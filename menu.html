@@ -1,5 +1,132 @@
-<li>
-  <a class="menu-link" href="fanworks.html">
-    二次創作物
-  </a>
-</li>
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>乙女座の脚元｜メニュー</title>
+
+  <style>
+    body {
+      margin: 0;
+      background: #1d3652;
+      color: #ffffff;
+      font-family: "Yu Mincho", "游明朝", "YuMincho", serif;
+    }
+
+    .menu-page {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 2rem;
+      box-sizing: border-box;
+    }
+
+    .menu-title {
+      margin: 0 0 3rem;
+      font-size: 2rem;
+      font-weight: 400;
+      letter-spacing: 0.12em;
+    }
+
+    .menu-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1.8rem;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .menu-link {
+      color: #ffffff;
+      font-size: 1.35rem;
+      letter-spacing: 0.08em;
+      text-decoration: none;
+      transition:
+        opacity 0.2s ease,
+        transform 0.2s ease;
+    }
+
+    .menu-link:hover {
+      opacity: 0.7;
+      transform: translateY(-2px);
+    }
+
+    .menu-link:focus-visible {
+      outline: 2px solid #28bfb0;
+      outline-offset: 5px;
+    }
+
+    .back-link {
+      margin-top: 4rem;
+      color: #ffffff;
+      font-size: 0.95rem;
+      text-decoration: none;
+      opacity: 0.75;
+    }
+
+    .back-link:hover {
+      opacity: 1;
+    }
+
+    @media (max-width: 600px) {
+      .menu-title {
+        font-size: 1.7rem;
+      }
+
+      .menu-link {
+        font-size: 1.2rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <main class="menu-page">
+
+    <h1 class="menu-title">
+      乙女座の脚元
+    </h1>
+
+    <nav>
+      <ul class="menu-list">
+
+        <li>
+          <a class="menu-link" href="fanworks.html">
+            二次創作物
+          </a>
+        </li>
+
+        <li>
+          <a class="menu-link" href="notes.html">
+            雑記
+          </a>
+        </li>
+
+        <li>
+          <a class="menu-link" href="bbs.html">
+            寄り合い
+          </a>
+        </li>
+
+        <li>
+          <a class="menu-link" href="about.html">
+            このサイトについて
+          </a>
+        </li>
+
+      </ul>
+    </nav>
+
+    <a class="back-link" href="index.html">
+      もどる
+    </a>
+
+  </main>
+
+</body>
+</html>
