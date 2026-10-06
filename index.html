@@ -1,29 +1,110 @@
-<nav>
-  <ul class="menu-list">
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>乙女座の脚元</title>
 
-    <li>
-      <a class="menu-link" href="fanworks.html">
-        二次創作物
-      </a>
-    </li>
+  <style>
+    body {
+      margin: 0;
+      background: #1d3652;
+      color: #ffffff;
+      font-family: "Yu Mincho", "游明朝", "YuMincho", serif;
+    }
 
-    <li>
-      <a class="menu-link" href="notes.html">
-        雑記
-      </a>
-    </li>
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 2rem;
+      box-sizing: border-box;
+    }
 
-    <li>
-      <a class="menu-link" href="bbs.html">
-        寄り合い
-      </a>
-    </li>
+    .site-title {
+      margin: 0;
+      color: #ffffff;
+      font-size: 2.4rem;
+      font-weight: 400;
+      letter-spacing: 0.12em;
+    }
 
-    <li>
-      <a class="menu-link" href="about.html">
-        このサイトについて
-      </a>
-    </li>
+    .site-description {
+      margin: 1rem 0 0;
+      color: #ffffff;
+      font-size: 1.15rem;
+      line-height: 1.8;
+    }
 
-  </ul>
-</nav>
+    .open-button {
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+
+      margin-top: 3rem;
+      padding: 0.8rem 1.8rem;
+
+      background: #28bfb0;
+      color: #ffffff;
+
+      font-family: inherit;
+      font-size: 1.5rem;
+      letter-spacing: 0.08em;
+
+      text-decoration: none;
+      border-radius: 999px;
+
+      transition:
+        opacity 0.2s ease,
+        transform 0.2s ease;
+    }
+
+    .open-button:hover {
+      opacity: 0.85;
+      transform: translateY(-2px);
+    }
+
+    .open-button:focus-visible {
+      outline: 2px solid #ffffff;
+      outline-offset: 4px;
+    }
+
+    @media (max-width: 600px) {
+      .site-title {
+        font-size: 2rem;
+      }
+
+      .site-description {
+        font-size: 1rem;
+      }
+
+      .open-button {
+        font-size: 1.3rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <main class="hero">
+
+    <h1 class="site-title">
+      乙女座の脚元
+    </h1>
+
+    <p class="site-description">
+      とりこしくろうによる書きものなど
+    </p>
+
+    <a class="open-button" href="menu.html">
+      ひらく
+    </a>
+
+  </main>
+
+</body>
+</html>
