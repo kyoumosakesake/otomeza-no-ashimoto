@@ -31,9 +31,7 @@
 
     .page-title {
       margin: 0 0 2.5rem;
-
       text-align: center;
-
       font-size: 2rem;
       font-weight: 400;
       letter-spacing: 0.12em;
@@ -47,9 +45,7 @@
     .tabs {
       display: flex;
       justify-content: center;
-
       gap: 2rem;
-
       margin-bottom: 2.5rem;
     }
 
@@ -63,7 +59,6 @@
       border-bottom: 1px solid transparent;
 
       font-size: 1.1rem;
-
       cursor: pointer;
 
       opacity: 0.55;
@@ -75,7 +70,6 @@
 
     .tab-button.active {
       opacity: 1;
-
       border-bottom-color: #28bfb0;
     }
 
@@ -100,20 +94,17 @@
     .legend {
       display: flex;
       justify-content: center;
-
       gap: 1.5rem;
 
-      margin-bottom: 3rem;
+      margin-bottom: 1rem;
 
       font-size: 0.8rem;
-
       opacity: 0.7;
     }
 
     .legend-item {
       display: flex;
       align-items: center;
-
       gap: 0.45rem;
     }
 
@@ -122,100 +113,30 @@
       height: 16px;
 
       border-radius: 50%;
-
       background: #ffffff;
     }
 
     .legend-dot.parody {
       background: transparent;
-
       border: 2px solid #ffffff;
     }
 
 
     /* =========================
-       スライド案内
+       タイムライン全体
     ========================= */
 
     .timeline-area {
       position: relative;
     }
 
-    /*
-      この矢印はスクロール部分の外側に置いてあるため、
-      タイムラインを左右に動かしても画面内に残ります。
-    */
-
-    .slide-guide {
+    .timeline-scroll {
       position: relative;
 
-      width: 100%;
-
-      height: 46px;
-
-      margin-bottom: 1rem;
-
-      pointer-events: none;
-
-      z-index: 50;
-    }
-
-    .slide-guide-text {
-      position: absolute;
-
-      left: 6px;
-      top: 0;
-
-      color: #28bfb0;
-
-      font-size: 0.8rem;
-      letter-spacing: 0.08em;
-
-      white-space: nowrap;
-    }
-
-    .slide-guide-line {
-      position: absolute;
-
-      left: 6px;
-      right: 22px;
-      bottom: 5px;
-
-      height: 6px;
-
-      background: #28bfb0;
-
-      border-radius: 999px;
-    }
-
-    .slide-guide-line::after {
-      content: "";
-
-      position: absolute;
-
-      right: -18px;
-      top: 50%;
-
-      transform: translateY(-50%);
-
-      border-top: 12px solid transparent;
-      border-bottom: 12px solid transparent;
-      border-left: 22px solid #28bfb0;
-    }
-
-
-    /* =========================
-       時系列
-    ========================= */
-
-    .timeline-scroll {
       overflow-x: auto;
       overflow-y: visible;
 
-      padding:
-        9rem
-        1rem
-        8rem;
+      padding: 12rem 1rem 8rem;
 
       scrollbar-color:
         rgba(255,255,255,0.25)
@@ -227,33 +148,96 @@
     .timeline {
       position: relative;
 
-      width: 1800px;
-      height: 330px;
+      /*
+        以前の1800pxから4200pxへ。
+        数値の近い作品同士にも
+        横方向の余白を作ります。
+      */
+      width: 4200px;
+      height: 360px;
 
       margin: 0 auto;
     }
 
-    /*
-      実際の時系列を表す横線
-    */
+
+    /* =========================
+       青緑の主軸
+    ========================= */
 
     .timeline-line {
       position: absolute;
 
       left: 55px;
-      right: 70px;
+      right: 55px;
 
-      top: 190px;
+      top: 210px;
 
-      height: 2px;
+      height: 7px;
 
-      background:
-        rgba(255,255,255,0.55);
+      background: #28bfb0;
+
+      border-radius: 999px;
+
+      z-index: 1;
+    }
+
+
+    /*
+      「スライドして移動」は
+      主軸の始点付近に置きます。
+    */
+
+    .slide-guide-text {
+      position: absolute;
+
+      left: 55px;
+      top: 174px;
+
+      color: #28bfb0;
+
+      font-size: 0.8rem;
+      letter-spacing: 0.08em;
+
+      white-space: nowrap;
+
+      z-index: 10;
+    }
+
+
+    /*
+      矢印の頭だけは
+      スクロールするタイムラインの外側に置く。
+
+      そのため横へスライドしても、
+      常に画面右端に見えます。
+    */
+
+    .fixed-arrow-head {
+      position: absolute;
+
+      right: 3px;
+
+      /*
+        timeline-scroll の上padding 12rem
+        ＋ 主軸の位置 210px を基準に調整
+      */
+      top: calc(12rem + 199px);
+
+      width: 0;
+      height: 0;
+
+      border-top: 15px solid transparent;
+      border-bottom: 15px solid transparent;
+      border-left: 25px solid #28bfb0;
+
+      pointer-events: none;
+
+      z-index: 100;
     }
 
 
     /* =========================
-       区分
+       区分線
     ========================= */
 
     .division-line {
@@ -261,11 +245,13 @@
 
       top: 90px;
 
-      height: 145px;
+      height: 170px;
       width: 1px;
 
       background:
         rgba(255,255,255,0.25);
+
+      z-index: 0;
     }
 
     .division-1 {
@@ -276,16 +262,19 @@
       left: 80%;
     }
 
+
+    /* =========================
+       区分名
+    ========================= */
+
     .section-label {
       position: absolute;
 
-      top: 238px;
+      top: 250px;
 
-      transform:
-        translateX(-50%);
+      transform: translateX(-50%);
 
       font-size: 0.86rem;
-
       letter-spacing: 0.08em;
 
       opacity: 0.65;
@@ -306,29 +295,6 @@
     }
 
 
-    /*
-      原点だけ表示。
-      4・8・10は表示しない。
-    */
-
-    .scale-label {
-      position: absolute;
-
-      top: 205px;
-
-      transform:
-        translateX(-50%);
-
-      font-size: 0.72rem;
-
-      opacity: 0.45;
-    }
-
-    .scale-0 {
-      left: 3%;
-    }
-
-
     /* =========================
        作品ポイント
     ========================= */
@@ -339,30 +305,26 @@
       left: var(--x);
 
       /*
-        すべて横線より上。
-        --offset は負の値になります。
+        必ず主軸より上。
       */
-
       top:
         calc(
-          190px +
-          var(--offset, -48px)
+          210px +
+          var(--offset, -54px)
         );
 
-      transform:
-        translate(-50%, -50%);
+      transform: translate(-50%, -50%);
 
       z-index: 5;
     }
 
     .point-button {
       display: flex;
-
       align-items: center;
       justify-content: center;
 
-      width: 36px;
-      height: 36px;
+      width: 38px;
+      height: 38px;
 
       padding: 0;
 
@@ -372,9 +334,8 @@
       background: #ffffff;
       color: #1d3652;
 
-      font-size: 0.8rem;
+      font-size: 0.82rem;
       font-weight: 600;
-
       line-height: 1;
 
       cursor: pointer;
@@ -419,20 +380,19 @@
     .story-point.parody
     .point-button:focus-visible {
       border-color: #28bfb0;
-
       color: #28bfb0;
     }
 
 
     /* =========================
-       作品ポップアップ
+       ポップアップ
     ========================= */
 
     .story-popup {
       position: absolute;
 
       left: 50%;
-      bottom: 26px;
+      bottom: 28px;
 
       transform:
         translateX(-50%)
@@ -466,11 +426,6 @@
       z-index: 30;
     }
 
-    /*
-      点からポップアップまで
-      マウスが通れる透明な橋
-    */
-
     .story-popup::before {
       content: "";
 
@@ -479,9 +434,9 @@
       left: 0;
       right: 0;
 
-      bottom: -26px;
+      bottom: -28px;
 
-      height: 26px;
+      height: 28px;
     }
 
     .story-popup::after {
@@ -492,17 +447,11 @@
       top: 100%;
       left: 50%;
 
-      transform:
-        translateX(-50%);
+      transform: translateX(-50%);
 
-      border-left:
-        7px solid transparent;
-
-      border-right:
-        7px solid transparent;
-
-      border-top:
-        7px solid #ffffff;
+      border-left: 7px solid transparent;
+      border-right: 7px solid transparent;
+      border-top: 7px solid #ffffff;
     }
 
     .story-point:hover
@@ -524,38 +473,26 @@
     }
 
     .story-title {
-      margin:
-        0
-        0
-        0.45rem;
+      margin: 0 0 0.45rem;
 
       font-size: 1.08rem;
       font-weight: 600;
-
       line-height: 1.5;
     }
 
     .story-date {
-      margin:
-        0
-        0
-        0.6rem;
+      margin: 0 0 0.6rem;
 
       font-size: 0.79rem;
-
       line-height: 1.5;
 
       opacity: 0.6;
     }
 
     .story-detail {
-      margin:
-        0
-        0
-        0.85rem;
+      margin: 0 0 0.85rem;
 
       font-size: 0.83rem;
-
       line-height: 1.7;
     }
 
@@ -583,7 +520,6 @@
 
     .writing-order {
       max-width: 760px;
-
       margin: 0 auto;
     }
 
@@ -592,10 +528,7 @@
     }
 
     .year-title {
-      margin:
-        0
-        0
-        1.3rem;
+      margin: 0 0 1.3rem;
 
       font-size: 1.1rem;
       font-weight: 400;
@@ -607,7 +540,6 @@
 
     .work-list {
       margin: 0;
-
       padding: 0;
 
       list-style: none;
@@ -615,9 +547,7 @@
 
     .work-list li {
       display: flex;
-
       gap: 1rem;
-
       align-items: baseline;
 
       padding: 0.9rem 0;
@@ -657,10 +587,7 @@
 
       width: fit-content;
 
-      margin:
-        5rem
-        auto
-        0;
+      margin: 5rem auto 0;
 
       color: #ffffff;
 
@@ -673,7 +600,6 @@
 
     .back-link:hover {
       opacity: 1;
-
       color: #28bfb0;
     }
 
@@ -701,34 +627,16 @@
       }
 
       .legend {
-        margin-bottom: 2.5rem;
-      }
-
-      .slide-guide {
-        height: 50px;
-      }
-
-      .slide-guide-text {
-        left: 4px;
-
-        font-size: 0.78rem;
-      }
-
-      .slide-guide-line {
-        left: 4px;
-        right: 21px;
-
-        height: 6px;
+        margin-bottom: 0.5rem;
       }
 
       .timeline-scroll {
-        padding-top: 9rem;
+        padding-top: 13rem;
         padding-bottom: 8rem;
       }
 
       /*
-        スマホでは小指の先より
-        大きいくらいのタップ領域
+        小指の先より大きめ。
       */
 
       .point-button {
@@ -740,19 +648,25 @@
 
       .story-popup {
         width: 240px;
-
-        bottom: 34px;
+        bottom: 35px;
       }
 
       .story-popup::before {
-        bottom: -34px;
+        bottom: -35px;
+        height: 35px;
+      }
 
-        height: 34px;
+      /*
+        スマホ時はpadding-topが13remなので
+        矢印の頭もそれに合わせます。
+      */
+
+      .fixed-arrow-head {
+        top: calc(13rem + 199px);
       }
 
       .work-list li {
         align-items: flex-start;
-
         flex-direction: column;
 
         gap: 0.25rem;
@@ -827,15 +741,11 @@
 
       <div class="timeline-area">
 
-        <div class="slide-guide">
-
-          <span class="slide-guide-text">
-            スライドして移動
-          </span>
-
-          <div class="slide-guide-line"></div>
-
-        </div>
+        <!--
+          スクロールしても右端に残る
+          矢印の頭
+        -->
+        <div class="fixed-arrow-head"></div>
 
 
         <div class="timeline-scroll">
@@ -845,7 +755,15 @@
             id="timeline"
           >
 
+            <!--
+              青緑色の主軸
+            -->
             <div class="timeline-line"></div>
+
+            <div class="slide-guide-text">
+              スライドして移動
+            </div>
+
 
             <div
               class="division-line division-1"
@@ -881,16 +799,6 @@
               "
             >
               恋人・その後
-            </div>
-
-
-            <div
-              class="
-                scale-label
-                scale-0
-              "
-            >
-              0
             </div>
 
           </div>
@@ -1057,6 +965,30 @@
         detail: "にゃんこ目線から見た佐杠の小説。うっすら性描写ありまして佐切さんが攻めです",
         score: 9.0,
         href: "works/yoigatari.html"
+      },
+
+      {
+        title: "相克の逢",
+        date: "2023年夏",
+        detail: "タオが伝わる感覚についての140字小説",
+        score: 8.4,
+        href: "works/sokoku-no-ai.html"
+      },
+
+      {
+        title: "乱し満たすもの",
+        date: "2023年夏",
+        detail: "たったひとことの切り返しに惑う140字小説",
+        score: 8.5,
+        href: "works/midashi-mitasu-mono.html"
+      },
+
+      {
+        title: "共に過ごす時間",
+        date: "2023年夏",
+        detail: "傷も歳も受け入れるほどの、140字小説",
+        score: 9.0,
+        href: "works/tomo-ni-sugosu-jikan.html"
       },
 
       {
@@ -1283,32 +1215,27 @@
         detail: "ふたりがふたたび出会ってすぐの小説",
         score: 4.0,
         href: "works/saikai-no-yoru.html"
-      },
-
-      {
-        title: "相克の逢",
-        date: "2023年夏",
-        detail: "タオが伝わる感覚についての140字小説",
-        score: 8.4,
-        href: "works/sokoku-no-ai.html"
-      },
-
-      {
-        title: "乱し満たすもの",
-        date: "2023年夏",
-        detail: "たったひとことの切り返しに惑う140字小説",
-        score: 8.5,
-        href: "works/midashi-mitasu-mono.html"
-      },
-
-      {
-        title: "共に過ごす時間",
-        date: "2023年夏",
-        detail: "傷も歳も受け入れるほどの、140字小説",
-        score: 9.0,
-        href: "works/tomo-ni-sugosu-jikan.html"
       }
 
+    ];
+
+
+    /*
+      ===================================
+      日付順
+      ===================================
+    */
+
+    const dateOrder = [
+      "2023年夏",
+      "2023年秋",
+      "2024年冬〜春",
+      "2024年春",
+      "2025年冬",
+      "2026年冬",
+      "2026年春",
+      "2026年夏",
+      "2026年秋"
     ];
 
 
@@ -1390,7 +1317,7 @@
 
     /*
       ===================================
-      時系列を作る
+      時系列
       ===================================
     */
 
@@ -1401,15 +1328,22 @@
 
 
     /*
-      同じscoreの作品をまとめます。
-      parodyも含めて処理します。
+      同じscoreの作品をまとめる
     */
 
     const groups = {};
 
 
     works.forEach(
-      (work) => {
+      (work, originalIndex) => {
+
+        /*
+          元配列の順番も保存
+        */
+
+        work.originalIndex =
+          originalIndex;
+
 
         const key =
           work.score.toFixed(1);
@@ -1427,11 +1361,48 @@
 
 
     /*
-      同じscoreの作品は、
-      配列内で先に登場する作品ほど
-      上に並びます。
+      同じ関係値の場合、
+      日付が古い作品ほど上になるよう
+      グループ内を並べ替える。
+    */
 
-      すべて時系列線より上です。
+    Object.values(groups)
+      .forEach(
+        (group) => {
+
+          group.sort(
+            (a, b) => {
+
+              const aDate =
+                dateOrder.indexOf(
+                  a.date
+                );
+
+              const bDate =
+                dateOrder.indexOf(
+                  b.date
+                );
+
+
+              if (aDate !== bDate) {
+                return aDate - bDate;
+              }
+
+
+              return (
+                a.originalIndex -
+                b.originalIndex
+              );
+
+            }
+          );
+
+        }
+      );
+
+
+    /*
+      作品を配置
     */
 
     works.forEach(
@@ -1449,19 +1420,18 @@
         const count =
           group.length;
 
-        const spacing = 46;
-
 
         /*
-          一番新しい作品でも
-          線から48px上。
+          同じ数値の作品を縦積み。
 
-          古い作品ほど
-          さらに上へ積み上げる。
+          もっとも古い作品が
+          もっとも上になります。
         */
 
+        const spacing = 52;
+
         const offset =
-          -48 -
+          -58 -
           (
             (count - 1 - index)
             * spacing
@@ -1479,7 +1449,7 @@
 
     /*
       ===================================
-      時系列ポイント生成
+      作品ポイント生成
       ===================================
     */
 
@@ -1508,8 +1478,8 @@
 
 
       /*
-        0〜10を
-        左右に少し余白を持たせて配置
+        score 0〜10を
+        3〜97％の位置に配置
       */
 
       const x =
@@ -1531,7 +1501,7 @@
 
 
       /*
-        丸ボタン
+        ● / ○
       */
 
       const button =
@@ -1555,7 +1525,7 @@
 
 
       /*
-        作品タイトルの最初の文字
+        タイトルの頭文字
       */
 
       button.textContent =
@@ -1659,8 +1629,7 @@
 
 
       /*
-        スマホでは
-        点をタップして開閉
+        タップで開閉
       */
 
       button.addEventListener(
@@ -1678,9 +1647,7 @@
               (otherPoint) => {
 
                 if (
-                  otherPoint
-                  !==
-                  point
+                  otherPoint !== point
                 ) {
 
                   otherPoint
@@ -1715,49 +1682,20 @@
       );
 
 
-    const dateOrder = [
-
-      "2023年夏",
-
-      "2023年秋",
-
-      "2024年冬〜春",
-
-      "2024年春",
-
-      "2025年冬",
-
-      "2026年冬",
-
-      "2026年春",
-
-      "2026年夏",
-
-      "2026年秋"
-
-    ];
-
-
     dateOrder.forEach(
       (dateName) => {
 
         const dateWorks =
           works.filter(
             (work) =>
-              work.date
-              ===
-              dateName
+              work.date === dateName
           );
 
 
         if (
-          dateWorks.length
-          ===
-          0
+          dateWorks.length === 0
         ) {
-
           return;
-
         }
 
 
@@ -1823,9 +1761,7 @@
             );
 
 
-            if (
-              work.parody
-            ) {
+            if (work.parody) {
 
               const type =
                 document.createElement(
@@ -1904,9 +1840,7 @@
       (event) => {
 
         if (
-          event.key
-          ===
-          "Escape"
+          event.key === "Escape"
         ) {
 
           document
