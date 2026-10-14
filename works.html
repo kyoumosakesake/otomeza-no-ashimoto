@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>作品｜乙女座の脚元</title>
+
+  <style>
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: #1d3652;
+      color: #ffffff;
+      font-family: "Yu Mincho", "游明朝", serif;
+    }
+
+    .page {
+      width: min(760px, 88%);
+      margin: 0 auto;
+      padding: 80px 0 100px;
+    }
+
+    h1 {
+      margin: 0 0 60px;
+      font-size: 2rem;
+      font-weight: normal;
+      letter-spacing: 0.15em;
+      text-align: center;
+    }
+
+    .works-list {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .work-link,
+    .work-disabled {
+      display: block;
+      padding: 22px 26px;
+      border: 1px solid rgba(255,255,255,0.35);
+      text-decoration: none;
+      color: #ffffff;
+      letter-spacing: 0.08em;
+      transition: 0.25s;
+    }
+
+    .work-link:hover {
+      border-color: #28bfb0;
+      color: #28bfb0;
+      transform: translateX(4px);
+    }
+
+    .work-disabled {
+      opacity: 0.5;
+      cursor: default;
+    }
+
+    .note {
+      display: block;
+      margin-top: 8px;
+      font-size: 0.8rem;
+      opacity: 0.65;
+    }
+
+    .back {
+      display: inline-block;
+      margin-top: 60px;
+      color: #ffffff;
+      text-decoration: none;
+      font-size: 0.9rem;
+      opacity: 0.75;
+    }
+
+    .back:hover {
+      color: #28bfb0;
+      opacity: 1;
+    }
+
+    @media (max-width: 600px) {
+      .page {
+        padding-top: 60px;
+      }
+
+      h1 {
+        font-size: 1.6rem;
+        margin-bottom: 45px;
+      }
+
+      .work-link,
+      .work-disabled {
+        padding: 18px 20px;
+        line-height: 1.8;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <main class="page">
+
+    <h1>作品</h1>
+
+    <div class="works-list">
+
+      <a href="fanworks.html" class="work-link">
+        地獄楽（佐杠・杠佐）
+      </a>
+
+      <div class="work-disabled">
+        雷雷雷（スミハヅ・ハヅスミ）
+        <span class="note">準備中</span>
+      </div>
+
+      <div class="work-disabled">
+        リコリス・リコイル（ちさたき・たきちさ）
+        <span class="note">準備中</span>
+      </div>
+
+    </div>
+
+    <a href="menu.html" class="back">← メニューへ戻る</a>
+
+  </main>
+
+</body>
+</html>
