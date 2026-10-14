@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <title>地獄楽（佐杠・杠佐）｜乙女座の脚元</title>
 
   <style>
@@ -30,32 +31,41 @@
 
     .page-title {
       margin: 0 0 2.5rem;
+
       text-align: center;
+
       font-size: 2rem;
       font-weight: 400;
       letter-spacing: 0.12em;
     }
 
-    /* --------------------
+
+    /* =========================
        タブ
-    -------------------- */
+    ========================= */
 
     .tabs {
       display: flex;
       justify-content: center;
+
       gap: 2rem;
+
       margin-bottom: 2.5rem;
     }
 
     .tab-button {
       padding: 0.5rem 0.2rem;
+
       background: transparent;
       color: #ffffff;
+
       border: none;
       border-bottom: 1px solid transparent;
 
       font-size: 1.1rem;
+
       cursor: pointer;
+
       opacity: 0.55;
 
       transition:
@@ -65,6 +75,7 @@
 
     .tab-button.active {
       opacity: 1;
+
       border-bottom-color: #28bfb0;
     }
 
@@ -81,97 +92,180 @@
       display: block;
     }
 
-    /* --------------------
+
+    /* =========================
        凡例
-    -------------------- */
+    ========================= */
 
     .legend {
       display: flex;
       justify-content: center;
+
       gap: 1.5rem;
 
-      margin-bottom: 1rem;
+      margin-bottom: 3rem;
 
       font-size: 0.8rem;
+
       opacity: 0.7;
     }
 
     .legend-item {
       display: flex;
       align-items: center;
+
       gap: 0.45rem;
     }
 
     .legend-dot {
-      width: 9px;
-      height: 9px;
+      width: 16px;
+      height: 16px;
+
       border-radius: 50%;
+
       background: #ffffff;
     }
 
     .legend-dot.parody {
       background: transparent;
-      border: 1.5px solid #ffffff;
+
+      border: 2px solid #ffffff;
     }
 
-    /* --------------------
+
+    /* =========================
+       スライド案内
+    ========================= */
+
+    .timeline-area {
+      position: relative;
+    }
+
+    /*
+      この矢印はスクロール部分の外側に置いてあるため、
+      タイムラインを左右に動かしても画面内に残ります。
+    */
+
+    .slide-guide {
+      position: relative;
+
+      width: 100%;
+
+      height: 46px;
+
+      margin-bottom: 1rem;
+
+      pointer-events: none;
+
+      z-index: 50;
+    }
+
+    .slide-guide-text {
+      position: absolute;
+
+      left: 6px;
+      top: 0;
+
+      color: #28bfb0;
+
+      font-size: 0.8rem;
+      letter-spacing: 0.08em;
+
+      white-space: nowrap;
+    }
+
+    .slide-guide-line {
+      position: absolute;
+
+      left: 6px;
+      right: 22px;
+      bottom: 5px;
+
+      height: 6px;
+
+      background: #28bfb0;
+
+      border-radius: 999px;
+    }
+
+    .slide-guide-line::after {
+      content: "";
+
+      position: absolute;
+
+      right: -18px;
+      top: 50%;
+
+      transform: translateY(-50%);
+
+      border-top: 12px solid transparent;
+      border-bottom: 12px solid transparent;
+      border-left: 22px solid #28bfb0;
+    }
+
+
+    /* =========================
        時系列
-    -------------------- */
+    ========================= */
 
     .timeline-scroll {
       overflow-x: auto;
       overflow-y: visible;
 
-      padding: 8rem 1rem 9rem;
+      padding:
+        9rem
+        1rem
+        8rem;
 
-      scrollbar-color: rgba(255,255,255,0.25) transparent;
+      scrollbar-color:
+        rgba(255,255,255,0.25)
+        transparent;
+
+      -webkit-overflow-scrolling: touch;
     }
 
     .timeline {
       position: relative;
 
       width: 1800px;
-      height: 300px;
+      height: 330px;
 
       margin: 0 auto;
     }
+
+    /*
+      実際の時系列を表す横線
+    */
 
     .timeline-line {
       position: absolute;
 
       left: 55px;
       right: 70px;
-      top: 150px;
+
+      top: 190px;
 
       height: 2px;
 
-      background: rgba(255, 255, 255, 0.8);
+      background:
+        rgba(255,255,255,0.55);
     }
 
-    .timeline-line::after {
-      content: "";
 
-      position: absolute;
-      right: -16px;
-      top: 50%;
-
-      transform: translateY(-50%);
-
-      border-top: 7px solid transparent;
-      border-bottom: 7px solid transparent;
-      border-left: 16px solid rgba(255, 255, 255, 0.8);
-    }
-
-    /* 4.0 / 8.0 の境界線 */
+    /* =========================
+       区分
+    ========================= */
 
     .division-line {
       position: absolute;
 
-      top: 92px;
-      height: 116px;
+      top: 90px;
+
+      height: 145px;
       width: 1px;
 
-      background: rgba(255, 255, 255, 0.28);
+      background:
+        rgba(255,255,255,0.25);
     }
 
     .division-1 {
@@ -182,17 +276,20 @@
       left: 80%;
     }
 
-    /* 区分名 */
-
     .section-label {
       position: absolute;
-      top: 218px;
 
-      transform: translateX(-50%);
+      top: 238px;
+
+      transform:
+        translateX(-50%);
 
       font-size: 0.86rem;
+
       letter-spacing: 0.08em;
+
       opacity: 0.65;
+
       white-space: nowrap;
     }
 
@@ -208,15 +305,22 @@
       left: 90%;
     }
 
-    /* 数字 */
+
+    /*
+      原点だけ表示。
+      4・8・10は表示しない。
+    */
 
     .scale-label {
       position: absolute;
-      top: 167px;
 
-      transform: translateX(-50%);
+      top: 205px;
+
+      transform:
+        translateX(-50%);
 
       font-size: 0.72rem;
+
       opacity: 0.45;
     }
 
@@ -224,38 +328,41 @@
       left: 3%;
     }
 
-    .scale-4 {
-      left: 40%;
-    }
 
-    .scale-8 {
-      left: 80%;
-    }
-
-    .scale-10 {
-      left: 97%;
-    }
-
-    /* --------------------
-       作品の点
-    -------------------- */
+    /* =========================
+       作品ポイント
+    ========================= */
 
     .story-point {
       position: absolute;
 
       left: var(--x);
-      top: calc(150px + var(--offset, 0px));
 
-      transform: translate(-50%, -50%);
+      /*
+        すべて横線より上。
+        --offset は負の値になります。
+      */
+
+      top:
+        calc(
+          190px +
+          var(--offset, -48px)
+        );
+
+      transform:
+        translate(-50%, -50%);
 
       z-index: 5;
     }
 
     .point-button {
-      display: block;
+      display: flex;
 
-      width: 13px;
-      height: 13px;
+      align-items: center;
+      justify-content: center;
+
+      width: 36px;
+      height: 36px;
 
       padding: 0;
 
@@ -263,30 +370,69 @@
       border-radius: 50%;
 
       background: #ffffff;
+      color: #1d3652;
+
+      font-size: 0.8rem;
+      font-weight: 600;
+
+      line-height: 1;
 
       cursor: pointer;
 
+      box-shadow:
+        0 2px 8px
+        rgba(0,0,0,0.16);
+
       transition:
         transform 0.15s ease,
-        background 0.15s ease;
+        background 0.15s ease,
+        color 0.15s ease;
     }
 
     .point-button:hover,
     .point-button:focus-visible {
       background: #28bfb0;
-      transform: scale(1.2);
+      color: #ffffff;
+
+      transform: scale(1.12);
+
       outline: none;
     }
 
-    /* --------------------
-       小ウィンドウ
-    -------------------- */
+
+    /* =========================
+       パロディの○
+    ========================= */
+
+    .story-point.parody
+    .point-button {
+      background: #1d3652;
+
+      color: #ffffff;
+
+      border: 2px solid #ffffff;
+    }
+
+    .story-point.parody
+    .point-button:hover,
+
+    .story-point.parody
+    .point-button:focus-visible {
+      border-color: #28bfb0;
+
+      color: #28bfb0;
+    }
+
+
+    /* =========================
+       作品ポップアップ
+    ========================= */
 
     .story-popup {
       position: absolute;
 
       left: 50%;
-      bottom: 16px;
+      bottom: 26px;
 
       transform:
         translateX(-50%)
@@ -302,10 +448,12 @@
       border-radius: 8px;
 
       box-shadow:
-        0 8px 24px rgba(0, 0, 0, 0.25);
+        0 8px 24px
+        rgba(0,0,0,0.25);
 
       opacity: 0;
       visibility: hidden;
+
       pointer-events: none;
 
       transition:
@@ -318,7 +466,11 @@
       z-index: 30;
     }
 
-    /* 点からウィンドウまでの透明な橋 */
+    /*
+      点からポップアップまで
+      マウスが通れる透明な橋
+    */
+
     .story-popup::before {
       content: "";
 
@@ -326,9 +478,10 @@
 
       left: 0;
       right: 0;
-      bottom: -16px;
 
-      height: 16px;
+      bottom: -26px;
+
+      height: 26px;
     }
 
     .story-popup::after {
@@ -339,18 +492,30 @@
       top: 100%;
       left: 50%;
 
-      transform: translateX(-50%);
+      transform:
+        translateX(-50%);
 
-      border-left: 7px solid transparent;
-      border-right: 7px solid transparent;
-      border-top: 7px solid #ffffff;
+      border-left:
+        7px solid transparent;
+
+      border-right:
+        7px solid transparent;
+
+      border-top:
+        7px solid #ffffff;
     }
 
-    .story-point:hover .story-popup,
-    .story-point:focus-within .story-popup,
-    .story-point.open .story-popup {
+    .story-point:hover
+    .story-popup,
+
+    .story-point:focus-within
+    .story-popup,
+
+    .story-point.open
+    .story-popup {
       opacity: 1;
       visibility: visible;
+
       pointer-events: auto;
 
       transform:
@@ -359,26 +524,38 @@
     }
 
     .story-title {
-      margin: 0 0 0.45rem;
+      margin:
+        0
+        0
+        0.45rem;
 
       font-size: 1.08rem;
       font-weight: 600;
+
       line-height: 1.5;
     }
 
     .story-date {
-      margin: 0 0 0.6rem;
+      margin:
+        0
+        0
+        0.6rem;
 
       font-size: 0.79rem;
+
       line-height: 1.5;
 
       opacity: 0.6;
     }
 
     .story-detail {
-      margin: 0 0 0.85rem;
+      margin:
+        0
+        0
+        0.85rem;
 
       font-size: 0.83rem;
+
       line-height: 1.7;
     }
 
@@ -391,41 +568,22 @@
 
       text-decoration: none;
 
-      border-bottom: 1px solid #28bfb0;
+      border-bottom:
+        1px solid #28bfb0;
     }
 
     .story-link:hover {
       opacity: 0.6;
     }
 
-    /* --------------------
-       パロディ
-    -------------------- */
 
-    .story-point.parody .point-button {
-      background: #1d3652;
-      border: 2px solid #ffffff;
-    }
-
-    .story-point.parody .point-button:hover,
-    .story-point.parody .point-button:focus-visible {
-      border-color: #28bfb0;
-    }
-
-    .story-point.parody-top {
-      top: 55px;
-    }
-
-    .story-point.parody-bottom {
-      top: 255px;
-    }
-
-    /* --------------------
+    /* =========================
        執筆順
-    -------------------- */
+    ========================= */
 
     .writing-order {
       max-width: 760px;
+
       margin: 0 auto;
     }
 
@@ -434,10 +592,14 @@
     }
 
     .year-title {
-      margin: 0 0 1.3rem;
+      margin:
+        0
+        0
+        1.3rem;
 
       font-size: 1.1rem;
       font-weight: 400;
+
       letter-spacing: 0.12em;
 
       opacity: 0.7;
@@ -445,6 +607,7 @@
 
     .work-list {
       margin: 0;
+
       padding: 0;
 
       list-style: none;
@@ -452,13 +615,16 @@
 
     .work-list li {
       display: flex;
+
       gap: 1rem;
+
       align-items: baseline;
 
       padding: 0.9rem 0;
 
       border-bottom:
-        1px solid rgba(255,255,255,0.13);
+        1px solid
+        rgba(255,255,255,0.13);
     }
 
     .work-list a {
@@ -477,19 +643,24 @@
       font-size: 0.72rem;
 
       opacity: 0.5;
+
       white-space: nowrap;
     }
 
-    /* --------------------
+
+    /* =========================
        戻る
-    -------------------- */
+    ========================= */
 
     .back-link {
       display: block;
 
       width: fit-content;
 
-      margin: 5rem auto 0;
+      margin:
+        5rem
+        auto
+        0;
 
       color: #ffffff;
 
@@ -502,11 +673,14 @@
 
     .back-link:hover {
       opacity: 1;
+
+      color: #28bfb0;
     }
 
-    /* --------------------
+
+    /* =========================
        スマホ
-    -------------------- */
+    ========================= */
 
     @media (max-width: 600px) {
 
@@ -526,23 +700,68 @@
         font-size: 1rem;
       }
 
+      .legend {
+        margin-bottom: 2.5rem;
+      }
+
+      .slide-guide {
+        height: 50px;
+      }
+
+      .slide-guide-text {
+        left: 4px;
+
+        font-size: 0.78rem;
+      }
+
+      .slide-guide-line {
+        left: 4px;
+        right: 21px;
+
+        height: 6px;
+      }
+
       .timeline-scroll {
-        padding-top: 7rem;
+        padding-top: 9rem;
         padding-bottom: 8rem;
       }
 
+      /*
+        スマホでは小指の先より
+        大きいくらいのタップ領域
+      */
+
+      .point-button {
+        width: 50px;
+        height: 50px;
+
+        font-size: 0.95rem;
+      }
+
       .story-popup {
-        width: 230px;
+        width: 240px;
+
+        bottom: 34px;
+      }
+
+      .story-popup::before {
+        bottom: -34px;
+
+        height: 34px;
       }
 
       .work-list li {
         align-items: flex-start;
+
         flex-direction: column;
+
         gap: 0.25rem;
       }
     }
+
   </style>
 </head>
+
 
 <body>
 
@@ -552,11 +771,13 @@
       地獄楽（佐杠・杠佐）
     </h1>
 
+
     <div
       class="tabs"
       role="tablist"
       aria-label="作品の並び方"
     >
+
       <button
         class="tab-button active"
         type="button"
@@ -576,12 +797,13 @@
       >
         執筆順
       </button>
+
     </div>
 
 
-    <!-- ====================
+    <!-- =====================
          時系列
-    ===================== -->
+    ====================== -->
 
     <section
       id="timeline-tab"
@@ -602,34 +824,76 @@
 
       </div>
 
-      <div class="timeline-scroll">
 
-        <div
-          class="timeline"
-          id="timeline"
-        >
+      <div class="timeline-area">
 
-          <div class="timeline-line"></div>
+        <div class="slide-guide">
 
-          <div class="division-line division-1"></div>
-          <div class="division-line division-2"></div>
+          <span class="slide-guide-text">
+            スライドして移動
+          </span>
 
-          <div class="section-label section-label-1">
-            原作軸
+          <div class="slide-guide-line"></div>
+
+        </div>
+
+
+        <div class="timeline-scroll">
+
+          <div
+            class="timeline"
+            id="timeline"
+          >
+
+            <div class="timeline-line"></div>
+
+            <div
+              class="division-line division-1"
+            ></div>
+
+            <div
+              class="division-line division-2"
+            ></div>
+
+
+            <div
+              class="
+                section-label
+                section-label-1
+              "
+            >
+              原作軸
+            </div>
+
+            <div
+              class="
+                section-label
+                section-label-2
+              "
+            >
+              諸国行脚
+            </div>
+
+            <div
+              class="
+                section-label
+                section-label-3
+              "
+            >
+              恋人・その後
+            </div>
+
+
+            <div
+              class="
+                scale-label
+                scale-0
+              "
+            >
+              0
+            </div>
+
           </div>
-
-          <div class="section-label section-label-2">
-            諸国行脚
-          </div>
-
-          <div class="section-label section-label-3">
-            恋人・その後
-          </div>
-
-          <div class="scale-label scale-0">0</div>
-          <div class="scale-label scale-4">4</div>
-          <div class="scale-label scale-8">8</div>
-          <div class="scale-label scale-10">10</div>
 
         </div>
 
@@ -638,9 +902,9 @@
     </section>
 
 
-    <!-- ====================
+    <!-- =====================
          執筆順
-    ===================== -->
+    ====================== -->
 
     <section
       id="writing-tab"
@@ -841,7 +1105,6 @@
         detail: "立場上恋愛はできないけど、のすったもんだシリーズ",
         score: 8.0,
         parody: true,
-        parodyPosition: "top",
         href: "works/yogo-kyoyu.html"
       },
 
@@ -995,7 +1258,6 @@
         detail: "グッズから着想を得たすったもんだシリーズ",
         score: 7.9,
         parody: true,
-        parodyPosition: "bottom",
         href: "works/yukionna-oni.html"
       },
 
@@ -1025,7 +1287,7 @@
 
       {
         title: "相克の逢",
-        date: "時期未記載",
+        date: "2023年夏",
         detail: "タオが伝わる感覚についての140字小説",
         score: 8.4,
         href: "works/sokoku-no-ai.html"
@@ -1033,7 +1295,7 @@
 
       {
         title: "乱し満たすもの",
-        date: "時期未記載",
+        date: "2023年夏",
         detail: "たったひとことの切り返しに惑う140字小説",
         score: 8.5,
         href: "works/midashi-mitasu-mono.html"
@@ -1041,7 +1303,7 @@
 
       {
         title: "共に過ごす時間",
-        date: "時期未記載",
+        date: "2023年夏",
         detail: "傷も歳も受け入れるほどの、140字小説",
         score: 9.0,
         href: "works/tomo-ni-sugosu-jikan.html"
@@ -1057,41 +1319,73 @@
     */
 
     const tabButtons =
-      document.querySelectorAll(".tab-button");
+      document.querySelectorAll(
+        ".tab-button"
+      );
 
     const tabContents =
-      document.querySelectorAll(".tab-content");
+      document.querySelectorAll(
+        ".tab-content"
+      );
 
-    tabButtons.forEach((button) => {
 
-      button.addEventListener("click", () => {
+    tabButtons.forEach(
+      (button) => {
 
-        tabButtons.forEach((item) => {
-          item.classList.remove("active");
-          item.setAttribute(
-            "aria-selected",
-            "false"
-          );
-        });
+        button.addEventListener(
+          "click",
+          () => {
 
-        tabContents.forEach((item) => {
-          item.classList.remove("active");
-        });
+            tabButtons.forEach(
+              (item) => {
 
-        button.classList.add("active");
+                item
+                  .classList
+                  .remove("active");
 
-        button.setAttribute(
-          "aria-selected",
-          "true"
+                item.setAttribute(
+                  "aria-selected",
+                  "false"
+                );
+
+              }
+            );
+
+
+            tabContents.forEach(
+              (item) => {
+
+                item
+                  .classList
+                  .remove("active");
+
+              }
+            );
+
+
+            button
+              .classList
+              .add("active");
+
+
+            button.setAttribute(
+              "aria-selected",
+              "true"
+            );
+
+
+            document
+              .getElementById(
+                button.dataset.tab
+              )
+              .classList
+              .add("active");
+
+          }
         );
 
-        document
-          .getElementById(button.dataset.tab)
-          .classList.add("active");
-
-      });
-
-    });
+      }
+    );
 
 
     /*
@@ -1101,75 +1395,93 @@
     */
 
     const timeline =
-      document.getElementById("timeline");
+      document.getElementById(
+        "timeline"
+      );
 
-    const normalWorks =
-      works.filter((work) => !work.parody);
 
     /*
-      同じ数値が重なったとき、
-      少しだけ上下にずらします。
+      同じscoreの作品をまとめます。
+      parodyも含めて処理します。
     */
 
     const groups = {};
 
-    normalWorks.forEach((work) => {
 
-      const key =
-        work.score.toFixed(1);
+    works.forEach(
+      (work) => {
 
-      if (!groups[key]) {
-        groups[key] = [];
+        const key =
+          work.score.toFixed(1);
+
+
+        if (!groups[key]) {
+          groups[key] = [];
+        }
+
+
+        groups[key].push(work);
+
       }
-
-      groups[key].push(work);
-
-    });
-
-
-    normalWorks.forEach((work) => {
-
-      const key =
-        work.score.toFixed(1);
-
-      const group =
-        groups[key];
-
-      const index =
-        group.indexOf(work);
-
-      const count =
-        group.length;
-
-      const spacing = 18;
-
-      const offset =
-        (index - (count - 1) / 2)
-        * spacing;
-
-      createTimelinePoint(
-        work,
-        offset
-      );
-
-    });
+    );
 
 
     /*
-      パロディは線から外す
+      同じscoreの作品は、
+      配列内で先に登場する作品ほど
+      上に並びます。
+
+      すべて時系列線より上です。
     */
 
-    works
-      .filter((work) => work.parody)
-      .forEach((work) => {
+    works.forEach(
+      (work) => {
+
+        const key =
+          work.score.toFixed(1);
+
+        const group =
+          groups[key];
+
+        const index =
+          group.indexOf(work);
+
+        const count =
+          group.length;
+
+        const spacing = 46;
+
+
+        /*
+          一番新しい作品でも
+          線から48px上。
+
+          古い作品ほど
+          さらに上へ積み上げる。
+        */
+
+        const offset =
+          -48 -
+          (
+            (count - 1 - index)
+            * spacing
+          );
+
 
         createTimelinePoint(
           work,
-          0
+          offset
         );
 
-      });
+      }
+    );
 
+
+    /*
+      ===================================
+      時系列ポイント生成
+      ===================================
+    */
 
     function createTimelinePoint(
       work,
@@ -1177,50 +1489,64 @@
     ) {
 
       const point =
-        document.createElement("div");
+        document.createElement(
+          "div"
+        );
+
 
       point.className =
         "story-point";
 
+
       if (work.parody) {
 
-        point.classList.add("parody");
-
-        point.classList.add(
-          work.parodyPosition === "top"
-            ? "parody-top"
-            : "parody-bottom"
-        );
+        point
+          .classList
+          .add("parody");
 
       }
 
+
       /*
-        左右に少し余白を持たせながら
-        0〜10を配置
+        0〜10を
+        左右に少し余白を持たせて配置
       */
 
       const x =
-        3 + (work.score / 10) * 94;
+        3 +
+        (work.score / 10)
+        * 94;
+
 
       point.style.setProperty(
         "--x",
         `${x}%`
       );
 
-      if (!work.parody) {
 
-        point.style.setProperty(
-          "--offset",
-          `${offset}px`
-        );
+      point.style.setProperty(
+        "--offset",
+        `${offset}px`
+      );
 
-      }
+
+      /*
+        丸ボタン
+      */
 
       const button =
-        document.createElement("button");
+        document.createElement(
+          "button"
+        );
 
-      button.type = "button";
-      button.className = "point-button";
+
+      button.type =
+        "button";
+
+
+      button.className =
+        "point-button";
+
 
       button.setAttribute(
         "aria-label",
@@ -1228,51 +1554,85 @@
       );
 
 
+      /*
+        作品タイトルの最初の文字
+      */
+
+      button.textContent =
+        Array.from(
+          work.title
+        )[0];
+
+
+      /*
+        ポップアップ
+      */
+
       const popup =
-        document.createElement("div");
+        document.createElement(
+          "div"
+        );
+
 
       popup.className =
         "story-popup";
 
 
       const title =
-        document.createElement("p");
+        document.createElement(
+          "p"
+        );
+
 
       title.className =
         "story-title";
+
 
       title.textContent =
         work.title;
 
 
       const date =
-        document.createElement("p");
+        document.createElement(
+          "p"
+        );
+
 
       date.className =
         "story-date";
+
 
       date.textContent =
         work.date;
 
 
       const detail =
-        document.createElement("p");
+        document.createElement(
+          "p"
+        );
+
 
       detail.className =
         "story-detail";
+
 
       detail.textContent =
         work.detail;
 
 
       const link =
-        document.createElement("a");
+        document.createElement(
+          "a"
+        );
+
 
       link.className =
         "story-link";
 
+
       link.href =
         work.href;
+
 
       link.textContent =
         "読む";
@@ -1285,16 +1645,22 @@
         link
       );
 
+
       point.append(
         button,
         popup
       );
 
-      timeline.appendChild(point);
+
+      timeline
+        .appendChild(
+          point
+        );
 
 
       /*
-        スマホでは点をタップして開閉
+        スマホでは
+        点をタップして開閉
       */
 
       button.addEventListener(
@@ -1303,17 +1669,29 @@
 
           event.stopPropagation();
 
+
           document
-            .querySelectorAll(".story-point.open")
-            .forEach((otherPoint) => {
+            .querySelectorAll(
+              ".story-point.open"
+            )
+            .forEach(
+              (otherPoint) => {
 
-              if (otherPoint !== point) {
-                otherPoint
-                  .classList
-                  .remove("open");
+                if (
+                  otherPoint
+                  !==
+                  point
+                ) {
+
+                  otherPoint
+                    .classList
+                    .remove("open");
+
+                }
+
               }
+            );
 
-            });
 
           point
             .classList
@@ -1336,110 +1714,166 @@
         "writing-order"
       );
 
+
     const dateOrder = [
+
       "2023年夏",
+
       "2023年秋",
+
       "2024年冬〜春",
+
       "2024年春",
+
       "2025年冬",
+
       "2026年冬",
+
       "2026年春",
+
       "2026年夏",
-      "2026年秋",
-      "時期未記載"
+
+      "2026年秋"
+
     ];
 
 
-    dateOrder.forEach((dateName) => {
+    dateOrder.forEach(
+      (dateName) => {
 
-      const dateWorks =
-        works.filter(
-          (work) =>
-            work.date === dateName
-        );
-
-      if (dateWorks.length === 0) {
-        return;
-      }
-
-
-      const block =
-        document.createElement("section");
-
-      block.className =
-        "year-block";
+        const dateWorks =
+          works.filter(
+            (work) =>
+              work.date
+              ===
+              dateName
+          );
 
 
-      const heading =
-        document.createElement("h2");
+        if (
+          dateWorks.length
+          ===
+          0
+        ) {
 
-      heading.className =
-        "year-title";
-
-      heading.textContent =
-        dateName;
-
-
-      const list =
-        document.createElement("ul");
-
-      list.className =
-        "work-list";
-
-
-      dateWorks.forEach((work) => {
-
-        const item =
-          document.createElement("li");
-
-
-        const link =
-          document.createElement("a");
-
-        link.href =
-          work.href;
-
-        link.textContent =
-          work.title;
-
-
-        item.appendChild(link);
-
-
-        if (work.parody) {
-
-          const type =
-            document.createElement("span");
-
-          type.className =
-            "work-type";
-
-          type.textContent =
-            "パロディ";
-
-          item.appendChild(type);
+          return;
 
         }
 
 
-        list.appendChild(item);
+        const block =
+          document.createElement(
+            "section"
+          );
 
-      });
+
+        block.className =
+          "year-block";
 
 
-      block.append(
-        heading,
-        list
-      );
+        const heading =
+          document.createElement(
+            "h2"
+          );
 
-      writingOrder.appendChild(block);
 
-    });
+        heading.className =
+          "year-title";
+
+
+        heading.textContent =
+          dateName;
+
+
+        const list =
+          document.createElement(
+            "ul"
+          );
+
+
+        list.className =
+          "work-list";
+
+
+        dateWorks.forEach(
+          (work) => {
+
+            const item =
+              document.createElement(
+                "li"
+              );
+
+
+            const link =
+              document.createElement(
+                "a"
+              );
+
+
+            link.href =
+              work.href;
+
+
+            link.textContent =
+              work.title;
+
+
+            item.appendChild(
+              link
+            );
+
+
+            if (
+              work.parody
+            ) {
+
+              const type =
+                document.createElement(
+                  "span"
+                );
+
+
+              type.className =
+                "work-type";
+
+
+              type.textContent =
+                "パロディ";
+
+
+              item.appendChild(
+                type
+              );
+
+            }
+
+
+            list.appendChild(
+              item
+            );
+
+          }
+        );
+
+
+        block.append(
+          heading,
+          list
+        );
+
+
+        writingOrder
+          .appendChild(
+            block
+          );
+
+      }
+    );
 
 
     /*
       ===================================
-      小ウィンドウを閉じる
+      ポップアップを閉じる
       ===================================
     */
 
@@ -1448,14 +1882,18 @@
       () => {
 
         document
-          .querySelectorAll(".story-point.open")
-          .forEach((point) => {
+          .querySelectorAll(
+            ".story-point.open"
+          )
+          .forEach(
+            (point) => {
 
-            point
-              .classList
-              .remove("open");
+              point
+                .classList
+                .remove("open");
 
-          });
+            }
+          );
 
       }
     );
@@ -1465,17 +1903,25 @@
       "keydown",
       (event) => {
 
-        if (event.key === "Escape") {
+        if (
+          event.key
+          ===
+          "Escape"
+        ) {
 
           document
-            .querySelectorAll(".story-point.open")
-            .forEach((point) => {
+            .querySelectorAll(
+              ".story-point.open"
+            )
+            .forEach(
+              (point) => {
 
-              point
-                .classList
-                .remove("open");
+                point
+                  .classList
+                  .remove("open");
 
-            });
+              }
+            );
 
         }
 
