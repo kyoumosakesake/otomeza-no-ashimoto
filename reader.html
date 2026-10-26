@@ -183,10 +183,10 @@
   @media (max-width: 600px) {
     .site-header { padding: 1.2rem 1rem; }
     .site-name { font-size: .8rem; }
-    /* スマホはLTRのスクロール座標を使用。表示順だけ反転して右から読みます。 */
+    /* スマホも右端を起点に、タイトル→本文の順に並べます。 */
     .reading-layout.vertical {
-      direction: ltr;
-      flex-direction: row-reverse;
+      direction: rtl;
+      flex-direction: row;
       gap: 1.5rem;
       padding: 1rem .75rem 3rem;
       overflow-x: scroll;
@@ -302,7 +302,7 @@
   }
   function resetReadingPosition() {
     if (settings.direction !== "vertical") return;
-    // PCはRTL、スマホはrow-reverseで、どちらも右端が0です。
+    // PC・スマホともRTLで右端が0です。
     layout.scrollLeft = 0;
   }
   function resetAfterLayout() {
@@ -465,7 +465,7 @@
     }
 
     if (gesture.dragging) {
-      // 左へドラッグ→scrollLeft減少→本文の先へ進む。
+      // 左へドラッグ→RTLの負方向へ進みます。
       event.preventDefault();
       const now = performance.now();
       const elapsed = Math.max(1, now - gesture.lastTime);
