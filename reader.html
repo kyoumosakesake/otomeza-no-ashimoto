@@ -146,6 +146,7 @@
     touch-action: auto; /* 横スワイプはブラウザのネイティブスクロールに任せる */
   }
   .reading-layout.vertical .work-header {
+    order: -1;
     flex: 0 0 auto;
     display: flex;
     flex-direction: row-reverse;
@@ -186,7 +187,7 @@
     /* スマホはLTR座標とrow-reverseで、右端のタイトルから読み始めます。 */
     .reading-layout.vertical {
       direction: ltr;
-      flex-direction: row-reverse;
+      flex-direction: row;
       gap: 1.5rem;
       padding: 1rem .75rem 3rem;
       overflow-x: scroll;
@@ -195,6 +196,7 @@
       -webkit-overflow-scrolling: touch;
     }
     .reading-layout.vertical .work-header {
+      order: 0;
       padding: .5rem 0;
       gap: .5rem;
       flex-direction: row; /* タイトル→日付の順に配置 */
@@ -246,14 +248,14 @@
 </div>
 
 <div class="reading-layout vertical" id="reading-layout">
+  <main class="reader" id="reader">
+    <article class="novel-text" id="novel-text"></article>
+  </main>
   <div class="work-header">
     <h1 class="work-title" id="work-title">読み込み中…</h1>
     <p class="work-date" id="work-date"></p>
   </div>
-  <main class="reader" id="reader">
-    <article class="novel-text" id="novel-text"></article>
-  </main>
-</div>
+
 <footer class="work-footer"><a class="back-link" href="fanworks.html">← 作品一覧へ戻る</a></footer>
 
 <script src="novels.js?v=20261026-3"></script>
@@ -302,9 +304,12 @@
   }
   function resetReadingPosition() {
     if (settings.direction !== "vertical") return;
-    // row-reverseは右端を0として左側へ負のスクロール座標になります。
-    // PCのRTLも右端が0です。
-    layout.scrollLeft = 0;
+    // スマホはLTR座標。右端（タイトル）から読み始めます。
+    if (mobileScreen.matches) {
+      layout.scrollLeft = layout.scrollWidth - layout.clientWidth;
+    } else {
+      layout.scrollLeft = 0;
+    }
   }
   function resetAfterLayout() {
     requestAnimationFrame(() => {
@@ -466,7 +471,7 @@
     }
 
     if (gesture.dragging) {
-      // LTRの右端から、左ドラッグでscrollLeftを減らして読み進める。
+      // 左ドラッグでスクロール座標を減らし、右端から左へ読み進めます。
       event.preventDefault();
       const now = performance.now();
       const elapsed = Math.max(1, now - gesture.lastTime);
