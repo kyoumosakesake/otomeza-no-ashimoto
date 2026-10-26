@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>作品を読む｜乙女座の脚元</title>
+
+<style>
+
+/* ========================================
+   基本設定
+======================================== */
+
+* {
+  box-sizing: border-box;
+}
+
+:root {
+  --background: #1d3652;
+  --foreground: #ffffff;
+  --accent: #28bfb0;
+  --font-size: 18px;
+  --reading-font: "Yu Mincho", "游明朝", "YuMincho", "Hiragino Mincho ProN", serif;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--reading-font);
+}
+
+body.light-mode {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+button {
+  font-family: inherit;
+}
+
+/* ========================================
+   ヘッダー
+======================================== */
+
+.site-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+.site-name {
+  color: var(--foreground);
+  font-size: .9rem;
+  letter-spacing: .12em;
+  text-decoration: none;
+}
+
+.settings-button {
+  padding: .55rem .9rem;
+  background: transparent;
+  color: var(--foreground);
+  border: 1px solid var(--foreground);
+  border-radius: 4px;
+  font-size: .85rem;
+  cursor: pointer;
+}
+
+/* ========================================
+   設定パネル
+======================================== */
+
+.settings-panel {
+  display: none;
+  position: fixed;
+  top: 75px;
+  right: 20px;
+  width: min(320px, calc(100vw - 40px));
+  max-height: calc(100vh - 95px);
+  overflow-y: auto;
+  padding: 1.4rem;
+  background: var(--background);
+  color: var(--foreground);
+  border: 1px solid var(--foreground);
+  border-radius: 7px;
+  box-shadow: 0 10px 35px rgba(0,0,0,.25);
+  z-index: 1000;
+}
+
+.settings-panel.open {
+  display: block;
+}
+
+.settings-title {
+  margin: 0 0 1.3rem;
+  font-size: 1rem;
+  font-weight: 400;
+}
+
+.setting-group {
+  margin-bottom: 1.4rem;
+}
+
+.setting-label {
+  display: block;
+  margin-bottom: .65rem;
+  font-size: .8rem;
+  opacity: .75;
+}
+
+.setting-buttons {
+  display: flex;
+  gap: .5rem;
+}
+
+.setting-option {
+  flex: 1;
+  padding: .6rem .3rem;
+  background: transparent;
+  color: var(--foreground);
+  border: 1px solid var(--foreground);
+  border-radius: 4px;
+  font-size: .85rem;
+  cursor: pointer;
+  opacity: .6;
+}
+
+.setting-option.active {
+  background: var(--accent);
+  color: #1d3652;
+  border-color: var(--accent);
+  opacity: 1;
+}
+
+.font-size-control {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.3rem;
+}
+
+.font-size-control button {
+  width: 40px;
+  height: 40px;
+  background: transparent;
+  color: var(--foreground);
+  border: 1px solid var(--foreground);
+  border-radius: 4px;
+  font-size: 1.3rem;
+  cursor: pointer;
+}
+
+.font-size-value {
+  min-width: 50px;
+  text-align: center;
+}
+
+.settings-close {
+  width: 100%;
+  padding: .7rem;
+  background: transparent;
+  color: var(--foreground);
+  border: 1px solid var(--foreground);
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+/* ========================================
+   作品タイトル
+======================================== */
+
+.work-header {
+  max-width: 800px;
+  margin: 3rem auto 2rem;
+  padding: 0 1.5rem;
+  text-align: center;
+}
+
+.work-title {
+  margin: 0 0 .8rem;
+  font-size: 1.7rem;
+  font-weight: 400;
+  letter-spacing: .1em;
+  line-height: 1.7;
+}
+
+.work-date {
+  margin: 0;
+  font-size: .8rem;
+  opacity: .6;
+}
+
+/* ========================================
+   本文
+======================================== */
+
+.reader {
+  width: 100%;
+  font-family: var(--reading-font);
+}
+
+.novel-text {
+  font-size: var(--font-size);
+  line-height: 2.2;
+  letter-spacing: .04em;
+  overflow-wrap: anywhere;
+}
+
+.novel-text p {
+  margin: 0 0 1.5em;
+  text-indent: 1em;
+}
+
+/* 横書き */
+
+.reader.horizontal {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 5rem;
+}
+
+.reader.horizontal .novel-text {
+  writing-mode: horizontal-tb;
+}
+
+/* 縦書き */
+
+.reader.vertical {
+  direction: rtl;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 2rem 1.5rem 4rem;
+}
+
+.reader.vertical .novel-text {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  direction: ltr;
+  width: max-content;
+  min-width: 100%;
+  height: min(65vh, 680px);
+  margin: 0;
+}
+
+.reader.vertical .novel-text p {
+  margin: 0 0 0 1.5em;
+}
+
+/* ========================================
+   ルビ
+======================================== */
+
+ruby {
+  ruby-position: over;
+}
+
+rt {
+  font-size: .5em;
+  font-weight: normal;
+  letter-spacing: 0;
+}
+
+/* ========================================
+   フッター
+======================================== */
+
+.work-footer {
+  max-width: 800px;
+  margin: 3rem auto 5rem;
+  padding: 0 1.5rem;
+  text-align: center;
+}
+
+.back-link {
+  color: var(--foreground);
+  font-size: .9rem;
+  text-decoration: none;
+  opacity: .7;
+}
+
+.back-link:hover {
+  color: var(--accent);
+  opacity: 1;
+}
+
+/* ========================================
+   スマートフォン
+======================================== */
+
+@media (max-width: 600px) {
+
+  .site-header {
+    padding: 1.2rem 1rem;
+  }
+
+  .site-name {
+    font-size: .8rem;
+  }
+
+  .work-header {
+    margin-top: 2rem;
+  }
+
+  .work-title {
+    font-size: 1.4rem;
+  }
+
+  .reader.vertical .novel-text {
+    height: 65vh;
+  }
+
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- ========================================
+     ヘッダー
+======================================== -->
+
+<header class="site-header">
+
+  <a class="site-name" href="index.html">
+    乙女座の脚元
+  </a>
+
+  <button
+    class="settings-button"
+    id="settings-button"
+    type="button"
+    aria-expanded="false"
+    aria-controls="settings-panel"
+  >
+    ⚙ 読書設定
+  </button>
+
+</header>
+
+<!-- ========================================
+     読書設定
+======================================== -->
+
+<div
+  class="settings-panel"
+  id="settings-panel"
+>
+
+  <h2 class="settings-title">
+    読書設定
+  </h2>
+
+  <!-- 組み方向 -->
+
+  <div class="setting-group">
+
+    <span class="setting-label">
+      組み方向
+    </span>
+
+    <div class="setting-buttons">
+
+      <button
+        class="setting-option active"
+        data-setting="direction"
+        data-value="vertical"
+        type="button"
+      >
+        縦書き
+      </button>
+
+      <button
+        class="setting-option"
+        data-setting="direction"
+        data-value="horizontal"
+        type="button"
+      >
+        横書き
+      </button>
+
+    </div>
+
+  </div>
+
+  <!-- フォント -->
+
+  <div class="setting-group">
+
+    <span class="setting-label">
+      フォント
+    </span>
+
+    <div class="setting-buttons">
+
+      <button
+        class="setting-option active"
+        data-setting="font"
+        data-value="mincho"
+        type="button"
+      >
+        游明朝
+      </button>
+
+      <button
+        class="setting-option"
+        data-setting="font"
+        data-value="gothic"
+        type="button"
+      >
+        ゴシック体
+      </button>
+
+    </div>
+
+  </div>
+
+  <!-- 文字サイズ -->
+
+  <div class="setting-group">
+
+    <span class="setting-label">
+      文字サイズ
+    </span>
+
+    <div class="font-size-control">
+
+      <button id="font-smaller" type="button">
+        −
+      </button>
+
+      <span
+        class="font-size-value"
+        id="font-size-value"
+      >
+        18px
+      </span>
+
+      <button id="font-larger" type="button">
+        ＋
+      </button>
+
+    </div>
+
+  </div>
+
+  <!-- 画面の色 -->
+
+  <div class="setting-group">
+
+    <span class="setting-label">
+      画面の色
+    </span>
+
+    <div class="setting-buttons">
+
+      <button
+        class="setting-option active"
+        data-setting="theme"
+        data-value="dark"
+        type="button"
+      >
+        暗い青
+      </button>
+
+      <button
+        class="setting-option"
+        data-setting="theme"
+        data-value="light"
+        type="button"
+      >
+        白
+      </button>
+
+    </div>
+
+  </div>
+
+  <button
+    class="settings-close"
+    id="settings-close"
+    type="button"
+  >
+    閉じる
+  </button>
+
+</div>
+
+<!-- ========================================
+     作品タイトル
+======================================== -->
+
+<div class="work-header">
+
+  <h1 class="work-title" id="work-title">
+    読み込み中…
+  </h1>
+
+  <p class="work-date" id="work-date"></p>
+
+</div>
+
+<!-- ========================================
+     本文
+======================================== -->
+
+<main class="reader vertical" id="reader">
+
+  <article class="novel-text" id="novel-text">
+
+    <p>ここに本文が入ります。</p>
+
+  </article>
+
+</main>
+
+<!-- ========================================
+     フッター
+======================================== -->
+
+<footer class="work-footer">
+
+  <a class="back-link" href="fanworks.html">
+    ← 作品一覧へ戻る
+  </a>
+
+</footer>
+
+<!-- ========================================
+     作品データを読み込む
+======================================== -->
+
+<script src="novels.js"></script>
+
+<script>
+
+/* ========================================
+   読書設定の初期値
+======================================== */
+
+const defaultSettings = {
+  direction: "vertical",
+  font: "mincho",
+  theme: "dark",
+  fontSize: 18
+};
+
+/* ========================================
+   保存済み設定の読み込み
+======================================== */
+
+let savedSettings = {};
+
+try {
+
+  savedSettings = JSON.parse(
+    localStorage.getItem("otomeza-reader-settings")
+  ) || {};
+
+} catch (error) {
+
+  savedSettings = {};
+
+}
+
+const settings = {
+  ...defaultSettings,
+  ...savedSettings
+};
+
+/* ========================================
+   要素
+======================================== */
+
+const reader =
+  document.getElementById("reader");
+
+const settingsButton =
+  document.getElementById("settings-button");
+
+const settingsPanel =
+  document.getElementById("settings-panel");
+
+const settingsClose =
+  document.getElementById("settings-close");
+
+const fontSizeValue =
+  document.getElementById("font-size-value");
+
+/* ========================================
+   読書設定を画面に反映
+======================================== */
+
+function applySettings() {
+
+  /* 縦書き・横書き */
+
+  reader.classList.toggle(
+    "vertical",
+    settings.direction === "vertical"
+  );
+
+  reader.classList.toggle(
+    "horizontal",
+    settings.direction === "horizontal"
+  );
+
+  /* フォント */
+
+  const fontFamily =
+    settings.font === "gothic"
+      ? '"Yu Gothic", "游ゴシック", "YuGothic", "Hiragino Kaku Gothic ProN", sans-serif'
+      : '"Yu Mincho", "游明朝", "YuMincho", "Hiragino Mincho ProN", serif';
+
+  document.documentElement.style.setProperty(
+    "--reading-font",
+    fontFamily
+  );
+
+  /* 文字サイズ */
+
+  document.documentElement.style.setProperty(
+    "--font-size",
+    `${settings.fontSize}px`
+  );
+
+  fontSizeValue.textContent =
+    `${settings.fontSize}px`;
+
+  /* 背景色 */
+
+  document.body.classList.toggle(
+    "light-mode",
+    settings.theme === "light"
+  );
+
+  /* 選択中のボタン */
+
+  document.querySelectorAll(
+    ".setting-option"
+  ).forEach(button => {
+
+    const key = button.dataset.setting;
+    const value = button.dataset.value;
+
+    const active =
+      settings[key] === value;
+
+    button.classList.toggle(
+      "active",
+      active
+    );
+
+    button.setAttribute(
+      "aria-pressed",
+      String(active)
+    );
+
+  });
+
+}
+
+/* ========================================
+   読書設定を保存
+======================================== */
+
+function saveSettings() {
+
+  try {
+
+    localStorage.setItem(
+      "otomeza-reader-settings",
+      JSON.stringify(settings)
+    );
+
+  } catch (error) {
+
+    /* 保存できない環境でも表示を継続 */
+
+  }
+
+}
+
+/* ========================================
+   設定ボタン
+======================================== */
+
+document.querySelectorAll(
+  ".setting-option"
+).forEach(button => {
+
+  button.addEventListener("click", () => {
+
+    settings[button.dataset.setting] =
+      button.dataset.value;
+
+    applySettings();
+    saveSettings();
+
+  });
+
+});
+
+/* ========================================
+   文字サイズ調整
+======================================== */
+
+document
+  .getElementById("font-smaller")
+  .addEventListener("click", () => {
+
+    settings.fontSize = Math.max(
+      12,
+      settings.fontSize - 2
+    );
+
+    applySettings();
+    saveSettings();
+
+  });
+
+document
+  .getElementById("font-larger")
+  .addEventListener("click", () => {
+
+    settings.fontSize = Math.min(
+      32,
+      settings.fontSize + 2
+    );
+
+    applySettings();
+    saveSettings();
+
+  });
+
+/* ========================================
+   設定パネルを開閉
+======================================== */
+
+function toggleSettingsPanel(open) {
+
+  settingsPanel.classList.toggle(
+    "open",
+    open
+  );
+
+  settingsButton.setAttribute(
+    "aria-expanded",
+    String(open)
+  );
+
+}
+
+settingsButton.addEventListener(
+  "click",
+  () => {
+
+    toggleSettingsPanel(
+      !settingsPanel.classList.contains("open")
+    );
+
+  }
+);
+
+settingsClose.addEventListener(
+  "click",
+  () => {
+    toggleSettingsPanel(false);
+  }
+);
+
+/* パネルの外を押すと閉じる */
+
+document.addEventListener("click", event => {
+
+  if (
+    !settingsPanel.contains(event.target) &&
+    !settingsButton.contains(event.target)
+  ) {
+    toggleSettingsPanel(false);
+  }
+
+});
+
+/* Escapeキーで閉じる */
+
+document.addEventListener("keydown", event => {
+
+  if (event.key === "Escape") {
+    toggleSettingsPanel(false);
+  }
+
+});
+
+/* ========================================
+   HTMLの特殊文字を変換
+======================================== */
+
+function escapeHTML(value) {
+
+  return String(value).replace(
+    /[&<>"']/g,
+    char => ({
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#39;"
+    })[char]
+  );
+
+}
+
+/* ========================================
+   小説本文の整形
+
+   対応するルビ記法：
+
+   [[rb:漢字 > ふりがな]]
+
+   例：
+   [[rb:杠 > ゆずりは]]
+   [[rb:静謐 > せいひつ]]
+   [[rb:赤翡翠 > ひりるる]]
+
+   空行で段落を区切ります。
+======================================== */
+
+function formatNovelText(text) {
+
+  const source = String(text || "")
+    .replace(/\r\n?/g, "\n");
+
+  const paragraphs = source
+    .trim()
+    .split(/\n\s*\n/);
+
+  return paragraphs.map(paragraph => {
+
+    let html = escapeHTML(paragraph.trim());
+
+    /* ルビをHTMLに変換 */
+
+    html = html.replace(
+      /\[\[rb:\s*([^>\]\n]+?)\s*>\s*([^\]\n]+?)\s*\]\]/g,
+      (_, base, reading) =>
+        `<ruby>${base.trim()}<rt>${reading.trim()}</rt></ruby>`
+    );
+
+    /* 段落内の改行 */
+
+    html = html.replace(
+      /\n/g,
+      "<br>"
+    );
+
+    return `<p>${html}</p>`;
+
+  }).join("\n");
+
+}
+
+/* ========================================
+   URLから作品IDを取得
+======================================== */
+
+const params =
+  new URLSearchParams(
+    window.location.search
+  );
+
+const workId =
+  params.get("work");
+
+/* ========================================
+   novels.jsから作品を探す
+======================================== */
+
+/*
+  novels.jsは次の形式にします。
+
+  const novels = [
+
+    {
+      id: "tabi-wa-michizure",
+      title: "旅は道連れ",
+      date: "2026-10-20",
+      text: `
+ここに本文が入ります。
+`
+    }
+
+  ];
+
+*/
+
+const novelList =
+  typeof novels !== "undefined" &&
+  Array.isArray(novels)
+    ? novels
+    : [];
+
+const currentWork =
+  novelList.find(
+    work => work.id === workId
+  );
+
+/* ========================================
+   作品を表示
+======================================== */
+
+if (currentWork) {
+
+  /* タイトル */
+
+  document
+    .getElementById("work-title")
+    .textContent = currentWork.title;
+
+  /* 執筆日 */
+
+  document
+    .getElementById("work-date")
+    .textContent = currentWork.date || "";
+
+  /* 本文 */
+
+  document
+    .getElementById("novel-text")
+    .innerHTML = formatNovelText(
+      currentWork.text
+    );
+
+  /* ブラウザのタイトル */
+
+  document.title =
+    `${currentWork.title}｜乙女座の脚元`;
+
+} else {
+
+  document
+    .getElementById("work-title")
+    .textContent = "作品が見つかりません";
+
+  document
+    .getElementById("work-date")
+    .textContent = "";
+
+  document
+    .getElementById("novel-text")
+    .innerHTML =
+      "<p>作品データを確認してください。</p>";
+
+}
+
+/* ========================================
+   初期表示
+======================================== */
+
+applySettings();
+
+</script>
+
+</body>
+</html>
