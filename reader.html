@@ -183,10 +183,10 @@
   @media (max-width: 600px) {
     .site-header { padding: 1.2rem 1rem; }
     .site-name { font-size: .8rem; }
-    /* スマホも右端を起点に、タイトル→本文の順に並べます。 */
+    /* スマホはLTR座標とrow-reverseで、右端のタイトルから読み始めます。 */
     .reading-layout.vertical {
-      direction: rtl;
-      flex-direction: row;
+      direction: ltr;
+      flex-direction: row-reverse;
       gap: 1.5rem;
       padding: 1rem .75rem 3rem;
       overflow-x: scroll;
@@ -197,7 +197,7 @@
     .reading-layout.vertical .work-header {
       padding: .5rem 0;
       gap: .5rem;
-      flex-direction: row; /* タイトルを縦方向の冒頭に配置 */
+      flex-direction: row; /* タイトル→日付の順に配置 */
     }
     .reading-layout.vertical .work-title { font-size: 1rem; }
     .reading-layout.vertical .work-date { font-size: .65rem; }
@@ -302,7 +302,8 @@
   }
   function resetReadingPosition() {
     if (settings.direction !== "vertical") return;
-    // PC・スマホともRTLで右端が0です。
+    // row-reverseは右端を0として左側へ負のスクロール座標になります。
+    // PCのRTLも右端が0です。
     layout.scrollLeft = 0;
   }
   function resetAfterLayout() {
@@ -465,7 +466,7 @@
     }
 
     if (gesture.dragging) {
-      // 左へドラッグ→RTLの負方向へ進みます。
+      // LTRの右端から、左ドラッグでscrollLeftを減らして読み進める。
       event.preventDefault();
       const now = performance.now();
       const elapsed = Math.max(1, now - gesture.lastTime);
