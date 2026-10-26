@@ -291,29 +291,25 @@ button {
 ======================================== */
 
 /*
-  画面右側にタイトル領域を配置し、
-  左側に本文領域を配置します。
+  タイトルと本文を同じ横スクロール領域に配置。
 
-  本文の横スクロールは.reader内だけで
-  発生するため、タイトルは動きません。
+  タイトルは本文の右側に表示され、
+  本文と一緒にスクロールします。
 */
 
 .reading-layout.vertical {
-  display: grid;
-
-  grid-template-columns:
-    minmax(0, 1fr)
-    150px;
-
-  grid-template-areas:
-    "body title";
-
-  align-items: start;
-
-  gap: 1rem;
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: flex-start;
+  gap: 3rem;
 
   width: 100%;
-  padding: 2rem 1.5rem;
+  overflow-x: auto;
+  overflow-y: hidden;
+
+  padding: 2rem 1.5rem 4rem;
+
+  direction: rtl;
 }
 
 /* ========================================
@@ -321,23 +317,19 @@ button {
 ======================================== */
 
 .reading-layout.vertical .work-header {
-  grid-area: title;
+  flex: 0 0 auto;
 
   display: flex;
   flex-direction: row-reverse;
   align-items: flex-start;
-  justify-content: center;
-
   gap: 1.2rem;
-
-  padding: 1rem 0;
 
   writing-mode: vertical-rl;
   text-orientation: mixed;
+  direction: ltr;
 
   height: 65vh;
-
-  overflow: hidden;
+  padding: 1rem 0;
 }
 
 .reading-layout.vertical .work-title {
@@ -355,49 +347,29 @@ button {
 ======================================== */
 
 .reading-layout.vertical .reader {
-  grid-area: body;
+  flex: 0 0 auto;
 
-  width: 100%;
+  width: max-content;
   min-width: 0;
 
-  overflow-x: auto;
-  overflow-y: hidden;
+  overflow: visible;
+  padding: 1rem 0 2rem;
 
-  /*
-    右端から読み始めるための設定
-  */
-
-  direction: rtl;
-
-  padding: 1rem 1.5rem 2rem;
+  direction: ltr;
 }
 
 .reading-layout.vertical .novel-text {
   writing-mode: vertical-rl;
   text-orientation: mixed;
 
-  /*
-    本文の高さを固定して、
-    段落が右から左へ続くようにします。
-  */
-
   height: 65vh;
 
-  /*
-    本文全体の横幅は内容に応じて伸びます。
-  */
-
   width: max-content;
-  min-width: 100%;
+  min-width: 0;
 
   direction: ltr;
 
-  /*
-    文章の開始位置は右端
-  */
-
-  margin-left: 0;
-  margin-right: 0;
+  margin: 0;
 }
 
 .reading-layout.vertical .novel-text p {
@@ -464,12 +436,8 @@ rt {
   }
 
   .reading-layout.vertical {
-    grid-template-columns:
-      minmax(0, 1fr)
-      85px;
-
-    gap: .5rem;
-    padding: 1rem .5rem;
+    gap: 1.5rem;
+    padding: 1rem .75rem 3rem;
   }
 
   .reading-layout.vertical .work-header {
@@ -486,7 +454,7 @@ rt {
   }
 
   .reading-layout.vertical .reader {
-    padding: .5rem;
+    padding: .5rem 0;
   }
 
   .reading-layout.vertical .novel-text {
@@ -1082,10 +1050,7 @@ function formatNovelText(text) {
 
     /*
       空行は専用の余白として表示する。
-
-      trim()は判定のみに使用し、
-      元の本文は変更しない。
-    */
+  */
 
     if (line === "") {
 
