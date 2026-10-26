@@ -105,13 +105,14 @@ a {
 }
 
 .legend-item {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: .45rem;
   white-space: nowrap;
 }
 
 .legend-dot {
+  display: inline-block;
   width: 16px;
   height: 16px;
   border-radius: 50%;
@@ -124,17 +125,25 @@ a {
   border: 2px solid var(--white);
 }
 
-.legend-dot.latest {
-  background: var(--accent);
-}
-
-.legend-dot.latest.parody {
-  background: transparent;
-  border: 2px solid var(--accent);
-}
+/* 最新作の凡例 */
 
 .legend-item.latest-legend {
   color: var(--accent);
+}
+
+.latest-legend-dots {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.legend-dot.latest-filled {
+  background: var(--accent);
+}
+
+.legend-dot.latest-outline {
+  background: transparent;
+  border: 2px solid var(--accent);
 }
 
 /* ========================================
@@ -452,6 +461,16 @@ a {
   opacity: .8;
 }
 
+/* 最新作カードの紹介文 */
+
+.latest-card-detail {
+  margin: 1.1rem 0 0;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(29,54,82,.25);
+  font-size: .9rem;
+  line-height: 1.8;
+}
+
 /* 年ごとの一覧 */
 
 .year-block {
@@ -569,6 +588,10 @@ a {
     height: 13px;
   }
 
+  .latest-legend-dots {
+    gap: 3px;
+  }
+
   .timeline-area {
     --timeline-top-space: 19rem;
   }
@@ -665,11 +688,14 @@ a {
       </span>
 
       <span class="legend-item latest-legend">
-        <span
-          class="legend-dot latest"
-          id="latest-legend-dot"
-        ></span>
+
+        <span class="latest-legend-dots">
+          <span class="legend-dot latest-filled"></span>
+          <span class="legend-dot latest-outline"></span>
+        </span>
+
         最新の小説
+
       </span>
 
     </div>
@@ -1264,6 +1290,7 @@ function displayDate(work) {
 }
 
 function displayCharacters(work) {
+
   if (
     work.characters === undefined ||
     work.characters === null
@@ -1276,20 +1303,10 @@ function displayCharacters(work) {
 
 /* ========================================
    最新作の取得
-
-   latest: true の作品を使用します。
 ======================================== */
 
 const latestWork =
   works.find(work => work.latest === true);
-
-/* 凡例の丸の形を最新作に合わせる */
-
-if (latestWork && latestWork.parody) {
-  document
-    .getElementById("latest-legend-dot")
-    .classList.add("parody");
-}
 
 /* ========================================
    ポップアップ
@@ -1347,8 +1364,6 @@ function positionPopup(button) {
     popupHeight -
     gap;
 
-  /* 左右の画面外にはみ出さないようにする */
-
   left = Math.max(
     margin,
     Math.min(
@@ -1357,13 +1372,9 @@ function positionPopup(button) {
     )
   );
 
-  /* 上に収まらなければ下へ */
-
   if (top < margin) {
     top = rect.bottom + gap;
   }
-
-  /* 下にも収まらない場合 */
 
   if (
     top + popupHeight >
@@ -1396,11 +1407,14 @@ function openPopup(work, point, button) {
   popupDate.textContent =
     displayDate(work);
 
-  popupCharacters.textContent =
+  const characters =
     displayCharacters(work);
 
+  popupCharacters.textContent =
+    characters;
+
   popupCharacters.style.display =
-    displayCharacters(work) ? "block" : "none";
+    characters ? "block" : "none";
 
   popupDetail.textContent =
     work.detail;
@@ -1590,10 +1604,6 @@ function createTimelinePoint(work, offset) {
     point.classList.add("latest");
   }
 
-  /*
-    冒頭の余白調整は従来どおり。
-  */
-
   const x =
     8 +
     ((work.score - 2.5) / (9.6 - 2.5)) * 89.5;
@@ -1658,6 +1668,7 @@ const writingOrder =
    最新作カード
 
    執筆順の一番上に表示します。
+   このカードだけ作品紹介文も表示します。
 ======================================== */
 
 if (latestWork) {
@@ -1705,11 +1716,22 @@ if (latestWork) {
     characters.style.display = "none";
   }
 
+  /* 作品紹介文 */
+
+  const detail =
+    document.createElement("p");
+
+  detail.className = "latest-card-detail";
+
+  detail.textContent =
+    latestWork.detail;
+
   card.append(
     label,
     date,
     title,
-    characters
+    characters,
+    detail
   );
 
   writingOrder.appendChild(card);
