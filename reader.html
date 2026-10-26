@@ -291,9 +291,9 @@ button {
 ======================================== */
 
 /*
-  タイトルと本文を同じ横スクロール領域に配置。
+  本文を右側、タイトルを左側に配置。
 
-  タイトルは本文の右側に表示され、
+  タイトルは固定せず、
   本文と一緒にスクロールします。
 */
 
@@ -310,6 +310,7 @@ button {
   padding: 2rem 1.5rem 4rem;
 
   direction: rtl;
+  scroll-behavior: auto;
 }
 
 /* ========================================
@@ -332,8 +333,15 @@ button {
   padding: 1rem 0;
 }
 
+/*
+  タイトルを一回り小さくしました。
+
+  変更前：1.5rem
+  変更後：1.2rem
+*/
+
 .reading-layout.vertical .work-title {
-  font-size: 1.5rem;
+  font-size: 1.2rem;
   line-height: 1.7;
 }
 
@@ -446,7 +454,7 @@ rt {
   }
 
   .reading-layout.vertical .work-title {
-    font-size: 1.1rem;
+    font-size: 1rem;
   }
 
   .reading-layout.vertical .work-date {
@@ -888,11 +896,31 @@ document.querySelectorAll(
 
   button.addEventListener("click", () => {
 
+    const previousDirection =
+      settings.direction;
+
     settings[button.dataset.setting] =
       button.dataset.value;
 
     applySettings();
     saveSettings();
+
+    /*
+      縦書きに切り替えたときは
+      本文の冒頭を表示する。
+    */
+
+    if (
+      button.dataset.setting === "direction" &&
+      settings.direction === "vertical" &&
+      previousDirection !== "vertical"
+    ) {
+
+      requestAnimationFrame(() => {
+        resetReadingPosition();
+      });
+
+    }
 
   });
 
@@ -1050,7 +1078,7 @@ function formatNovelText(text) {
 
     /*
       空行は専用の余白として表示する。
-  */
+    */
 
     if (line === "") {
 
@@ -1203,10 +1231,92 @@ if (currentWork) {
 }
 
 /* ========================================
+   縦書きの読み始め位置
+======================================== */
+
+function resetReadingPosition() {
+
+  /*
+    横書きの場合は通常の表示にする。
+  */
+
+  if (settings.direction !== "vertical") {
+    return;
+  }
+
+  /*
+    まず横スクロール位置を初期化する。
+  */
+
+  readingLayout.scrollLeft = 0;
+
+  /*
+    本文の最初の要素を取得する。
+
+    最初が空行の場合も、その空行を
+    読み始め位置として扱う。
+  */
+
+  const firstElement =
+    document.querySelector(
+      "#novel-text > :first-child"
+    );
+
+  if (!firstElement) {
+    return;
+  }
+
+  /*
+    最初の要素が見える位置まで
+    横スクロールする。
+
+    タイトルは本文の左側にあるため、
+    読み進めた最後に表示される。
+  */
+
+  firstElement.scrollIntoView({
+    behavior: "instant",
+    block: "nearest",
+    inline: "nearest"
+  });
+
+}
+
+/* ========================================
    初期表示
 ======================================== */
 
 applySettings();
+
+/*
+  ブラウザによる前回位置の復元を防ぐ。
+*/
+
+if ("scrollRestoration" in history) {
+  history.scrollRestoration = "manual";
+}
+
+/*
+  ページの読み込みが完了してから
+  本文の冒頭に移動する。
+*/
+
+window.addEventListener("load", () => {
+
+  requestAnimationFrame(() => {
+
+    resetReadingPosition();
+
+    /*
+      ページ全体の縦スクロールは
+      一番上から開始する。
+    */
+
+    window.scrollTo(0, 0);
+
+  });
+
+});
 
 </script>
 
