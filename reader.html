@@ -146,7 +146,6 @@
     touch-action: auto; /* 横スワイプはブラウザのネイティブスクロールに任せる */
   }
   .reading-layout.vertical .work-header {
-    order: -1;
     flex: 0 0 auto;
     display: flex;
     flex-direction: row-reverse;
@@ -184,7 +183,7 @@
   @media (max-width: 600px) {
     .site-header { padding: 1.2rem 1rem; }
     .site-name { font-size: .8rem; }
-    /* スマホはLTR座標とrow-reverseで、右端のタイトルから読み始めます。 */
+    /* スマホはLTR座標とrow-reverse。DOM先頭のタイトルが右端に来ます。 */
     .reading-layout.vertical {
       direction: ltr;
       flex-direction: row-reverse;
@@ -205,10 +204,10 @@
     .reading-layout.vertical .work-date { font-size: .65rem; }
     .reading-layout.vertical .reader { padding: .5rem 0; }
     .reading-layout.vertical .novel-text {
-      height: max(320px, calc(100dvh - 285px));
+      height: max(360px, calc(100dvh - 180px));
     }
     .reading-layout.vertical .work-header {
-      height: max(320px, calc(100dvh - 285px));
+      height: max(360px, calc(100dvh - 180px));
     }
     .reading-layout.vertical + .work-footer {
       position: fixed;
@@ -219,8 +218,8 @@
       width: 100%;
       max-width: none;
       margin: 0;
-      padding: 1.2rem 1rem calc(1.2rem + env(safe-area-inset-bottom));
-      background: linear-gradient(to top, var(--background) 65%, transparent);
+      padding: .7rem 1rem calc(.7rem + env(safe-area-inset-bottom));
+      background: var(--background);
       pointer-events: none;
     }
     .reading-layout.vertical + .work-footer .back-link {
@@ -269,17 +268,18 @@
 </div>
 
 <div class="reading-layout vertical" id="reading-layout">
-  <main class="reader" id="reader">
-    <article class="novel-text" id="novel-text"></article>
-  </main>
   <div class="work-header">
     <h1 class="work-title" id="work-title">読み込み中…</h1>
     <p class="work-date" id="work-date"></p>
   </div>
+  <main class="reader" id="reader">
+    <article class="novel-text" id="novel-text"></article>
+  </main>
+</div>
 
 <footer class="work-footer"><a class="back-link" href="fanworks.html">← 作品一覧へ戻る</a></footer>
 
-<script src="novels.js?v=20261026-3"></script>
+<script src="novels.js?v=20261026-4"></script>
 <script>
   const fontSizes = [12, 14, 16, 18, 20];
   const storageKey = "otomeza-reader-settings";
