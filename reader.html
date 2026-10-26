@@ -143,7 +143,7 @@
     scroll-behavior: auto;
     overscroll-behavior-x: contain;
     -webkit-overflow-scrolling: touch;
-    touch-action: pan-y;
+    touch-action: pan-y; /* 縦の操作はブラウザ、横の操作は下のJSが担当 */
   }
   .reading-layout.vertical .work-header {
     flex: 0 0 auto;
@@ -383,29 +383,8 @@
     layout.scrollLeft += direction * settings.fontSize * 2.2;
   }, { passive: false });
 
-  // スマホ：指を左右に動かすと、縦書き本文を横スクロールします。
-  let lastTouchX = null;
-  let lastTouchY = null;
-  layout.addEventListener("touchstart", event => {
-    if (settings.direction !== "vertical" || event.touches.length !== 1) return;
-    lastTouchX = event.touches[0].clientX;
-    lastTouchY = event.touches[0].clientY;
-  }, { passive: true });
-  layout.addEventListener("touchmove", event => {
-    if (settings.direction !== "vertical" || event.touches.length !== 1 || lastTouchX === null) return;
-    const x = event.touches[0].clientX;
-    const y = event.touches[0].clientY;
-    const dx = x - lastTouchX;
-    const dy = y - lastTouchY;
-    if (Math.abs(dx) > Math.abs(dy) && layout.scrollWidth > layout.clientWidth) {
-      event.preventDefault();
-      layout.scrollLeft += dx;
-    }
-    lastTouchX = x;
-    lastTouchY = y;
-  }, { passive: false });
-  layout.addEventListener("touchend", () => { lastTouchX = null; lastTouchY = null; });
-  layout.addEventListener("touchcancel", () => { lastTouchX = null; lastTouchY = null; });
+  // スマホはブラウザ標準の横スワイプを使用します。
+  // 独自のtouchmove処理を削除し、慣性スクロールも有効にします。
 
   if ("scrollRestoration" in history) history.scrollRestoration = "manual";
   applySettings();
