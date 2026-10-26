@@ -31,6 +31,7 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--reading-font);
+  transition: background-color .2s, color .2s;
 }
 
 body.light-mode {
@@ -71,6 +72,11 @@ button {
   border-radius: 4px;
   font-size: .85rem;
   cursor: pointer;
+}
+
+.settings-button:hover {
+  border-color: var(--accent);
+  color: var(--accent);
 }
 
 /* ========================================
@@ -157,6 +163,11 @@ button {
   cursor: pointer;
 }
 
+.font-size-control button:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
 .font-size-value {
   min-width: 50px;
   text-align: center;
@@ -198,7 +209,7 @@ button {
 }
 
 /* ========================================
-   本文
+   本文共通
 ======================================== */
 
 .reader {
@@ -214,11 +225,15 @@ button {
 }
 
 .novel-text p {
-  margin: 0 0 1.5em;
-  text-indent: 1em;
+  margin: 0;
+  padding: 0;
+  text-indent: 0;
+  white-space: pre-wrap;
 }
 
-/* 横書き */
+/* ========================================
+   横書き
+======================================== */
 
 .reader.horizontal {
   max-width: 800px;
@@ -230,7 +245,13 @@ button {
   writing-mode: horizontal-tb;
 }
 
-/* 縦書き */
+.reader.horizontal .novel-blank-line {
+  height: 1em;
+}
+
+/* ========================================
+   縦書き
+======================================== */
 
 .reader.vertical {
   direction: rtl;
@@ -250,7 +271,13 @@ button {
 }
 
 .reader.vertical .novel-text p {
-  margin: 0 0 0 1.5em;
+  margin: 0;
+  padding: 0;
+}
+
+.reader.vertical .novel-blank-line {
+  width: 1em;
+  height: auto;
 }
 
 /* ========================================
@@ -352,6 +379,8 @@ rt {
 <div
   class="settings-panel"
   id="settings-panel"
+  role="dialog"
+  aria-label="読書設定"
 >
 
   <h2 class="settings-title">
@@ -514,9 +543,7 @@ rt {
 <main class="reader vertical" id="reader">
 
   <article class="novel-text" id="novel-text">
-
     <p>ここに本文が入ります。</p>
-
   </article>
 
 </main>
@@ -534,7 +561,7 @@ rt {
 </footer>
 
 <!-- ========================================
-     作品データを読み込む
+     作品データ
 ======================================== -->
 
 <script src="novels.js"></script>
@@ -595,7 +622,7 @@ const fontSizeValue =
   document.getElementById("font-size-value");
 
 /* ========================================
-   読書設定を画面に反映
+   読書設定の反映
 ======================================== */
 
 function applySettings() {
@@ -634,7 +661,7 @@ function applySettings() {
   fontSizeValue.textContent =
     `${settings.fontSize}px`;
 
-  /* 背景色 */
+  /* 画面の色 */
 
   document.body.classList.toggle(
     "light-mode",
@@ -650,8 +677,7 @@ function applySettings() {
     const key = button.dataset.setting;
     const value = button.dataset.value;
 
-    const active =
-      settings[key] === value;
+    const active = settings[key] === value;
 
     button.classList.toggle(
       "active",
@@ -668,7 +694,7 @@ function applySettings() {
 }
 
 /* ========================================
-   読書設定を保存
+   読書設定の保存
 ======================================== */
 
 function saveSettings() {
@@ -682,7 +708,7 @@ function saveSettings() {
 
   } catch (error) {
 
-    /* 保存できない環境でも表示を継続 */
+    /* 保存できない場合も表示を継続 */
 
   }
 
@@ -741,7 +767,7 @@ document
   });
 
 /* ========================================
-   設定パネルを開閉
+   設定パネルの開閉
 ======================================== */
 
 function toggleSettingsPanel(open) {
@@ -758,23 +784,19 @@ function toggleSettingsPanel(open) {
 
 }
 
-settingsButton.addEventListener(
-  "click",
-  () => {
+settingsButton.addEventListener("click", () => {
 
-    toggleSettingsPanel(
-      !settingsPanel.classList.contains("open")
-    );
+  toggleSettingsPanel(
+    !settingsPanel.classList.contains("open")
+  );
 
-  }
-);
+});
 
-settingsClose.addEventListener(
-  "click",
-  () => {
-    toggleSettingsPanel(false);
-  }
-);
+settingsClose.addEventListener("click", () => {
+
+  toggleSettingsPanel(false);
+
+});
 
 /* パネルの外を押すと閉じる */
 
@@ -821,45 +843,81 @@ function escapeHTML(value) {
 /* ========================================
    小説本文の整形
 
-   対応するルビ記法：
-
+   ルビ：
    [[rb:漢字 > ふりがな]]
 
-   例：
-   [[rb:杠 > ゆずりは]]
-   [[rb:静謐 > せいひつ]]
-   [[rb:赤翡翠 > ひりるる]]
+   1行を1段落として表示します。
 
-   空行で段落を区切ります。
+   行頭の全角スペースは維持します。
+   空行も維持します。
 ======================================== */
 
 function formatNovelText(text) {
 
   const source = String(text || "")
-    .replace(/\r\n?/g, "\n");
+    .replace(/\r\n?/g, "\n")
+    .trim();
 
-  const paragraphs = source
-    .trim()
-    .split(/\n\s*\n/);
+  if (!source) {
+    return "<p>ここに本文が入ります。</p>";
+  }
 
-  return paragraphs.map(paragraph => {
+  const rubyPattern =
+    /\[\[rb:\s*([^>\]\n]+?)\s*>\s*([^\]\n]+?)\s*\]\]/g;
 
-    let html = escapeHTML(paragraph.trim());
+  return source.split("\n").map(line => {
 
-    /* ルビをHTMLに変換 */
+    let html = "";
+    let lastIndex = 0;
 
-    html = html.replace(
-      /\[\[rb:\s*([^>\]\n]+?)\s*>\s*([^\]\n]+?)\s*\]\]/g,
-      (_, base, reading) =>
-        `<ruby>${base.trim()}<rt>${reading.trim()}</rt></ruby>`
+    /*
+      ルビを先に認識し、
+      通常の文章とルビをそれぞれ安全に変換する。
+    */
+
+    for (const match of line.matchAll(rubyPattern)) {
+
+      /* ルビより前の文章 */
+
+      html += escapeHTML(
+        line.slice(lastIndex, match.index)
+      );
+
+      /* ルビの親文字 */
+
+      const base =
+        escapeHTML(match[1].trim());
+
+      /* ふりがな */
+
+      const reading =
+        escapeHTML(match[2].trim());
+
+      /* rubyタグに変換 */
+
+      html +=
+        `<ruby>${base}<rt>${reading}</rt></ruby>`;
+
+      lastIndex =
+        match.index + match[0].length;
+
+    }
+
+    /* 最後のルビより後ろの文章 */
+
+    html += escapeHTML(
+      line.slice(lastIndex)
     );
 
-    /* 段落内の改行 */
+    /* 空行 */
 
-    html = html.replace(
-      /\n/g,
-      "<br>"
-    );
+    if (line.trim() === "") {
+
+      return '<div class="novel-blank-line"></div>';
+
+    }
+
+    /* 通常の段落 */
 
     return `<p>${html}</p>`;
 
@@ -880,26 +938,8 @@ const workId =
   params.get("work");
 
 /* ========================================
-   novels.jsから作品を探す
+   novels.jsから作品を取得
 ======================================== */
-
-/*
-  novels.jsは次の形式にします。
-
-  const novels = [
-
-    {
-      id: "tabi-wa-michizure",
-      title: "旅は道連れ",
-      date: "2026-10-20",
-      text: `
-ここに本文が入ります。
-`
-    }
-
-  ];
-
-*/
 
 const novelList =
   typeof novels !== "undefined" &&
