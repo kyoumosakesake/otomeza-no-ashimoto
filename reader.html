@@ -183,10 +183,10 @@
   @media (max-width: 600px) {
     .site-header { padding: 1.2rem 1rem; }
     .site-name { font-size: .8rem; }
-    /* スマホはLTR座標。右端にタイトルを確実に置くため、通常のrowで順序を指定。 */
+    /* スマホはLTRスクロール座標を維持しつつ、HTML先頭のタイトルを物理的な右端に配置。 */
     .reading-layout.vertical {
       direction: ltr;
-      flex-direction: row;
+      flex-direction: row-reverse;
       gap: 1.5rem;
       padding: 1rem .75rem 3rem;
       overflow-x: scroll;
@@ -195,14 +195,13 @@
       -webkit-overflow-scrolling: touch;
     }
     .reading-layout.vertical .work-header {
-      order: 2; /* スクロール領域の物理的な右端にタイトルを置く */
       padding: .5rem 0;
       gap: .5rem;
       flex-direction: row; /* タイトル→日付の順に配置 */
     }
     .reading-layout.vertical .work-title { font-size: 1rem; }
     .reading-layout.vertical .work-date { font-size: .65rem; }
-    .reading-layout.vertical .reader { order: 1; padding: .5rem 0; }
+    .reading-layout.vertical .reader { padding: .5rem 0; }
     .reading-layout.vertical .novel-text {
       height: max(360px, calc(100dvh - 180px));
     }
