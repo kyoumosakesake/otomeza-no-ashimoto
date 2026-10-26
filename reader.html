@@ -22,7 +22,11 @@
   --foreground: #ffffff;
   --accent: #28bfb0;
   --font-size: 18px;
-  --reading-font: "Yu Mincho", "游明朝", "YuMincho", "Hiragino Mincho ProN", serif;
+  --reading-font:
+    "Yu Mincho",
+    "游明朝",
+    "Hiragino Mincho ProN",
+    serif;
 }
 
 body {
@@ -72,11 +76,6 @@ button {
   border-radius: 4px;
   font-size: .85rem;
   cursor: pointer;
-}
-
-.settings-button:hover {
-  border-color: var(--accent);
-  color: var(--accent);
 }
 
 /* ========================================
@@ -163,11 +162,6 @@ button {
   cursor: pointer;
 }
 
-.font-size-control button:hover {
-  border-color: var(--accent);
-  color: var(--accent);
-}
-
 .font-size-value {
   min-width: 50px;
   text-align: center;
@@ -209,7 +203,7 @@ button {
 }
 
 /* ========================================
-   本文共通
+   本文の基本設定
 ======================================== */
 
 .reader {
@@ -223,6 +217,13 @@ button {
   letter-spacing: .04em;
   overflow-wrap: anywhere;
 }
+
+/*
+  1行を1段落として表示。
+
+  text-indentは使用しません。
+  行頭の全角スペースは本文から読み込みます。
+*/
 
 .novel-text p {
   margin: 0;
@@ -243,6 +244,11 @@ button {
 
 .reader.horizontal .novel-text {
   writing-mode: horizontal-tb;
+  display: block;
+}
+
+.reader.horizontal .novel-text p {
+  display: block;
 }
 
 .reader.horizontal .novel-blank-line {
@@ -254,30 +260,42 @@ button {
 ======================================== */
 
 .reader.vertical {
-  direction: rtl;
+  width: 100%;
   overflow-x: auto;
   overflow-y: hidden;
   padding: 2rem 1.5rem 4rem;
 }
 
+/*
+  縦書きでは、本文全体を縦書きにする。
+
+  段落は右から左へ配置され、
+  長い文章は次の縦列へ折り返されます。
+*/
+
 .reader.vertical .novel-text {
   writing-mode: vertical-rl;
   text-orientation: mixed;
-  direction: ltr;
+
+  height: min(65vh, 680px);
+
   width: max-content;
   min-width: 100%;
-  height: min(65vh, 680px);
-  margin: 0;
+
+  margin-left: auto;
+  margin-right: 0;
 }
 
 .reader.vertical .novel-text p {
+  display: block;
   margin: 0;
   padding: 0;
 }
 
 .reader.vertical .novel-blank-line {
+  display: block;
   width: 1em;
-  height: auto;
+  height: 100%;
 }
 
 /* ========================================
@@ -379,8 +397,6 @@ rt {
 <div
   class="settings-panel"
   id="settings-panel"
-  role="dialog"
-  aria-label="読書設定"
 >
 
   <h2 class="settings-title">
@@ -472,7 +488,10 @@ rt {
         18px
       </span>
 
-      <button id="font-larger" type="button">
+      <button
+        id="font-larger"
+        type="button"
+      >
         ＋
       </button>
 
@@ -528,11 +547,17 @@ rt {
 
 <div class="work-header">
 
-  <h1 class="work-title" id="work-title">
+  <h1
+    class="work-title"
+    id="work-title"
+  >
     読み込み中…
   </h1>
 
-  <p class="work-date" id="work-date"></p>
+  <p
+    class="work-date"
+    id="work-date"
+  ></p>
 
 </div>
 
@@ -540,9 +565,15 @@ rt {
      本文
 ======================================== -->
 
-<main class="reader vertical" id="reader">
+<main
+  class="reader vertical"
+  id="reader"
+>
 
-  <article class="novel-text" id="novel-text">
+  <article
+    class="novel-text"
+    id="novel-text"
+  >
     <p>ここに本文が入ります。</p>
   </article>
 
@@ -554,7 +585,10 @@ rt {
 
 <footer class="work-footer">
 
-  <a class="back-link" href="fanworks.html">
+  <a
+    class="back-link"
+    href="fanworks.html"
+  >
     ← 作品一覧へ戻る
   </a>
 
@@ -569,7 +603,7 @@ rt {
 <script>
 
 /* ========================================
-   読書設定の初期値
+   読書設定
 ======================================== */
 
 const defaultSettings = {
@@ -578,10 +612,6 @@ const defaultSettings = {
   theme: "dark",
   fontSize: 18
 };
-
-/* ========================================
-   保存済み設定の読み込み
-======================================== */
 
 let savedSettings = {};
 
@@ -622,12 +652,10 @@ const fontSizeValue =
   document.getElementById("font-size-value");
 
 /* ========================================
-   読書設定の反映
+   読書設定を反映
 ======================================== */
 
 function applySettings() {
-
-  /* 縦書き・横書き */
 
   reader.classList.toggle(
     "vertical",
@@ -643,8 +671,8 @@ function applySettings() {
 
   const fontFamily =
     settings.font === "gothic"
-      ? '"Yu Gothic", "游ゴシック", "YuGothic", "Hiragino Kaku Gothic ProN", sans-serif'
-      : '"Yu Mincho", "游明朝", "YuMincho", "Hiragino Mincho ProN", serif';
+      ? '"Yu Gothic", "游ゴシック", "Hiragino Kaku Gothic ProN", sans-serif'
+      : '"Yu Mincho", "游明朝", "Hiragino Mincho ProN", serif';
 
   document.documentElement.style.setProperty(
     "--reading-font",
@@ -677,7 +705,8 @@ function applySettings() {
     const key = button.dataset.setting;
     const value = button.dataset.value;
 
-    const active = settings[key] === value;
+    const active =
+      settings[key] === value;
 
     button.classList.toggle(
       "active",
@@ -694,7 +723,7 @@ function applySettings() {
 }
 
 /* ========================================
-   読書設定の保存
+   設定保存
 ======================================== */
 
 function saveSettings() {
@@ -708,7 +737,7 @@ function saveSettings() {
 
   } catch (error) {
 
-    /* 保存できない場合も表示を継続 */
+    /* 保存できない場合も継続 */
 
   }
 
@@ -735,7 +764,7 @@ document.querySelectorAll(
 });
 
 /* ========================================
-   文字サイズ調整
+   文字サイズ
 ======================================== */
 
 document
@@ -767,7 +796,7 @@ document
   });
 
 /* ========================================
-   設定パネルの開閉
+   設定パネル
 ======================================== */
 
 function toggleSettingsPanel(open) {
@@ -798,8 +827,6 @@ settingsClose.addEventListener("click", () => {
 
 });
 
-/* パネルの外を押すと閉じる */
-
 document.addEventListener("click", event => {
 
   if (
@@ -811,8 +838,6 @@ document.addEventListener("click", event => {
 
 });
 
-/* Escapeキーで閉じる */
-
 document.addEventListener("keydown", event => {
 
   if (event.key === "Escape") {
@@ -822,7 +847,7 @@ document.addEventListener("keydown", event => {
 });
 
 /* ========================================
-   HTMLの特殊文字を変換
+   HTMLの特殊文字
 ======================================== */
 
 function escapeHTML(value) {
@@ -841,59 +866,90 @@ function escapeHTML(value) {
 }
 
 /* ========================================
-   小説本文の整形
+   本文の整形
 
-   ルビ：
-   [[rb:漢字 > ふりがな]]
-
-   1行を1段落として表示します。
-
-   行頭の全角スペースは維持します。
-   空行も維持します。
+   ・1行を1段落にする
+   ・行頭の全角スペースを維持
+   ・空行を維持
+   ・ルビを変換
 ======================================== */
 
 function formatNovelText(text) {
 
-  const source = String(text || "")
-    .replace(/\r\n?/g, "\n")
-    .trim();
+  /*
+    改行コードを統一する。
+    trim()は使わない。
+    先頭の全角スペースを残すため。
+  */
 
-  if (!source) {
+  const source = String(text || "")
+    .replace(/\r\n?/g, "\n");
+
+  /*
+    テンプレートリテラルの
+    先頭・末尾にある空行だけ取り除く。
+
+    本文の全角スペースは削除しない。
+  */
+
+  const lines = source.split("\n");
+
+  while (
+    lines.length > 0 &&
+    lines[0].trim() === ""
+  ) {
+    lines.shift();
+  }
+
+  while (
+    lines.length > 0 &&
+    lines[lines.length - 1].trim() === ""
+  ) {
+    lines.pop();
+  }
+
+  if (lines.length === 0) {
     return "<p>ここに本文が入ります。</p>";
   }
+
+  /*
+    [[rb:漢字 > ふりがな]]
+    を認識する。
+  */
 
   const rubyPattern =
     /\[\[rb:\s*([^>\]\n]+?)\s*>\s*([^\]\n]+?)\s*\]\]/g;
 
-  return source.split("\n").map(line => {
+  return lines.map(line => {
+
+    /*
+      空行は専用の要素にする。
+    */
+
+    if (line.trim() === "") {
+
+      return '<div class="novel-blank-line"></div>';
+
+    }
 
     let html = "";
     let lastIndex = 0;
 
     /*
-      ルビを先に認識し、
-      通常の文章とルビをそれぞれ安全に変換する。
+      ルビを先に認識する。
     */
 
     for (const match of line.matchAll(rubyPattern)) {
-
-      /* ルビより前の文章 */
 
       html += escapeHTML(
         line.slice(lastIndex, match.index)
       );
 
-      /* ルビの親文字 */
-
       const base =
         escapeHTML(match[1].trim());
 
-      /* ふりがな */
-
       const reading =
         escapeHTML(match[2].trim());
-
-      /* rubyタグに変換 */
 
       html +=
         `<ruby>${base}<rt>${reading}</rt></ruby>`;
@@ -903,21 +959,17 @@ function formatNovelText(text) {
 
     }
 
-    /* 最後のルビより後ろの文章 */
+    /*
+      残りの文章
+    */
 
     html += escapeHTML(
       line.slice(lastIndex)
     );
 
-    /* 空行 */
-
-    if (line.trim() === "") {
-
-      return '<div class="novel-blank-line"></div>';
-
-    }
-
-    /* 通常の段落 */
+    /*
+      1行を1段落として出力
+    */
 
     return `<p>${html}</p>`;
 
@@ -926,7 +978,7 @@ function formatNovelText(text) {
 }
 
 /* ========================================
-   URLから作品IDを取得
+   作品ID
 ======================================== */
 
 const params =
@@ -938,7 +990,7 @@ const workId =
   params.get("work");
 
 /* ========================================
-   novels.jsから作品を取得
+   作品データ
 ======================================== */
 
 const novelList =
@@ -953,32 +1005,24 @@ const currentWork =
   );
 
 /* ========================================
-   作品を表示
+   作品表示
 ======================================== */
 
 if (currentWork) {
-
-  /* タイトル */
 
   document
     .getElementById("work-title")
     .textContent = currentWork.title;
 
-  /* 執筆日 */
-
   document
     .getElementById("work-date")
     .textContent = currentWork.date || "";
-
-  /* 本文 */
 
   document
     .getElementById("novel-text")
     .innerHTML = formatNovelText(
       currentWork.text
     );
-
-  /* ブラウザのタイトル */
 
   document.title =
     `${currentWork.title}｜乙女座の脚元`;
