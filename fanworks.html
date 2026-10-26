@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>地獄楽（佐杠・杠佐）｜乙女座の脚元</title>
 
 <style>
@@ -36,7 +37,9 @@ a {
   letter-spacing: .12em;
 }
 
-/* タブ */
+/* ========================================
+   タブ
+======================================== */
 
 .tabs {
   display: flex;
@@ -75,7 +78,9 @@ a {
   display: block;
 }
 
-/* 凡例 */
+/* ========================================
+   凡例
+======================================== */
 
 .legend {
   display: flex;
@@ -104,7 +109,9 @@ a {
   border: 2px solid #fff;
 }
 
-/* 関係性タイムライン */
+/* ========================================
+   関係性タイムライン
+======================================== */
 
 .timeline-area {
   position: relative;
@@ -162,7 +169,9 @@ a {
   z-index: 100;
 }
 
-/* 区分 */
+/* ========================================
+   区分
+======================================== */
 
 .division-line {
   position: absolute;
@@ -194,7 +203,9 @@ a {
   z-index: 20;
 }
 
-/* 作品ポイント */
+/* ========================================
+   作品ポイント
+======================================== */
 
 .story-point {
   position: absolute;
@@ -227,7 +238,8 @@ a {
 }
 
 .point-button:hover,
-.point-button:focus-visible {
+.point-button:focus-visible,
+.point-button[aria-expanded="true"] {
   background: #28bfb0;
   color: #fff;
   transform: scale(1.12);
@@ -241,66 +253,94 @@ a {
 }
 
 .story-point.parody .point-button:hover,
-.story-point.parody .point-button:focus-visible {
+.story-point.parody .point-button:focus-visible,
+.story-point.parody .point-button[aria-expanded="true"] {
   border-color: #28bfb0;
   color: #28bfb0;
 }
 
-/* ポップアップ */
+/* ========================================
+   ポップアップ
+
+   タイムラインの外側（body直下）に配置し、
+   position: fixed で最前面に表示します。
+======================================== */
 
 .story-popup {
-  position: absolute;
-  left: 50%;
-  bottom: 28px;
-  transform: translateX(-50%) translateY(5px);
+  position: fixed;
+
   width: 265px;
-  padding: 1rem 1.1rem;
+  max-width: calc(100vw - 24px);
+
+  padding: 1.15rem 1.1rem 1rem;
+
   background: #fff;
   color: #1d3652;
+
   border-radius: 8px;
-  box-shadow: 0 8px 24px rgba(0,0,0,.25);
-  opacity: 0;
+
+  box-shadow:
+    0 8px 30px rgba(0,0,0,.35);
+
+  z-index: 999999;
+
   visibility: hidden;
+  opacity: 0;
   pointer-events: none;
+
   transition:
-    opacity .18s,
-    transform .18s,
-    visibility .18s;
+    opacity .15s,
+    visibility .15s;
+
   text-align: left;
-  z-index: 30;
 }
 
-.story-popup::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: -28px;
-  height: 28px;
-}
-
-.story-popup::after {
-  content: "";
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  transform: translateX(-50%);
-  border-left: 7px solid transparent;
-  border-right: 7px solid transparent;
-  border-top: 7px solid #fff;
-}
-
-.story-point:hover .story-popup,
-.story-point:focus-within .story-popup,
-.story-point.open .story-popup {
-  opacity: 1;
+.story-popup.open {
   visibility: visible;
+  opacity: 1;
   pointer-events: auto;
-  transform: translateX(-50%) translateY(0);
+}
+
+/* 右上の閉じるボタン */
+
+.popup-close {
+  position: absolute;
+  top: 7px;
+  right: 8px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 30px;
+  height: 30px;
+
+  padding: 0;
+
+  background: transparent;
+  border: none;
+
+  color: #1d3652;
+
+  font-family: sans-serif;
+  font-size: 23px;
+  font-weight: 300;
+  line-height: 1;
+
+  cursor: pointer;
+
+  opacity: .55;
+  transition: opacity .15s;
+}
+
+.popup-close:hover,
+.popup-close:focus-visible {
+  opacity: 1;
+  outline: none;
 }
 
 .story-title {
-  margin: 0 0 .45rem;
+  margin: 0 28px .45rem 0;
   font-size: 1.08rem;
   font-weight: 600;
   line-height: 1.5;
@@ -331,7 +371,9 @@ a {
   opacity: .6;
 }
 
-/* 執筆順 */
+/* ========================================
+   執筆順
+======================================== */
 
 .writing-order {
   max-width: 760px;
@@ -387,7 +429,9 @@ a {
   white-space: nowrap;
 }
 
-/* 戻る */
+/* ========================================
+   戻る
+======================================== */
 
 .back-link {
   display: block;
@@ -404,9 +448,12 @@ a {
   color: #28bfb0;
 }
 
-/* スマートフォン */
+/* ========================================
+   スマートフォン
+======================================== */
 
 @media (max-width: 600px) {
+
   .page {
     padding-top: 3rem;
   }
@@ -439,12 +486,6 @@ a {
 
   .story-popup {
     width: 240px;
-    bottom: 35px;
-  }
-
-  .story-popup::before {
-    bottom: -35px;
-    height: 35px;
   }
 
   .work-list li {
@@ -456,6 +497,7 @@ a {
   .work-date {
     flex: none;
   }
+
 }
 </style>
 </head>
@@ -473,6 +515,7 @@ a {
     role="tablist"
     aria-label="作品の並び方"
   >
+
     <button
       class="tab-button active"
       type="button"
@@ -494,9 +537,12 @@ a {
     >
       執筆順
     </button>
+
   </div>
 
-  <!-- 関係性 -->
+  <!-- =====================================
+       関係性
+  ====================================== -->
 
   <section
     id="timeline-tab"
@@ -505,6 +551,7 @@ a {
   >
 
     <div class="legend">
+
       <span class="legend-item">
         <span class="legend-dot"></span>
         本編
@@ -514,6 +561,7 @@ a {
         <span class="legend-dot parody"></span>
         パロディ
       </span>
+
     </div>
 
     <div class="timeline-area">
@@ -549,11 +597,14 @@ a {
         </div>
 
       </div>
+
     </div>
 
   </section>
 
-  <!-- 執筆順 -->
+  <!-- =====================================
+       執筆順
+  ====================================== -->
 
   <section
     id="writing-tab"
@@ -577,30 +628,60 @@ a {
 
 </main>
 
+<!-- ========================================
+     最前面ポップアップ
+
+     タイムラインの外側に置くことで
+     スクロール領域による切り抜きを防ぎます。
+======================================== -->
+
+<div
+  class="story-popup"
+  id="story-popup"
+  role="dialog"
+  aria-label="作品情報"
+  aria-hidden="true"
+>
+
+  <button
+    class="popup-close"
+    id="popup-close"
+    type="button"
+    aria-label="閉じる"
+  >
+    ×
+  </button>
+
+  <p
+    class="story-title"
+    id="popup-title"
+  ></p>
+
+  <p
+    class="story-date"
+    id="popup-date"
+  ></p>
+
+  <p
+    class="story-detail"
+    id="popup-detail"
+  ></p>
+
+  <a
+    class="story-link"
+    id="popup-link"
+    href="#"
+  >
+    読む
+  </a>
+
+</div>
+
 <script>
 
-/*
-  作品データ
-
-  date:
-    執筆日、またはシリーズの開始日
-
-  endDate:
-    シリーズの終了日
-
-  detail:
-    関係性ポップアップの紹介文
-
-  score:
-    関係性タイムライン上の配置値
-    ※作品の評価点ではありません
-
-  href:
-    作品ページへのリンク
-
-  parody:
-    true の場合、白い輪郭の丸で表示
-*/
+/* ========================================
+   作品データ
+======================================== */
 
 const works = [
 
@@ -1000,11 +1081,6 @@ const works = [
    執筆日と並び順
 ======================================== */
 
-/*
-  同じ日付の場合は、
-  上の作品データに記載した順番を維持します。
-*/
-
 works.forEach((work, index) => {
   work.originalIndex = index;
 });
@@ -1014,21 +1090,252 @@ const chronologicalWorks = [...works].sort((a, b) =>
   a.originalIndex - b.originalIndex
 );
 
-/*
-  執筆日表示
-
-  通常作品：
-  2026-04-01
-
-  シリーズ：
-  2026-05-03 ～ 2026-05-20
-*/
-
 function displayDate(work) {
   return work.endDate
     ? `${work.date} ～ ${work.endDate}`
     : work.date;
 }
+
+
+/* ========================================
+   ポップアップの要素
+======================================== */
+
+const popup =
+  document.getElementById('story-popup');
+
+const popupClose =
+  document.getElementById('popup-close');
+
+const popupTitle =
+  document.getElementById('popup-title');
+
+const popupDate =
+  document.getElementById('popup-date');
+
+const popupDetail =
+  document.getElementById('popup-detail');
+
+const popupLink =
+  document.getElementById('popup-link');
+
+/*
+  現在開いている作品ポイント
+*/
+
+let activePoint = null;
+let activeButton = null;
+
+
+/* ========================================
+   ポップアップの位置調整
+======================================== */
+
+function positionPopup(button) {
+
+  const rect =
+    button.getBoundingClientRect();
+
+  /*
+    ポップアップの大きさを取得
+  */
+
+  const popupWidth =
+    popup.offsetWidth;
+
+  const popupHeight =
+    popup.offsetHeight;
+
+  const margin = 12;
+  const gap = 12;
+
+  /*
+    まずは丸の上側に表示
+  */
+
+  let left =
+    rect.left +
+    rect.width / 2 -
+    popupWidth / 2;
+
+  let top =
+    rect.top -
+    popupHeight -
+    gap;
+
+  /*
+    左右にはみ出さないよう調整
+  */
+
+  left = Math.max(
+    margin,
+    Math.min(
+      left,
+      window.innerWidth - popupWidth - margin
+    )
+  );
+
+  /*
+    上側に収まらない場合は
+    丸の下側に表示
+  */
+
+  if (top < margin) {
+
+    top =
+      rect.bottom + gap;
+
+  }
+
+  /*
+    下側にも収まらない場合は
+    画面内に収める
+  */
+
+  if (top + popupHeight >
+      window.innerHeight - margin) {
+
+    top =
+      window.innerHeight -
+      popupHeight -
+      margin;
+
+  }
+
+  top = Math.max(margin, top);
+
+  popup.style.left = `${left}px`;
+  popup.style.top = `${top}px`;
+
+}
+
+
+/* ========================================
+   ポップアップを開く
+======================================== */
+
+function openPopup(work, point, button) {
+
+  closePopup();
+
+  popupTitle.textContent =
+    work.title;
+
+  popupDate.textContent =
+    displayDate(work);
+
+  popupDetail.textContent =
+    work.detail;
+
+  popupLink.href =
+    work.href;
+
+  activePoint = point;
+  activeButton = button;
+
+  button.setAttribute(
+    'aria-expanded',
+    'true'
+  );
+
+  /*
+    表示内容を設定した後で開き、
+    正しい高さを使って位置を決めます。
+  */
+
+  popup.classList.add('open');
+
+  popup.setAttribute(
+    'aria-hidden',
+    'false'
+  );
+
+  positionPopup(button);
+
+}
+
+
+/* ========================================
+   ポップアップを閉じる
+======================================== */
+
+function closePopup() {
+
+  popup.classList.remove('open');
+
+  popup.setAttribute(
+    'aria-hidden',
+    'true'
+  );
+
+  if (activeButton) {
+
+    activeButton.setAttribute(
+      'aria-expanded',
+      'false'
+    );
+
+  }
+
+  activePoint = null;
+  activeButton = null;
+
+}
+
+
+/* ========================================
+   ×ボタン
+======================================== */
+
+popupClose.addEventListener(
+  'click',
+  event => {
+
+    event.stopPropagation();
+
+    closePopup();
+
+  }
+);
+
+
+/* ========================================
+   ポップアップ外を押した場合
+======================================== */
+
+document.addEventListener(
+  'click',
+  event => {
+
+    if (
+      !event.target.closest('.story-popup') &&
+      !event.target.closest('.point-button')
+    ) {
+
+      closePopup();
+
+    }
+
+  }
+);
+
+
+/* ========================================
+   Escapeキー
+======================================== */
+
+document.addEventListener(
+  'keydown',
+  event => {
+
+    if (event.key === 'Escape') {
+
+      closePopup();
+
+    }
+
+  }
+);
 
 
 /* ========================================
@@ -1045,25 +1352,42 @@ tabButtons.forEach(button => {
 
   button.addEventListener('click', () => {
 
+    closePopup();
+
     tabButtons.forEach(item => {
+
       item.classList.remove('active');
-      item.setAttribute('aria-selected', 'false');
+
+      item.setAttribute(
+        'aria-selected',
+        'false'
+      );
+
     });
 
     tabContents.forEach(item => {
+
       item.classList.remove('active');
+
     });
 
     button.classList.add('active');
 
-    button.setAttribute('aria-selected', 'true');
+    button.setAttribute(
+      'aria-selected',
+      'true'
+    );
 
     document
       .getElementById(button.dataset.tab)
       .classList.add('active');
 
     if (button.dataset.tab === 'timeline-tab') {
-      requestAnimationFrame(updateSectionLabel);
+
+      requestAnimationFrame(
+        updateSectionLabel
+      );
+
     }
 
   });
@@ -1078,15 +1402,12 @@ tabButtons.forEach(button => {
 const timeline =
   document.getElementById('timeline');
 
-/*
-  同じ関係値の作品をグループ化します。
-*/
-
 const groups = {};
 
 works.forEach(work => {
 
-  const key = work.score.toFixed(1);
+  const key =
+    work.score.toFixed(1);
 
   if (!groups[key]) {
     groups[key] = [];
@@ -1096,11 +1417,6 @@ works.forEach(work => {
 
 });
 
-/*
-  同じ関係値の作品は、
-  執筆日が古いものから順に並べます。
-*/
-
 Object.values(groups).forEach(group => {
 
   group.sort((a, b) =>
@@ -1109,10 +1425,6 @@ Object.values(groups).forEach(group => {
   );
 
 });
-
-/*
-  作品ポイントを配置します。
-*/
 
 works.forEach(work => {
 
@@ -1146,11 +1458,8 @@ function createTimelinePoint(work, offset) {
   }
 
   /*
-    最初の作品を8%地点に配置します。
-
-    これにより、
-    「スライドして移動」の案内文と
-    最初の作品ポイントが重ならなくなります。
+    最初の作品を8%地点に配置し、
+    スライド案内との重なりを防止
   */
 
   const x =
@@ -1167,7 +1476,9 @@ function createTimelinePoint(work, offset) {
     `${offset}px`
   );
 
-  /* 丸いボタン */
+  /*
+    丸いボタン
+  */
 
   const button =
     document.createElement('button');
@@ -1189,143 +1500,42 @@ function createTimelinePoint(work, offset) {
   button.textContent =
     Array.from(work.title)[0];
 
-
-  /* ポップアップ */
-
-  const popup =
-    document.createElement('div');
-
-  popup.className = 'story-popup';
-
-
-  /* 作品タイトル */
-
-  const title =
-    document.createElement('p');
-
-  title.className = 'story-title';
-
-  title.textContent = work.title;
-
-
-  /* 執筆日 */
-
-  const date =
-    document.createElement('p');
-
-  date.className = 'story-date';
-
-  date.textContent = displayDate(work);
-
-
-  /* 紹介文 */
-
-  const detail =
-    document.createElement('p');
-
-  detail.className = 'story-detail';
-
-  detail.textContent = work.detail;
-
-
-  /* 作品リンク */
-
-  const link =
-    document.createElement('a');
-
-  link.className = 'story-link';
-
-  link.href = work.href;
-
-  link.textContent = '読む';
-
-
-  /* ポップアップ内に配置 */
-
-  popup.append(
-    title,
-    date,
-    detail,
-    link
-  );
-
-  point.append(
-    button,
-    popup
-  );
+  point.appendChild(button);
 
   timeline.appendChild(point);
 
+  /*
+    丸を押すとポップアップを開く
+  */
 
-  /* 丸を押したとき */
+  button.addEventListener(
+    'click',
+    event => {
 
-  button.addEventListener('click', event => {
+      event.stopPropagation();
 
-    event.stopPropagation();
+      /*
+        同じ丸を押した場合は閉じる
+      */
 
-    const wasOpen =
-      point.classList.contains('open');
+      if (activePoint === point) {
 
-    closePopups();
+        closePopup();
 
-    if (!wasOpen) {
+        return;
 
-      point.classList.add('open');
+      }
 
-      button.setAttribute(
-        'aria-expanded',
-        'true'
+      openPopup(
+        work,
+        point,
+        button
       );
 
     }
-
-  });
-
-}
-
-
-/* ========================================
-   ポップアップを閉じる
-======================================== */
-
-function closePopups() {
-
-  document
-    .querySelectorAll('.story-point.open')
-    .forEach(point => {
-
-      point.classList.remove('open');
-
-      point
-        .querySelector('.point-button')
-        .setAttribute(
-          'aria-expanded',
-          'false'
-        );
-
-    });
+  );
 
 }
-
-/* ポップアップ以外を押した場合 */
-
-document.addEventListener('click', event => {
-
-  if (!event.target.closest('.story-popup')) {
-    closePopups();
-  }
-
-});
-
-/* Escapeキーでも閉じる */
-
-document.addEventListener('keydown', event => {
-
-  if (event.key === 'Escape') {
-    closePopups();
-  }
-
-});
 
 
 /* ========================================
@@ -1335,10 +1545,6 @@ document.addEventListener('keydown', event => {
 const writingOrder =
   document.getElementById('writing-order');
 
-/*
-  作品の執筆日から年を取得します。
-*/
-
 const years = [
   ...new Set(
     chronologicalWorks.map(work =>
@@ -1347,19 +1553,12 @@ const years = [
   )
 ];
 
-/*
-  年ごとに作品一覧を作成します。
-*/
-
 years.forEach(year => {
 
   const block =
     document.createElement('section');
 
   block.className = 'year-block';
-
-
-  /* 年の見出し */
 
   const heading =
     document.createElement('h2');
@@ -1368,14 +1567,10 @@ years.forEach(year => {
 
   heading.textContent = `${year}年`;
 
-
-  /* 作品一覧 */
-
   const list =
     document.createElement('ul');
 
   list.className = 'work-list';
-
 
   chronologicalWorks
     .filter(work => work.date.startsWith(year))
@@ -1384,34 +1579,26 @@ years.forEach(year => {
       const item =
         document.createElement('li');
 
-
-      /* 執筆日 */
-
       const date =
         document.createElement('span');
 
       date.className = 'work-date';
 
-      date.textContent = displayDate(work);
-
-
-      /* 作品名 */
+      date.textContent =
+        displayDate(work);
 
       const link =
         document.createElement('a');
 
       link.href = work.href;
 
-      link.textContent = work.title;
-
+      link.textContent =
+        work.title;
 
       item.append(
         date,
         link
       );
-
-
-      /* パロディ表記 */
 
       if (work.parody) {
 
@@ -1420,7 +1607,8 @@ years.forEach(year => {
 
         type.className = 'work-type';
 
-        type.textContent = 'パロディ';
+        type.textContent =
+          'パロディ';
 
         item.appendChild(type);
 
@@ -1429,7 +1617,6 @@ years.forEach(year => {
       list.appendChild(item);
 
     });
-
 
   block.append(
     heading,
@@ -1449,23 +1636,15 @@ const timelineScroll =
   document.querySelector('.timeline-scroll');
 
 const currentSectionLabel =
-  document.getElementById('current-section-label');
+  document.getElementById(
+    'current-section-label'
+  );
 
 const division1 =
   document.querySelector('.division-1');
 
 const division2 =
   document.querySelector('.division-2');
-
-/*
-  画面中央の位置に応じて、
-
-  仙薬捜索
-  諸国行脚
-  その後
-
-  を切り替えます。
-*/
 
 function updateSectionLabel() {
 
@@ -1499,22 +1678,75 @@ function updateSectionLabel() {
 
 }
 
-/* 横スクロール時 */
+
+/* ========================================
+   スクロール時の処理
+======================================== */
+
+/*
+  タイムラインをスクロールした場合、
+  ポップアップを閉じます。
+
+  これにより、丸だけが移動して
+  ポップアップが画面に残ることを防ぎます。
+*/
 
 timelineScroll.addEventListener(
   'scroll',
-  updateSectionLabel,
+  () => {
+
+    updateSectionLabel();
+
+    closePopup();
+
+  },
   { passive: true }
 );
 
-/* 画面サイズ変更時 */
+
+/* ========================================
+   画面サイズ変更時
+======================================== */
 
 window.addEventListener(
   'resize',
-  updateSectionLabel
+  () => {
+
+    updateSectionLabel();
+
+    if (activeButton) {
+
+      positionPopup(activeButton);
+
+    }
+
+  }
 );
 
-/* 初期表示 */
+
+/* ========================================
+   ページ縦スクロール時
+======================================== */
+
+/*
+  縦スクロール時も、
+  開いているポップアップを閉じます。
+*/
+
+window.addEventListener(
+  'scroll',
+  () => {
+
+    closePopup();
+
+  },
+  { passive: true }
+);
+
+
+/* ========================================
+   初期表示
+======================================== */
 
 updateSectionLabel();
 
