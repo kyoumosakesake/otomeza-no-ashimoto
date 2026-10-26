@@ -183,8 +183,22 @@
   @media (max-width: 600px) {
     .site-header { padding: 1.2rem 1rem; }
     .site-name { font-size: .8rem; }
-    .reading-layout.vertical { gap: 1.5rem; padding: 1rem .75rem 3rem; }
-    .reading-layout.vertical .work-header { padding: .5rem 0; gap: .5rem; }
+    /* スマホはLTRのスクロール座標を使用。表示順だけ反転して右から読みます。 */
+    .reading-layout.vertical {
+      direction: ltr;
+      flex-direction: row-reverse;
+      gap: 1.5rem;
+      padding: 1rem .75rem 3rem;
+      overflow-x: scroll;
+      overflow-y: hidden;
+      touch-action: pan-y;
+      -webkit-overflow-scrolling: touch;
+    }
+    .reading-layout.vertical .work-header {
+      padding: .5rem 0;
+      gap: .5rem;
+      flex-direction: row; /* タイトルを縦方向の冒頭に配置 */
+    }
     .reading-layout.vertical .work-title { font-size: 1rem; }
     .reading-layout.vertical .work-date { font-size: .65rem; }
     .reading-layout.vertical .reader { padding: .5rem 0; }
@@ -242,7 +256,7 @@
 </div>
 <footer class="work-footer"><a class="back-link" href="fanworks.html">← 作品一覧へ戻る</a></footer>
 
-<script src="novels.js?v=20261026-2"></script>
+<script src="novels.js?v=20261026-3"></script>
 <script>
   const fontSizes = [12, 14, 16, 18, 20];
   const storageKey = "otomeza-reader-settings";
@@ -288,7 +302,7 @@
   }
   function resetReadingPosition() {
     if (settings.direction !== "vertical") return;
-    // RTL の横スクロールでは 0 が右端（タイトルの位置）です。
+    // PCはRTL、スマホはrow-reverseで、どちらも右端が0です。
     layout.scrollLeft = 0;
   }
   function resetAfterLayout() {
@@ -383,8 +397,117 @@
     layout.scrollLeft += direction * settings.fontSize * 2.2;
   }, { passive: false });
 
-  // スマホはブラウザ標準の横スワイプを使用します。
-  // 独自のtouchmove処理を削除し、慣性スクロールも有効にします。
+  // スマホ縦書き専用：ドラッグ操作と左右端タップ。
+  // PCのホイール処理は上記のまま変更しません。
+  const mobileScreen = window.matchMedia("(max-width: 600px)");
+  let gesture = null;
+  let inertiaFrame = null;
+
+  function mobileVertical() {
+    return mobileScreen.matches && settings.direction === "vertical";
+  }
+
+  function stopInertia() {
+    if (inertiaFrame !== null) {
+      cancelAnimationFrame(inertiaFrame);
+      inertiaFrame = null;
+    }
+  }
+
+  function coast(velocity) {
+    let last = performance.now();
+    function frame(now) {
+      const elapsed = Math.min(now - last, 32);
+      last = now;
+      const previous = layout.scrollLeft;
+      layout.scrollLeft += velocity * elapsed;
+      velocity *= Math.pow(0.94, elapsed / 16);
+      const reachedEdge = Math.abs(layout.scrollLeft - previous) < 0.2;
+      if (Math.abs(velocity) > 0.035 && !reachedEdge) {
+        inertiaFrame = requestAnimationFrame(frame);
+      } else {
+        inertiaFrame = null;
+      }
+    }
+    inertiaFrame = requestAnimationFrame(frame);
+  }
+
+  layout.addEventListener("touchstart", event => {
+    if (!mobileVertical() || event.touches.length !== 1) return;
+    stopInertia();
+    const touch = event.touches[0];
+    gesture = {
+      startX: touch.clientX,
+      startY: touch.clientY,
+      lastX: touch.clientX,
+      lastY: touch.clientY,
+      lastTime: performance.now(),
+      velocity: 0,
+      dragging: false,
+      vertical: false
+    };
+  }, { passive: true });
+
+  layout.addEventListener("touchmove", event => {
+    if (!mobileVertical() || !gesture || event.touches.length !== 1) return;
+    const touch = event.touches[0];
+    const x = touch.clientX;
+    const y = touch.clientY;
+    const totalX = x - gesture.startX;
+    const totalY = y - gesture.startY;
+
+    if (!gesture.dragging && !gesture.vertical) {
+      if (Math.abs(totalX) > 6 && Math.abs(totalX) > Math.abs(totalY)) {
+        gesture.dragging = true;
+      } else if (Math.abs(totalY) > 6 && Math.abs(totalY) > Math.abs(totalX)) {
+        gesture.vertical = true;
+      }
+    }
+
+    if (gesture.dragging) {
+      // 左へドラッグ→scrollLeft減少→本文の先へ進む。
+      event.preventDefault();
+      const now = performance.now();
+      const elapsed = Math.max(1, now - gesture.lastTime);
+      const dx = x - gesture.lastX;
+      layout.scrollLeft += dx;
+      const measured = Math.max(-1.8, Math.min(1.8, dx / elapsed));
+      gesture.velocity = gesture.velocity * 0.5 + measured * 0.5;
+    }
+    gesture.lastX = x;
+    gesture.lastY = y;
+    gesture.lastTime = performance.now();
+  }, { passive: false });
+
+  layout.addEventListener("touchend", event => {
+    if (!gesture || !mobileVertical()) { gesture = null; return; }
+    const touch = event.changedTouches[0];
+    const deltaX = touch.clientX - gesture.startX;
+    const deltaY = touch.clientY - gesture.startY;
+    const dragged = gesture.dragging || Math.abs(deltaX) > 10 || Math.abs(deltaY) > 10;
+
+    if (gesture.dragging) {
+      if (Math.abs(gesture.velocity) > 0.08) coast(gesture.velocity);
+    } else if (!dragged) {
+      const rect = layout.getBoundingClientRect();
+      const x = touch.clientX - rect.left;
+      const edgeWidth = Math.min(85, rect.width * 0.22);
+      const step = layout.clientWidth * 0.85;
+      if (x < edgeWidth) {
+        // 左端タップ：次のページへ。
+        layout.scrollTo({ left: layout.scrollLeft - step, behavior: "smooth" });
+      } else if (x > rect.width - edgeWidth) {
+        // 右端タップ：前のページへ。
+        layout.scrollTo({ left: layout.scrollLeft + step, behavior: "smooth" });
+      }
+    }
+    gesture = null;
+  }, { passive: true });
+
+  layout.addEventListener("touchcancel", () => {
+    gesture = null;
+    stopInertia();
+  }, { passive: true });
 
   if ("scrollRestoration" in history) history.scrollRestoration = "manual";
   applySettings();
