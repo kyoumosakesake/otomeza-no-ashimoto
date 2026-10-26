@@ -1,1386 +1,1524 @@
-
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>地獄楽（佐杠・杠佐）｜乙女座の脚元</title>
-
-  <style>
-    * { box-sizing: border-box; }
-
-    body {
-      margin: 0;
-      background: #1d3652;
-      color: #ffffff;
-      font-family: "Yu Mincho", "游明朝", "YuMincho", serif;
-    }
-
-    button, a { font-family: inherit; }
-
-    .page {
-      width: min(1200px, 94%);
-      margin: 0 auto;
-      padding: 4rem 0 5rem;
-    }
-
-    .page-title {
-      margin: 0 0 2.5rem;
-      text-align: center;
-      font-size: 2rem;
-      font-weight: 400;
-      letter-spacing: 0.12em;
-    }
-
-    /* =========================
-       タブ
-    ========================= */
-
-    .tabs {
-      display: flex;
-      justify-content: center;
-      gap: 2rem;
-      margin-bottom: 2.5rem;
-    }
-
-    .tab-button {
-      padding: 0.5rem 0.2rem;
-      background: transparent;
-      color: #ffffff;
-      border: none;
-      border-bottom: 1px solid transparent;
-      font-size: 1.1rem;
-      cursor: pointer;
-      opacity: 0.55;
-      transition:
-        opacity 0.2s ease,
-        border-color 0.2s ease;
-    }
-
-    .tab-button.active {
-      opacity: 1;
-      border-bottom-color: #28bfb0;
-    }
-
-    .tab-button:focus-visible {
-      outline: 2px solid #28bfb0;
-      outline-offset: 5px;
-    }
-
-    .tab-content { display: none; }
-    .tab-content.active { display: block; }
-
-    /* =========================
-       凡例
-    ========================= */
-
-    .legend {
-      display: flex;
-      justify-content: center;
-      gap: 1.5rem;
-      margin-bottom: 1rem;
-      font-size: 0.8rem;
-      opacity: 0.7;
-    }
-
-    .legend-item {
-      display: flex;
-      align-items: center;
-      gap: 0.45rem;
-    }
-
-    .legend-dot {
-      width: 16px;
-      height: 16px;
-      border-radius: 50%;
-      background: #ffffff;
-    }
-
-    .legend-dot.parody {
-      background: transparent;
-      border: 2px solid #ffffff;
-    }
-
-    /* =========================
-       タイムライン全体
-    ========================= */
-
-    .timeline-area {
-      position: relative;
-      --timeline-top-space: 12rem;
-    }
-
-    .timeline-scroll {
-      position: relative;
-      overflow-x: auto;
-      overflow-y: visible;
-      padding: var(--timeline-top-space) 1rem 8rem;
-      scrollbar-color: rgba(255,255,255,0.25) transparent;
-      -webkit-overflow-scrolling: touch;
-    }
-
-    .timeline {
-      position: relative;
-      width: 4200px;
-      height: 360px;
-      margin: 0 auto;
-    }
-
-    /* =========================
-       青緑の主軸
-    ========================= */
-
-    .timeline-line {
-      position: absolute;
-      left: 55px;
-      right: 55px;
-      top: 210px;
-      height: 7px;
-      background: #28bfb0;
-      border-radius: 999px;
-      z-index: 1;
-    }
-
-    .slide-guide-text {
-      position: absolute;
-      left: 55px;
-      top: 174px;
-      color: #28bfb0;
-      font-size: 0.8rem;
-      letter-spacing: 0.08em;
-      white-space: nowrap;
-      z-index: 10;
-    }
-
-    /* スクロール中も右端に残る矢印 */
-
-    .fixed-arrow-head {
-      position: absolute;
-      right: 3px;
-      top: calc(var(--timeline-top-space) + 199px);
-      width: 0;
-      height: 0;
-      border-top: 15px solid transparent;
-      border-bottom: 15px solid transparent;
-      border-left: 25px solid #28bfb0;
-      pointer-events: none;
-      z-index: 100;
-    }
-
-    /* =========================
-       区分線
-    ========================= */
-
-    .division-line {
-      position: absolute;
-      top: 90px;
-      height: 170px;
-      width: 1px;
-      background: rgba(255,255,255,0.25);
-      z-index: 0;
-    }
-
-    .division-1 { left: 40%; }
-    .division-2 { left: 80%; }
-
-    /* =========================
-       中央固定の区分名
-    ========================= */
-
-    .current-section-label {
-      position: absolute;
-      top: calc(var(--timeline-top-space) + 250px);
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 0.86rem;
-      letter-spacing: 0.08em;
-      opacity: 0.65;
-      white-space: nowrap;
-      pointer-events: none;
-      z-index: 20;
-    }
-
-    /* =========================
-       作品ポイント
-    ========================= */
-
-    .story-point {
-      position: absolute;
-      left: var(--x);
-      top: calc(210px + var(--offset, -54px));
-      transform: translate(-50%, -50%);
-      z-index: 5;
-    }
-
-    .point-button {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 38px;
-      height: 38px;
-      padding: 0;
-      border: none;
-      border-radius: 50%;
-      background: #ffffff;
-      color: #1d3652;
-      font-size: 0.82rem;
-      font-weight: 600;
-      line-height: 1;
-      cursor: pointer;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.16);
-      transition:
-        transform 0.15s ease,
-        background 0.15s ease,
-        color 0.15s ease;
-    }
-
-    .point-button:hover,
-    .point-button:focus-visible {
-      background: #28bfb0;
-      color: #ffffff;
-      transform: scale(1.12);
-      outline: none;
-    }
-
-    /* パロディの白抜き丸 */
-
-    .story-point.parody .point-button {
-      background: #1d3652;
-      color: #ffffff;
-      border: 2px solid #ffffff;
-    }
-
-    .story-point.parody .point-button:hover,
-    .story-point.parody .point-button:focus-visible {
-      border-color: #28bfb0;
-      color: #28bfb0;
-    }
-
-    /* =========================
-       ポップアップ
-    ========================= */
-
-    .story-popup {
-      position: absolute;
-      left: 50%;
-      bottom: 28px;
-      transform: translateX(-50%) translateY(5px);
-      width: 265px;
-      padding: 1rem 1.1rem;
-      background: #ffffff;
-      color: #1d3652;
-      border-radius: 8px;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.25);
-      opacity: 0;
-      visibility: hidden;
-      pointer-events: none;
-      transition:
-        opacity 0.18s ease,
-        transform 0.18s ease,
-        visibility 0.18s ease;
-      text-align: left;
-      z-index: 30;
-    }
-
-    .story-popup::before {
-      content: "";
-      position: absolute;
-      left: 0;
-      right: 0;
-      bottom: -28px;
-      height: 28px;
-    }
-
-    .story-popup::after {
-      content: "";
-      position: absolute;
-      top: 100%;
-      left: 50%;
-      transform: translateX(-50%);
-      border-left: 7px solid transparent;
-      border-right: 7px solid transparent;
-      border-top: 7px solid #ffffff;
-    }
-
-    .story-point:hover .story-popup,
-    .story-point:focus-within .story-popup,
-    .story-point.open .story-popup {
-      opacity: 1;
-      visibility: visible;
-      pointer-events: auto;
-      transform: translateX(-50%) translateY(0);
-    }
-
-    .story-title {
-      margin: 0 0 0.45rem;
-      font-size: 1.08rem;
-      font-weight: 600;
-      line-height: 1.5;
-    }
-
-    .story-date {
-      margin: 0 0 0.6rem;
-      font-size: 0.79rem;
-      line-height: 1.5;
-      opacity: 0.6;
-    }
-
-    .story-detail {
-      margin: 0 0 0.85rem;
-      font-size: 0.83rem;
-      line-height: 1.7;
-    }
-
-    .story-link {
-      display: inline-block;
-      color: #1d3652;
-      font-size: 0.85rem;
-      text-decoration: none;
-      border-bottom: 1px solid #28bfb0;
-    }
-
-    .story-link:hover { opacity: 0.6; }
-
-    /* =========================
-       執筆順
-    ========================= */
-
-    .writing-order {
-      max-width: 760px;
-      margin: 0 auto;
-    }
-
-    .year-block {
-      margin-bottom: 3.7rem;
-    }
-
-    .year-title {
-      margin: 0 0 1.3rem;
-      font-size: 1.1rem;
-      font-weight: 400;
-      letter-spacing: 0.12em;
-      opacity: 0.7;
-    }
-
-    .work-list {
-      margin: 0;
-      padding: 0;
-      list-style: none;
-    }
-
-    .work-list li {
-      display: flex;
-      gap: 1rem;
-      align-items: baseline;
-      padding: 0.9rem 0;
-      border-bottom: 1px solid rgba(255,255,255,0.13);
-    }
-
-    .work-list a {
-      color: #ffffff;
-      font-size: 1.02rem;
-      text-decoration: none;
-    }
-
-    .work-list a:hover { opacity: 0.65; }
-
-    .work-type {
-      font-size: 0.72rem;
-      opacity: 0.5;
-      white-space: nowrap;
-    }
-
-    /* =========================
-       戻る
-    ========================= */
-
-    .back-link {
-      display: block;
-      width: fit-content;
-      margin: 5rem auto 0;
-      color: #ffffff;
-      font-size: 0.95rem;
-      text-decoration: none;
-      opacity: 0.7;
-    }
-
-    .back-link:hover {
-      opacity: 1;
-      color: #28bfb0;
-    }
-
-    /* =========================
-       スマホ対応
-    ========================= */
-
-    @media (max-width: 600px) {
-
-      .page {
-        padding-top: 3rem;
-      }
-
-      .page-title {
-        font-size: 1.7rem;
-      }
-
-      .tabs {
-        margin-bottom: 2rem;
-      }
-
-      .tab-button {
-        font-size: 1rem;
-      }
-
-      .legend {
-        margin-bottom: 0.5rem;
-      }
-
-      .timeline-area {
-        --timeline-top-space: 13rem;
-      }
-
-      .point-button {
-        width: 50px;
-        height: 50px;
-        font-size: 0.95rem;
-      }
-
-      .story-popup {
-        width: 240px;
-        bottom: 35px;
-      }
-
-      .story-popup::before {
-        bottom: -35px;
-        height: 35px;
-      }
-
-      .work-list li {
-        align-items: flex-start;
-        flex-direction: column;
-        gap: 0.25rem;
-      }
-    }
-
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>地獄楽（佐杠・杠佐）｜乙女座の脚元</title>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: #1d3652;
+  color: #fff;
+  font-family: "Yu Mincho", "游明朝", "YuMincho", serif;
+}
+
+button,
+a {
+  font-family: inherit;
+}
+
+.page {
+  width: min(1200px, 94%);
+  margin: 0 auto;
+  padding: 4rem 0 5rem;
+}
+
+.page-title {
+  margin: 0 0 2.5rem;
+  text-align: center;
+  font-size: 2rem;
+  font-weight: 400;
+  letter-spacing: .12em;
+}
+
+/* タブ */
+
+.tabs {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin-bottom: 2.5rem;
+}
+
+.tab-button {
+  padding: .5rem .2rem;
+  background: transparent;
+  color: #fff;
+  border: none;
+  border-bottom: 1px solid transparent;
+  font-size: 1.1rem;
+  cursor: pointer;
+  opacity: .55;
+  transition: opacity .2s, border-color .2s;
+}
+
+.tab-button.active {
+  opacity: 1;
+  border-bottom-color: #28bfb0;
+}
+
+.tab-button:focus-visible {
+  outline: 2px solid #28bfb0;
+  outline-offset: 5px;
+}
+
+.tab-content {
+  display: none;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+/* 凡例 */
+
+.legend {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-bottom: 1rem;
+  font-size: .8rem;
+  opacity: .7;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: .45rem;
+}
+
+.legend-dot {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #fff;
+}
+
+.legend-dot.parody {
+  background: transparent;
+  border: 2px solid #fff;
+}
+
+/* 関係性タイムライン */
+
+.timeline-area {
+  position: relative;
+  --timeline-top-space: 18rem;
+}
+
+.timeline-scroll {
+  position: relative;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: var(--timeline-top-space) 1rem 8rem;
+  scrollbar-color: rgba(255,255,255,.25) transparent;
+  -webkit-overflow-scrolling: touch;
+}
+
+.timeline {
+  position: relative;
+  width: 4200px;
+  height: 360px;
+  margin: 0 auto;
+}
+
+.timeline-line {
+  position: absolute;
+  left: 55px;
+  right: 55px;
+  top: 210px;
+  height: 7px;
+  background: #28bfb0;
+  border-radius: 999px;
+  z-index: 1;
+}
+
+.slide-guide-text {
+  position: absolute;
+  left: 55px;
+  top: 174px;
+  color: #28bfb0;
+  font-size: .8rem;
+  letter-spacing: .08em;
+  white-space: nowrap;
+  z-index: 10;
+}
+
+.fixed-arrow-head {
+  position: absolute;
+  right: 3px;
+  top: calc(var(--timeline-top-space) + 199px);
+  width: 0;
+  height: 0;
+  border-top: 15px solid transparent;
+  border-bottom: 15px solid transparent;
+  border-left: 25px solid #28bfb0;
+  pointer-events: none;
+  z-index: 100;
+}
+
+/* 区分 */
+
+.division-line {
+  position: absolute;
+  top: 90px;
+  height: 170px;
+  width: 1px;
+  background: rgba(255,255,255,.25);
+  z-index: 0;
+}
+
+.division-1 {
+  left: 40%;
+}
+
+.division-2 {
+  left: 80%;
+}
+
+.current-section-label {
+  position: absolute;
+  top: calc(var(--timeline-top-space) + 250px);
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: .86rem;
+  letter-spacing: .08em;
+  opacity: .65;
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 20;
+}
+
+/* 作品ポイント */
+
+.story-point {
+  position: absolute;
+  left: var(--x);
+  top: calc(210px + var(--offset, -54px));
+  transform: translate(-50%, -50%);
+  z-index: 5;
+}
+
+.point-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: #fff;
+  color: #1d3652;
+  font-size: .82rem;
+  font-weight: 600;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,.16);
+  transition:
+    transform .15s,
+    background .15s,
+    color .15s;
+}
+
+.point-button:hover,
+.point-button:focus-visible {
+  background: #28bfb0;
+  color: #fff;
+  transform: scale(1.12);
+  outline: none;
+}
+
+.story-point.parody .point-button {
+  background: #1d3652;
+  color: #fff;
+  border: 2px solid #fff;
+}
+
+.story-point.parody .point-button:hover,
+.story-point.parody .point-button:focus-visible {
+  border-color: #28bfb0;
+  color: #28bfb0;
+}
+
+/* ポップアップ */
+
+.story-popup {
+  position: absolute;
+  left: 50%;
+  bottom: 28px;
+  transform: translateX(-50%) translateY(5px);
+  width: 265px;
+  padding: 1rem 1.1rem;
+  background: #fff;
+  color: #1d3652;
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0,0,0,.25);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition:
+    opacity .18s,
+    transform .18s,
+    visibility .18s;
+  text-align: left;
+  z-index: 30;
+}
+
+.story-popup::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -28px;
+  height: 28px;
+}
+
+.story-popup::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+  border-top: 7px solid #fff;
+}
+
+.story-point:hover .story-popup,
+.story-point:focus-within .story-popup,
+.story-point.open .story-popup {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translateX(-50%) translateY(0);
+}
+
+.story-title {
+  margin: 0 0 .45rem;
+  font-size: 1.08rem;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+.story-date {
+  margin: 0 0 .6rem;
+  font-size: .79rem;
+  line-height: 1.5;
+  opacity: .6;
+}
+
+.story-detail {
+  margin: 0 0 .85rem;
+  font-size: .83rem;
+  line-height: 1.7;
+}
+
+.story-link {
+  display: inline-block;
+  color: #1d3652;
+  font-size: .85rem;
+  text-decoration: none;
+  border-bottom: 1px solid #28bfb0;
+}
+
+.story-link:hover {
+  opacity: .6;
+}
+
+/* 執筆順 */
+
+.writing-order {
+  max-width: 760px;
+  margin: 0 auto;
+}
+
+.year-block {
+  margin-bottom: 3.7rem;
+}
+
+.year-title {
+  margin: 0 0 1.3rem;
+  font-size: 1.1rem;
+  font-weight: 400;
+  letter-spacing: .12em;
+  opacity: .7;
+}
+
+.work-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.work-list li {
+  display: flex;
+  gap: 1rem;
+  align-items: baseline;
+  padding: .9rem 0;
+  border-bottom: 1px solid rgba(255,255,255,.13);
+}
+
+.work-date {
+  flex: 0 0 215px;
+  font-size: .82rem;
+  opacity: .65;
+  font-variant-numeric: tabular-nums;
+}
+
+.work-list a {
+  color: #fff;
+  font-size: 1.02rem;
+  text-decoration: none;
+}
+
+.work-list a:hover {
+  opacity: .65;
+}
+
+.work-type {
+  font-size: .72rem;
+  opacity: .5;
+  white-space: nowrap;
+}
+
+/* 戻る */
+
+.back-link {
+  display: block;
+  width: fit-content;
+  margin: 5rem auto 0;
+  color: #fff;
+  font-size: .95rem;
+  text-decoration: none;
+  opacity: .7;
+}
+
+.back-link:hover {
+  opacity: 1;
+  color: #28bfb0;
+}
+
+/* スマートフォン */
+
+@media (max-width: 600px) {
+  .page {
+    padding-top: 3rem;
+  }
+
+  .page-title {
+    font-size: 1.7rem;
+  }
+
+  .tabs {
+    margin-bottom: 2rem;
+  }
+
+  .tab-button {
+    font-size: 1rem;
+  }
+
+  .legend {
+    margin-bottom: .5rem;
+  }
+
+  .timeline-area {
+    --timeline-top-space: 19rem;
+  }
+
+  .point-button {
+    width: 50px;
+    height: 50px;
+    font-size: .95rem;
+  }
+
+  .story-popup {
+    width: 240px;
+    bottom: 35px;
+  }
+
+  .story-popup::before {
+    bottom: -35px;
+    height: 35px;
+  }
+
+  .work-list li {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: .25rem;
+  }
+
+  .work-date {
+    flex: none;
+  }
+}
+</style>
 </head>
 
 <body>
 
-  <main class="page">
+<main class="page">
 
-    <h1 class="page-title">
-      地獄楽（佐杠・杠佐）
-    </h1>
+  <h1 class="page-title">
+    地獄楽（佐杠・杠佐）
+  </h1>
 
-    <!-- =====================
-         表示切り替え
-    ====================== -->
-
-    <div
-      class="tabs"
-      role="tablist"
-      aria-label="作品の並び方"
+  <div
+    class="tabs"
+    role="tablist"
+    aria-label="作品の並び方"
+  >
+    <button
+      class="tab-button active"
+      type="button"
+      role="tab"
+      aria-selected="true"
+      aria-controls="timeline-tab"
+      data-tab="timeline-tab"
     >
+      関係性
+    </button>
 
-      <button
-        class="tab-button active"
-        type="button"
-        role="tab"
-        aria-selected="true"
-        aria-controls="timeline-tab"
-        data-tab="timeline-tab"
-      >
-        関係性
-      </button>
+    <button
+      class="tab-button"
+      type="button"
+      role="tab"
+      aria-selected="false"
+      aria-controls="writing-tab"
+      data-tab="writing-tab"
+    >
+      執筆順
+    </button>
+  </div>
 
-      <button
-        class="tab-button"
-        type="button"
-        role="tab"
-        aria-selected="false"
-        aria-controls="writing-tab"
-        data-tab="writing-tab"
-      >
-        執筆順
-      </button>
+  <!-- 関係性 -->
 
+  <section
+    id="timeline-tab"
+    class="tab-content active"
+    role="tabpanel"
+  >
+
+    <div class="legend">
+      <span class="legend-item">
+        <span class="legend-dot"></span>
+        本編
+      </span>
+
+      <span class="legend-item">
+        <span class="legend-dot parody"></span>
+        パロディ
+      </span>
     </div>
 
-    <!-- =====================
-         関係性
-    ====================== -->
-
-    <section
-      id="timeline-tab"
-      class="tab-content active"
-      role="tabpanel"
-    >
-
-      <div class="legend">
-
-        <span class="legend-item">
-          <span class="legend-dot"></span>
-          本編
-        </span>
-
-        <span class="legend-item">
-          <span class="legend-dot parody"></span>
-          パロディ
-        </span>
-
-      </div>
-
-      <div class="timeline-area">
-
-        <!-- 右端固定の矢印 -->
-        <div
-          class="fixed-arrow-head"
-          aria-hidden="true"
-        ></div>
-
-        <!-- 現在の区分名 -->
-        <div
-          class="current-section-label"
-          id="current-section-label"
-        >
-          仙薬捜索
-        </div>
-
-        <div class="timeline-scroll">
-
-          <div
-            class="timeline"
-            id="timeline"
-          >
-
-            <div class="timeline-line"></div>
-
-            <div class="slide-guide-text">
-              スライドして移動
-            </div>
-
-            <!-- 区分境界 -->
-
-            <div
-              class="division-line division-1"
-            ></div>
-
-            <div
-              class="division-line division-2"
-            ></div>
-
-          </div>
-
-        </div>
-
-      </div>
-
-    </section>
-
-    <!-- =====================
-         執筆順
-    ====================== -->
-
-    <section
-      id="writing-tab"
-      class="tab-content"
-      role="tabpanel"
-    >
+    <div class="timeline-area">
 
       <div
-        class="writing-order"
-        id="writing-order"
+        class="fixed-arrow-head"
+        aria-hidden="true"
       ></div>
 
-    </section>
-
-    <a
-      class="back-link"
-      href="works.html"
-    >
-      ← 作品一覧へ
-    </a>
-
-  </main>
-
-  <script>
-
-    /*
-      ===================================
-      作品データ
-      ===================================
-      scoreは関係性の配置位置。
-      作品の評価点ではありません。
-    */
-
-    const works = [
-
-      {
-        title: "やわらかなひびきで",
-        date: "2023年夏",
-        detail: "佐切さんの呼び名に関する140字小説",
-        score: 4.0,
-        href: "works/yawarakana-hibiki.html"
-      },
-
-      {
-        title: "あなたの心がわからない",
-        date: "2023年夏",
-        detail: "やきもちがわからない佐切さんの140字小説",
-        score: 4.0,
-        href: "works/anata-no-kokoro.html"
-      },
-
-      {
-        title: "心を震わせる呼び",
-        date: "2023年夏",
-        detail: "旧名の方が好きな佐切さんの140字小説",
-        score: 4.0,
-        href: "works/kokoro-wo-furuwaseru-yobi.html"
-      },
-
-      {
-        title: "心臓（ハート）の危機",
-        date: "2023年夏",
-        detail: "大切な人は守らねばという佐切さんの140字小説",
-        score: 4.3,
-        href: "works/heart-no-kiki.html"
-      },
-
-      {
-        title: "私の甘味（スイーツ）",
-        date: "2023年夏",
-        detail: "甘いものが好きなのを見てるだけで満足な杠さんの140字小説",
-        score: 4.2,
-        href: "works/watashi-no-sweets.html"
-      },
-
-      {
-        title: "買わねば損",
-        date: "2023年夏",
-        detail: "やけくそに言っても佐切さんは涼しい顔、な140字小説",
-        score: 4.4,
-        href: "works/kawaneba-son.html"
-      },
-
-      {
-        title: "ありのままで",
-        date: "2023年夏",
-        detail: "自分の傷を明かした杠さんの140字小説",
-        score: 6.0,
-        href: "works/arinomamade.html"
-      },
-
-      {
-        title: "ざわつき",
-        date: "2023年夏",
-        detail: "首斬りに従事してきた佐切さんの140字小説",
-        score: 5.5,
-        href: "works/zawatsuki.html"
-      },
-
-      {
-        title: "愉楽を知るは",
-        date: "2023年夏",
-        detail: "原作で出てきたユラクなんたらを「活用」した小説。杠さんが攻め気味です",
-        score: 7.9,
-        href: "works/yuraku-wo-shiru-wa.html"
-      },
-
-      {
-        title: "手にしたい光",
-        date: "2023年夏",
-        detail: "ふたりが結ばれるシチュを考えた小説",
-        score: 7.9,
-        href: "works/te-ni-shitai-hikari.html"
-      },
-
-      {
-        title: "その心、満たされるまで",
-        date: "2023年夏",
-        detail: "思いが強い佐切さんについての小説",
-        score: 8.3,
-        href: "works/sono-kokoro-mitasareru-made.html"
-      },
-
-      {
-        title: "不安を断ち切って",
-        date: "2023年夏",
-        detail: "自分の気持ちを持て余しはじめた杠さんの小説",
-        score: 6.8,
-        href: "works/fuan-wo-tachikitte.html"
-      },
-
-      {
-        title: "I am too happy.",
-        date: "2023年夏",
-        detail: "とりこしくろう初のR-18小説。わいの答えはこれや（火炎瓶を投げつける）。佐切さんが攻めです",
-        score: 8.1,
-        href: "works/i-am-too-happy.html"
-      },
-
-      {
-        title: "Blue Green シリーズ",
-        date: "2023年夏",
-        detail: "京の都に来た佐杠のすったもんだ。とりこしくろう初のシリーズ作",
-        score: 5.5,
-        href: "works/blue-green.html"
-      },
-
-      {
-        title: "宵語り",
-        date: "2023年夏",
-        detail: "にゃんこ目線から見た佐杠の小説。うっすら性描写ありまして佐切さんが攻めです",
-        score: 9.0,
-        href: "works/yoigatari.html"
-      },
-
-      {
-        title: "相克の逢",
-        date: "2023年夏",
-        detail: "タオが伝わる感覚についての140字小説",
-        score: 8.4,
-        href: "works/sokoku-no-ai.html"
-      },
-
-      {
-        title: "乱し満たすもの",
-        date: "2023年夏",
-        detail: "たったひとことの切り返しに惑う140字小説",
-        score: 8.5,
-        href: "works/midashi-mitasu-mono.html"
-      },
-
-      {
-        title: "共に過ごす時間",
-        date: "2023年夏",
-        detail: "傷も歳も受け入れるほどの、140字小説",
-        score: 9.0,
-        href: "works/tomo-ni-sugosu-jikan.html"
-      },
-
-      {
-        title: "筆が滑る",
-        date: "2023年秋",
-        detail: "書きたいものをつい書いてしまう佐切さんの短編",
-        score: 5.5,
-        href: "works/fude-ga-suberu.html"
-      },
-
-      {
-        title: "お互い様",
-        date: "2023年秋",
-        detail: "酔っぱらった佐切さんについての短編",
-        score: 5.6,
-        href: "works/otagaisama.html"
-      },
-
-      {
-        title: "ひとをみるひとよ",
-        date: "2023年秋",
-        detail: "杠さんの運命についての短編",
-        score: 7.7,
-        href: "works/hito-wo-miru-hito-yo.html"
-      },
-
-      {
-        title: "あらがい・いきがい",
-        date: "2023年秋",
-        detail: "それでも生きていくふたりの短編",
-        score: 9.5,
-        href: "works/aragai-ikigai.html"
-      },
-
-      {
-        title: "嘘つきの本音",
-        date: "2023年秋",
-        detail: "島で別れてからの杠さんの独白小説",
-        score: 3.9,
-        href: "works/usotsuki-no-honne.html"
-      },
-
-      {
-        title: "養護教諭の佐切さんと杠さん シリーズ",
-        date: "2024年冬〜春",
-        detail: "立場上恋愛はできないけど、のすったもんだシリーズ",
-        score: 8.0,
-        parody: true,
-        href: "works/yogo-kyoyu.html"
-      },
-
-      {
-        title: "とけてしまうくらい",
-        date: "2024年春",
-        detail: "もしも最中に自分の傷がばれてしまったら、な杠さんの短編。R-18で佐切さんが攻め",
-        score: 8.2,
-        href: "works/tokete-shimau-kurai.html"
-      },
-
-      {
-        title: "まっすぐな曲者",
-        date: "2024年春",
-        detail: "そういうときにも素直に自分を出せない杠さんの短編。R-18で佐切さんが攻め",
-        score: 8.4,
-        href: "works/massugu-na-kusemono.html"
-      },
-
-      {
-        title: "限度まで蒸らされて",
-        date: "2024年春",
-        detail: "進化した佐切さんにいいようにされてしまう杠さんの短編。R-18で佐切さんが攻め",
-        score: 8.4,
-        href: "works/gendo-made-murasarete.html"
-      },
-
-      {
-        title: "あなたの心を味わいたい",
-        date: "2024年春",
-        detail: "いつもとは違う雰囲気にしてみた杠さんの短編。R-18で杠さんが攻め",
-        score: 8.5,
-        href: "works/anata-no-kokoro-wo-ajiwaitai.html"
-      },
-
-      {
-        title: "丸餅ふたつ",
-        date: "2025年冬",
-        detail: "ちょっと暗い考えになっちゃう佐切さんの小説",
-        score: 8.6,
-        href: "works/marumochi-futatsu.html"
-      },
-
-      {
-        title: "ふたり、手を繋いだら",
-        date: "2025年冬",
-        detail: "もう昔の自分ではないと確信する佐切さんの小説",
-        score: 6.5,
-        href: "works/futari-te-wo-tsunaidara.html"
-      },
-
-      {
-        title: "ただそばに",
-        date: "2025年冬",
-        detail: "隣に居ないと、居ても、なんか落ちつかないふたりの小説。ちょい喧嘩？させたかった",
-        score: 6.3,
-        href: "works/tada-soba-ni.html"
-      },
-
-      {
-        title: "風邪の功名",
-        date: "2026年冬",
-        detail: "風邪をひいてしまった佐切さんの小説",
-        score: 5.8,
-        href: "works/kaze-no-komyo.html"
-      },
-
-      {
-        title: "また進むため",
-        date: "2026年冬",
-        detail: "過去を払拭する杠さんの小説",
-        score: 6.1,
-        href: "works/mata-susumu-tame.html"
-      },
-
-      {
-        title: "忍ぶれど",
-        date: "2026年冬",
-        detail: "杠さんがひたすら耐える小説",
-        score: 7.8,
-        href: "works/shinoburedo.html"
-      },
-
-      {
-        title: "ひとつ目の羽ばたき",
-        date: "2026年冬",
-        detail: "佐切さんが山田家を出る小説",
-        score: 2.5,
-        href: "works/hitotsume-no-habataki.html"
-      },
-
-      {
-        title: "前向きに進む",
-        date: "2026年春",
-        detail: "佐切さんのちょっとしたひとことについての短編",
-        score: 4.2,
-        href: "works/maemuki-ni-susumu.html"
-      },
-
-      {
-        title: "たしかな色のある世界",
-        date: "2026年春",
-        detail: "好きって、どういうことだろうと考える短編",
-        score: 5.5,
-        href: "works/tashikana-iro-no-aru-sekai.html"
-      },
-
-      {
-        title: "ふくらむ手土産",
-        date: "2026年春",
-        detail: "思わぬものに救われる短編",
-        score: 6.2,
-        href: "works/fukuramu-temiyage.html"
-      },
-
-      {
-        title: "秘めごとは向こう側に",
-        date: "2026年春",
-        detail: "第三者目線のふたりについての短編",
-        score: 9.2,
-        href: "works/himegoto-wa-mukougawa-ni.html"
-      },
-
-      {
-        title: "花は散るゆえに",
-        date: "2026年春",
-        detail: "今がとても幸せ。だからこそ……の小説",
-        score: 9.6,
-        href: "works/hana-wa-chiru-yue-ni.html"
-      },
-
-      {
-        title: "...Me too.",
-        date: "2026年春",
-        detail: "初夜、が明けたふたりについての小説",
-        score: 8.1,
-        href: "works/me-too.html"
-      },
-
-      {
-        title: "夢のつづきは",
-        date: "2026年春",
-        detail: "ちょっと不思議な小説",
-        score: 6.0,
-        href: "works/yume-no-tsuzuki-wa.html"
-      },
-
-      {
-        title: "雪女の佐切さんと鬼の杠さん シリーズ",
-        date: "2026年春",
-        detail: "グッズから着想を得たすったもんだシリーズ",
-        score: 7.9,
-        parody: true,
-        href: "works/yukionna-oni.html"
-      },
-
-      {
-        title: "恋を鳴くには",
-        date: "2026年夏",
-        detail: "もだもだ杠さんの小説",
-        score: 6.9,
-        href: "works/koi-wo-naku-niwa.html"
-      },
-
-      {
-        title: "生に冒され",
-        date: "2026年夏",
-        detail: "島で別れてからの佐切さんの独白小説",
-        score: 2.6,
-        href: "works/sei-ni-okasare.html"
-      },
-
-      {
-        title: "再会の夜",
-        date: "2026年秋",
-        detail: "ふたりがふたたび出会ってすぐの小説",
-        score: 4.0,
-        href: "works/saikai-no-yoru.html"
-      }
-
-    ];
-
-    /*
-      ===================================
-      執筆時期の順番
-      ===================================
-    */
-
-    const dateOrder = [
-      "2023年夏",
-      "2023年秋",
-      "2024年冬〜春",
-      "2024年春",
-      "2025年冬",
-      "2026年冬",
-      "2026年春",
-      "2026年夏",
-      "2026年秋"
-    ];
-
-    /*
-      ===================================
-      タブ切り替え
-      ===================================
-    */
-
-    const tabButtons =
-      document.querySelectorAll(".tab-button");
-
-    const tabContents =
-      document.querySelectorAll(".tab-content");
-
-    tabButtons.forEach(button => {
-
-      button.addEventListener("click", () => {
-
-        tabButtons.forEach(item => {
-          item.classList.remove("active");
-          item.setAttribute("aria-selected", "false");
-        });
-
-        tabContents.forEach(item => {
-          item.classList.remove("active");
-        });
-
-        button.classList.add("active");
-        button.setAttribute("aria-selected", "true");
-
-        document
-          .getElementById(button.dataset.tab)
-          .classList.add("active");
-
-        if (button.dataset.tab === "timeline-tab") {
-          requestAnimationFrame(updateSectionLabel);
-        }
-
-      });
+      <div
+        class="current-section-label"
+        id="current-section-label"
+      >
+        仙薬捜索
+      </div>
 
+      <div class="timeline-scroll">
+
+        <div
+          class="timeline"
+          id="timeline"
+        >
+
+          <div class="timeline-line"></div>
+
+          <div class="slide-guide-text">
+            スライドして移動
+          </div>
+
+          <div class="division-line division-1"></div>
+          <div class="division-line division-2"></div>
+
+        </div>
+
+      </div>
+    </div>
+
+  </section>
+
+  <!-- 執筆順 -->
+
+  <section
+    id="writing-tab"
+    class="tab-content"
+    role="tabpanel"
+  >
+
+    <div
+      class="writing-order"
+      id="writing-order"
+    ></div>
+
+  </section>
+
+  <a
+    class="back-link"
+    href="works.html"
+  >
+    ← 作品一覧へ
+  </a>
+
+</main>
+
+<script>
+
+/*
+  作品データ
+
+  date:
+    執筆日、またはシリーズの開始日
+
+  endDate:
+    シリーズの終了日
+
+  detail:
+    関係性ポップアップの紹介文
+
+  score:
+    関係性タイムライン上の配置値
+    ※作品の評価点ではありません
+
+  href:
+    作品ページへのリンク
+
+  parody:
+    true の場合、白い輪郭の丸で表示
+*/
+
+const works = [
+
+  {
+    title: "やわらかなひびきで",
+    date: "2023-07-04",
+    detail: "佐切さんの呼び名に関する140字小説",
+    score: 4.0,
+    href: "works/yawarakana-hibiki.html"
+  },
+
+  {
+    title: "あなたの心がわからない",
+    date: "2023-07-04",
+    detail: "やきもちがわからない佐切さんの140字小説",
+    score: 4.0,
+    href: "works/anata-no-kokoro.html"
+  },
+
+  {
+    title: "心を震わせる呼び",
+    date: "2023-07-04",
+    detail: "旧名の方が好きな佐切さんの140字小説",
+    score: 4.0,
+    href: "works/kokoro-wo-furuwaseru-yobi.html"
+  },
+
+  {
+    title: "心臓（ハート）の危機",
+    date: "2023-07-04",
+    detail: "大切な人は守らねばという佐切さんの140字小説",
+    score: 4.3,
+    href: "works/heart-no-kiki.html"
+  },
+
+  {
+    title: "私の甘味（スイーツ）",
+    date: "2023-07-04",
+    detail: "甘いものが好きなのを見てるだけで満足な杠さんの140字小説",
+    score: 4.2,
+    href: "works/watashi-no-sweets.html"
+  },
+
+  {
+    title: "買わねば損",
+    date: "2023-07-04",
+    detail: "やけくそに言っても佐切さんは涼しい顔、な140字小説",
+    score: 4.4,
+    href: "works/kawaneba-son.html"
+  },
+
+  {
+    title: "ありのままで",
+    date: "2023-07-04",
+    detail: "自分の傷を明かした杠さんの140字小説",
+    score: 6.0,
+    href: "works/arinomamade.html"
+  },
+
+  {
+    title: "ざわつき",
+    date: "2023-07-04",
+    detail: "首斬りに従事してきた佐切さんの140字小説",
+    score: 5.5,
+    href: "works/zawatsuki.html"
+  },
+
+  {
+    title: "相克の逢",
+    date: "2023-07-04",
+    detail: "タオが伝わる感覚についての140字小説",
+    score: 8.4,
+    href: "works/sokoku-no-ai.html"
+  },
+
+  {
+    title: "乱し満たすもの",
+    date: "2023-07-04",
+    detail: "たったひとことの切り返しに惑う140字小説",
+    score: 8.5,
+    href: "works/midashi-mitasu-mono.html"
+  },
+
+  {
+    title: "共に過ごす時間",
+    date: "2023-07-04",
+    detail: "傷も歳も受け入れるほどの、140字小説",
+    score: 9.0,
+    href: "works/tomo-ni-sugosu-jikan.html"
+  },
+
+  {
+    title: "愉楽を知るは",
+    date: "2023-07-07",
+    detail: "原作で出てきたユラクなんたらを「活用」した小説。杠さんが攻め気味です",
+    score: 7.9,
+    href: "works/yuraku-wo-shiru-wa.html"
+  },
+
+  {
+    title: "手にしたい光",
+    date: "2023-07-07",
+    detail: "ふたりが結ばれるシチュを考えた小説",
+    score: 7.9,
+    href: "works/te-ni-shitai-hikari.html"
+  },
+
+  {
+    title: "その心、満たされるまで",
+    date: "2023-07-08",
+    detail: "思いが強い佐切さんについての小説",
+    score: 8.3,
+    href: "works/sono-kokoro-mitasareru-made.html"
+  },
+
+  {
+    title: "不安を断ち切って",
+    date: "2023-07-12",
+    detail: "自分の気持ちを持て余しはじめた杠さんの小説",
+    score: 6.8,
+    href: "works/fuan-wo-tachikitte.html"
+  },
+
+  {
+    title: "I am too happy.",
+    date: "2023-07-15",
+    detail: "とりこしくろう初のR-18小説。わいの答えはこれや（火炎瓶を投げつける）。佐切さんが攻めです",
+    score: 8.1,
+    href: "works/i-am-too-happy.html"
+  },
+
+  {
+    title: "Blue Green シリーズ",
+    date: "2023-07-20",
+    endDate: "2023-08-07",
+    detail: "京の都に来た佐杠のすったもんだ。とりこしくろう初のシリーズ作",
+    score: 5.5,
+    href: "works/blue-green.html"
+  },
+
+  {
+    title: "宵語り",
+    date: "2023-08-12",
+    detail: "にゃんこ目線から見た佐杠の小説。うっすら性描写ありまして佐切さんが攻めです",
+    score: 9.0,
+    href: "works/yoigatari.html"
+  },
+
+  {
+    title: "筆が滑る",
+    date: "2023-09-30",
+    detail: "書きたいものをつい書いてしまう佐切さんの短編",
+    score: 5.5,
+    href: "works/fude-ga-suberu.html"
+  },
+
+  {
+    title: "お互い様",
+    date: "2023-09-30",
+    detail: "酔っぱらった佐切さんについての短編",
+    score: 5.6,
+    href: "works/otagaisama.html"
+  },
+
+  {
+    title: "ひとをみるひとよ",
+    date: "2023-09-30",
+    detail: "杠さんの運命についての短編",
+    score: 7.7,
+    href: "works/hito-wo-miru-hito-yo.html"
+  },
+
+  {
+    title: "あらがい・いきがい",
+    date: "2023-09-30",
+    detail: "それでも生きていくふたりの短編",
+    score: 9.5,
+    href: "works/aragai-ikigai.html"
+  },
+
+  {
+    title: "嘘つきの本音",
+    date: "2023-10-30",
+    detail: "島で別れてからの杠さんの独白小説",
+    score: 3.9,
+    href: "works/usotsuki-no-honne.html"
+  },
+
+  {
+    title: "養護教諭の佐切さんと生徒の杠さん シリーズ",
+    date: "2024-02-04",
+    endDate: "2024-04-18",
+    detail: "立場上恋愛はできないけど、のすったもんだシリーズ",
+    score: 8.0,
+    parody: true,
+    href: "works/yogo-kyoyu.html"
+  },
+
+  {
+    title: "とけてしまうくらい",
+    date: "2024-05-02",
+    detail: "もしも最中に自分の傷がばれてしまったら、な杠さんの短編。R-18で佐切さんが攻め",
+    score: 8.2,
+    href: "works/tokete-shimau-kurai.html"
+  },
+
+  {
+    title: "まっすぐな曲者",
+    date: "2024-05-02",
+    detail: "そういうときにも素直に自分を出せない杠さんの短編。R-18で佐切さんが攻め",
+    score: 8.4,
+    href: "works/massugu-na-kusemono.html"
+  },
+
+  {
+    title: "限度まで蒸らされて",
+    date: "2024-05-02",
+    detail: "進化した佐切さんにいいようにされてしまう杠さんの短編。R-18で佐切さんが攻め",
+    score: 8.4,
+    href: "works/gendo-made-murasarete.html"
+  },
+
+  {
+    title: "あなたの心を味わいたい",
+    date: "2024-05-02",
+    detail: "いつもとは違う雰囲気にしてみた杠さんの短編。R-18で杠さんが攻め",
+    score: 8.5,
+    href: "works/anata-no-kokoro-wo-ajiwaitai.html"
+  },
+
+  {
+    title: "丸餅ふたつ",
+    date: "2025-01-25",
+    detail: "ちょっと暗い考えになっちゃう佐切さんの小説",
+    score: 8.6,
+    href: "works/marumochi-futatsu.html"
+  },
+
+  {
+    title: "ふたり、手を繋いだら",
+    date: "2025-12-31",
+    detail: "もう昔の自分ではないと確信する佐切さんの小説",
+    score: 6.5,
+    href: "works/futari-te-wo-tsunaidara.html"
+  },
+
+  {
+    title: "ただそばに",
+    date: "2025-12-31",
+    detail: "隣に居ないと、居ても、なんか落ちつかないふたりの小説。ちょい喧嘩？させたかった",
+    score: 6.3,
+    href: "works/tada-soba-ni.html"
+  },
+
+  {
+    title: "風邪の功名",
+    date: "2026-01-13",
+    detail: "風邪をひいてしまった佐切さんの小説",
+    score: 5.8,
+    href: "works/kaze-no-komyo.html"
+  },
+
+  {
+    title: "また進むため",
+    date: "2026-01-23",
+    detail: "過去を払拭する杠さんの小説",
+    score: 6.1,
+    href: "works/mata-susumu-tame.html"
+  },
+
+  {
+    title: "忍ぶれど",
+    date: "2026-02-01",
+    detail: "杠さんがひたすら耐える小説",
+    score: 7.8,
+    href: "works/shinoburedo.html"
+  },
+
+  {
+    title: "ひとつ目の羽ばたき",
+    date: "2026-02-14",
+    detail: "佐切さんが山田家を出る小説",
+    score: 2.5,
+    href: "works/hitotsume-no-habataki.html"
+  },
+
+  {
+    title: "前向きに進む",
+    date: "2026-03-14",
+    detail: "佐切さんのちょっとしたひとことについての短編",
+    score: 4.2,
+    href: "works/maemuki-ni-susumu.html"
+  },
+
+  {
+    title: "たしかな色のある世界",
+    date: "2026-03-14",
+    detail: "好きって、どういうことだろうと考える短編",
+    score: 5.5,
+    href: "works/tashikana-iro-no-aru-sekai.html"
+  },
+
+  {
+    title: "ふくらむ手土産",
+    date: "2026-03-14",
+    detail: "思わぬものに救われる短編",
+    score: 6.2,
+    href: "works/fukuramu-temiyage.html"
+  },
+
+  {
+    title: "秘めごとは向こう側に",
+    date: "2026-03-14",
+    detail: "第三者目線のふたりについての短編",
+    score: 9.2,
+    href: "works/himegoto-wa-mukougawa-ni.html"
+  },
+
+  {
+    title: "花は散るゆえに",
+    date: "2026-03-21",
+    detail: "今がとても幸せ。だからこそ……の小説",
+    score: 9.6,
+    href: "works/hana-wa-chiru-yue-ni.html"
+  },
+
+  {
+    title: "...Me too.",
+    date: "2026-04-07",
+    detail: "初夜、が明けたふたりについての小説",
+    score: 8.1,
+    href: "works/me-too.html"
+  },
+
+  {
+    title: "夢のつづきは",
+    date: "2026-04-15",
+    detail: "ちょっと不思議な小説",
+    score: 6.0,
+    href: "works/yume-no-tsuzuki-wa.html"
+  },
+
+  {
+    title: "雪女の佐切さんと鬼の杠さん シリーズ",
+    date: "2026-05-03",
+    endDate: "2026-05-20",
+    detail: "グッズから着想を得たすったもんだシリーズ",
+    score: 7.9,
+    parody: true,
+    href: "works/yukionna-oni.html"
+  },
+
+  {
+    title: "追いかけっこ",
+    date: "2026-06-28",
+    detail: "お互いに「自分には持っていないものをこの人は持っている」と思い合っているふたりの小説",
+    score: 4.0,
+    href: "works/oikakekko.html"
+  },
+
+  {
+    title: "恋を鳴くには",
+    date: "2026-07-05",
+    detail: "もだもだ杠さんの小説",
+    score: 6.9,
+    href: "works/koi-wo-naku-niwa.html"
+  },
+
+  {
+    title: "生に冒され",
+    date: "2026-07-18",
+    detail: "島で別れてからの佐切さんの独白小説",
+    score: 2.6,
+    href: "works/sei-ni-okasare.html"
+  },
+
+  {
+    title: "再会の夜",
+    date: "2026-09-30",
+    detail: "ふたりがふたたび出会ってすぐの小説",
+    score: 4.0,
+    href: "works/saikai-no-yoru.html"
+  },
+
+  {
+    title: "旅は道連れ",
+    date: "2026-10-20",
+    detail: "まだわからないけど、今は。という小説",
+    score: 4.0,
+    href: "works/tabi-wa-michizure.html"
+  }
+
+];
+
+
+/* ========================================
+   執筆日と並び順
+======================================== */
+
+/*
+  同じ日付の場合は、
+  上の作品データに記載した順番を維持します。
+*/
+
+works.forEach((work, index) => {
+  work.originalIndex = index;
+});
+
+const chronologicalWorks = [...works].sort((a, b) =>
+  a.date.localeCompare(b.date) ||
+  a.originalIndex - b.originalIndex
+);
+
+/*
+  執筆日表示
+
+  通常作品：
+  2026-04-01
+
+  シリーズ：
+  2026-05-03 ～ 2026-05-20
+*/
+
+function displayDate(work) {
+  return work.endDate
+    ? `${work.date} ～ ${work.endDate}`
+    : work.date;
+}
+
+
+/* ========================================
+   タブ切り替え
+======================================== */
+
+const tabButtons =
+  document.querySelectorAll('.tab-button');
+
+const tabContents =
+  document.querySelectorAll('.tab-content');
+
+tabButtons.forEach(button => {
+
+  button.addEventListener('click', () => {
+
+    tabButtons.forEach(item => {
+      item.classList.remove('active');
+      item.setAttribute('aria-selected', 'false');
     });
 
-    /*
-      ===================================
-      関係性タイムライン
-      ===================================
-    */
-
-    const timeline =
-      document.getElementById("timeline");
-
-    const groups = {};
-
-    works.forEach((work, originalIndex) => {
-
-      work.originalIndex = originalIndex;
-
-      const key = work.score.toFixed(1);
-
-      if (!groups[key]) {
-        groups[key] = [];
-      }
-
-      groups[key].push(work);
-
+    tabContents.forEach(item => {
+      item.classList.remove('active');
     });
 
-    /*
-      同じscoreの作品は縦に並べる。
-      古い作品ほど上に配置。
-    */
+    button.classList.add('active');
 
-    Object.values(groups).forEach(group => {
+    button.setAttribute('aria-selected', 'true');
 
-      group.sort((a, b) => {
+    document
+      .getElementById(button.dataset.tab)
+      .classList.add('active');
 
-        const aDate = dateOrder.indexOf(a.date);
-        const bDate = dateOrder.indexOf(b.date);
-
-        if (aDate !== bDate) {
-          return aDate - bDate;
-        }
-
-        return a.originalIndex - b.originalIndex;
-
-      });
-
-    });
-
-    /*
-      作品ポイントを配置
-    */
-
-    works.forEach(work => {
-
-      const key = work.score.toFixed(1);
-      const group = groups[key];
-
-      const index = group.indexOf(work);
-      const count = group.length;
-
-      const spacing = 52;
-
-      const offset =
-        -58 - ((count - 1 - index) * spacing);
-
-      createTimelinePoint(work, offset);
-
-    });
-
-    /*
-      ===================================
-      作品ポイント生成
-      ===================================
-    */
-
-    function createTimelinePoint(work, offset) {
-
-      const point = document.createElement("div");
-
-      point.className = "story-point";
-
-      if (work.parody) {
-        point.classList.add("parody");
-      }
-
-      /*
-        score 2.5〜9.6を横幅の2.5〜97.5％へ。
-
-        最初の作品までの長い余白をなくす。
-        scoreの大小関係はそのまま維持。
-      */
-
-      const x =
-        2.5 +
-        ((work.score - 2.5) / (9.6 - 2.5)) * 95;
-
-      point.style.setProperty("--x", `${x}%`);
-      point.style.setProperty("--offset", `${offset}px`);
-
-      /*
-        丸い作品ボタン
-      */
-
-      const button = document.createElement("button");
-
-      button.type = "button";
-      button.className = "point-button";
-
-      button.setAttribute("aria-label", work.title);
-
-      button.textContent = Array.from(work.title)[0];
-
-      /*
-        ポップアップ
-      */
-
-      const popup = document.createElement("div");
-      popup.className = "story-popup";
-
-      const title = document.createElement("p");
-      title.className = "story-title";
-      title.textContent = work.title;
-
-      const date = document.createElement("p");
-      date.className = "story-date";
-      date.textContent = work.date;
-
-      const detail = document.createElement("p");
-      detail.className = "story-detail";
-      detail.textContent = work.detail;
-
-      const link = document.createElement("a");
-      link.className = "story-link";
-      link.href = work.href;
-      link.textContent = "読む";
-
-      popup.append(title, date, detail, link);
-      point.append(button, popup);
-      timeline.appendChild(point);
-
-      /*
-        タップで開閉
-      */
-
-      button.addEventListener("click", event => {
-
-        event.stopPropagation();
-
-        document
-          .querySelectorAll(".story-point.open")
-          .forEach(otherPoint => {
-
-            if (otherPoint !== point) {
-              otherPoint.classList.remove("open");
-            }
-
-          });
-
-        point.classList.toggle("open");
-
-      });
-
+    if (button.dataset.tab === 'timeline-tab') {
+      requestAnimationFrame(updateSectionLabel);
     }
 
-    /*
-      ===================================
-      執筆順
-      ===================================
-    */
+  });
 
-    const writingOrder =
-      document.getElementById("writing-order");
+});
 
-    dateOrder.forEach(dateName => {
 
-      const dateWorks = works.filter(
-        work => work.date === dateName
+/* ========================================
+   関係性タイムライン
+======================================== */
+
+const timeline =
+  document.getElementById('timeline');
+
+/*
+  同じ関係値の作品をグループ化します。
+*/
+
+const groups = {};
+
+works.forEach(work => {
+
+  const key = work.score.toFixed(1);
+
+  if (!groups[key]) {
+    groups[key] = [];
+  }
+
+  groups[key].push(work);
+
+});
+
+/*
+  同じ関係値の作品は、
+  執筆日が古いものから順に並べます。
+*/
+
+Object.values(groups).forEach(group => {
+
+  group.sort((a, b) =>
+    a.date.localeCompare(b.date) ||
+    a.originalIndex - b.originalIndex
+  );
+
+});
+
+/*
+  作品ポイントを配置します。
+*/
+
+works.forEach(work => {
+
+  const group =
+    groups[work.score.toFixed(1)];
+
+  const index =
+    group.indexOf(work);
+
+  const offset =
+    -58 - ((group.length - 1 - index) * 52);
+
+  createTimelinePoint(work, offset);
+
+});
+
+
+/* ========================================
+   作品ポイント生成
+======================================== */
+
+function createTimelinePoint(work, offset) {
+
+  const point =
+    document.createElement('div');
+
+  point.className = 'story-point';
+
+  if (work.parody) {
+    point.classList.add('parody');
+  }
+
+  /*
+    最初の作品を8%地点に配置します。
+
+    これにより、
+    「スライドして移動」の案内文と
+    最初の作品ポイントが重ならなくなります。
+  */
+
+  const x =
+    8 +
+    ((work.score - 2.5) / (9.6 - 2.5)) * 89.5;
+
+  point.style.setProperty(
+    '--x',
+    `${x}%`
+  );
+
+  point.style.setProperty(
+    '--offset',
+    `${offset}px`
+  );
+
+  /* 丸いボタン */
+
+  const button =
+    document.createElement('button');
+
+  button.type = 'button';
+
+  button.className = 'point-button';
+
+  button.setAttribute(
+    'aria-label',
+    work.title
+  );
+
+  button.setAttribute(
+    'aria-expanded',
+    'false'
+  );
+
+  button.textContent =
+    Array.from(work.title)[0];
+
+
+  /* ポップアップ */
+
+  const popup =
+    document.createElement('div');
+
+  popup.className = 'story-popup';
+
+
+  /* 作品タイトル */
+
+  const title =
+    document.createElement('p');
+
+  title.className = 'story-title';
+
+  title.textContent = work.title;
+
+
+  /* 執筆日 */
+
+  const date =
+    document.createElement('p');
+
+  date.className = 'story-date';
+
+  date.textContent = displayDate(work);
+
+
+  /* 紹介文 */
+
+  const detail =
+    document.createElement('p');
+
+  detail.className = 'story-detail';
+
+  detail.textContent = work.detail;
+
+
+  /* 作品リンク */
+
+  const link =
+    document.createElement('a');
+
+  link.className = 'story-link';
+
+  link.href = work.href;
+
+  link.textContent = '読む';
+
+
+  /* ポップアップ内に配置 */
+
+  popup.append(
+    title,
+    date,
+    detail,
+    link
+  );
+
+  point.append(
+    button,
+    popup
+  );
+
+  timeline.appendChild(point);
+
+
+  /* 丸を押したとき */
+
+  button.addEventListener('click', event => {
+
+    event.stopPropagation();
+
+    const wasOpen =
+      point.classList.contains('open');
+
+    closePopups();
+
+    if (!wasOpen) {
+
+      point.classList.add('open');
+
+      button.setAttribute(
+        'aria-expanded',
+        'true'
       );
 
-      if (dateWorks.length === 0) {
-        return;
-      }
-
-      const block = document.createElement("section");
-      block.className = "year-block";
-
-      const heading = document.createElement("h2");
-      heading.className = "year-title";
-      heading.textContent = dateName;
-
-      const list = document.createElement("ul");
-      list.className = "work-list";
-
-      dateWorks.forEach(work => {
-
-        const item = document.createElement("li");
-
-        const link = document.createElement("a");
-        link.href = work.href;
-        link.textContent = work.title;
-
-        item.appendChild(link);
-
-        if (work.parody) {
-
-          const type = document.createElement("span");
-          type.className = "work-type";
-          type.textContent = "パロディ";
-
-          item.appendChild(type);
-
-        }
-
-        list.appendChild(item);
-
-      });
-
-      block.append(heading, list);
-      writingOrder.appendChild(block);
-
-    });
-
-    /*
-      ===================================
-      ポップアップを閉じる
-      ===================================
-    */
-
-    document.addEventListener("click", () => {
-
-      document
-        .querySelectorAll(".story-point.open")
-        .forEach(point => {
-          point.classList.remove("open");
-        });
-
-    });
-
-    document.addEventListener("keydown", event => {
-
-      if (event.key === "Escape") {
-
-        document
-          .querySelectorAll(".story-point.open")
-          .forEach(point => {
-            point.classList.remove("open");
-          });
-
-      }
-
-    });
-
-    /*
-      ===================================
-      関係区分名の中央固定表示
-      ===================================
-
-      タイムラインの中央にある位置を基準に
-      現在の区分名を更新する。
-
-      0〜40%  ：仙薬捜索
-      40〜80% ：諸国行脚
-      80〜100%：その後
-    */
-
-    const timelineScroll =
-      document.querySelector(".timeline-scroll");
-
-    const currentSectionLabel =
-      document.getElementById("current-section-label");
-
-    const division1 =
-      document.querySelector(".division-1");
-
-    const division2 =
-      document.querySelector(".division-2");
-
-    function updateSectionLabel() {
-
-      const timelineRect =
-        timeline.getBoundingClientRect();
-
-      const scrollRect =
-        timelineScroll.getBoundingClientRect();
-
-      /*
-        表示領域の中央がタイムライン上の
-        どこにあるかを計算する。
-      */
-
-      const centerX =
-        (scrollRect.left + scrollRect.width / 2)
-        - timelineRect.left;
-
-      let sectionName = "仙薬捜索";
-
-      if (centerX >= division2.offsetLeft) {
-
-        sectionName = "その後";
-
-      } else if (centerX >= division1.offsetLeft) {
-
-        sectionName = "諸国行脚";
-
-      }
-
-      currentSectionLabel.textContent = sectionName;
-
     }
 
-    /*
-      スクロール時に更新
-    */
+  });
 
-    timelineScroll.addEventListener(
-      "scroll",
-      updateSectionLabel,
-      { passive: true }
-    );
+}
 
-    /*
-      画面サイズ変更時に更新
-    */
 
-    window.addEventListener(
-      "resize",
-      updateSectionLabel
-    );
+/* ========================================
+   ポップアップを閉じる
+======================================== */
 
-    /*
-      初期表示
-    */
+function closePopups() {
 
-    updateSectionLabel();
+  document
+    .querySelectorAll('.story-point.open')
+    .forEach(point => {
 
-  </script>
+      point.classList.remove('open');
+
+      point
+        .querySelector('.point-button')
+        .setAttribute(
+          'aria-expanded',
+          'false'
+        );
+
+    });
+
+}
+
+/* ポップアップ以外を押した場合 */
+
+document.addEventListener('click', event => {
+
+  if (!event.target.closest('.story-popup')) {
+    closePopups();
+  }
+
+});
+
+/* Escapeキーでも閉じる */
+
+document.addEventListener('keydown', event => {
+
+  if (event.key === 'Escape') {
+    closePopups();
+  }
+
+});
+
+
+/* ========================================
+   執筆順
+======================================== */
+
+const writingOrder =
+  document.getElementById('writing-order');
+
+/*
+  作品の執筆日から年を取得します。
+*/
+
+const years = [
+  ...new Set(
+    chronologicalWorks.map(work =>
+      work.date.slice(0, 4)
+    )
+  )
+];
+
+/*
+  年ごとに作品一覧を作成します。
+*/
+
+years.forEach(year => {
+
+  const block =
+    document.createElement('section');
+
+  block.className = 'year-block';
+
+
+  /* 年の見出し */
+
+  const heading =
+    document.createElement('h2');
+
+  heading.className = 'year-title';
+
+  heading.textContent = `${year}年`;
+
+
+  /* 作品一覧 */
+
+  const list =
+    document.createElement('ul');
+
+  list.className = 'work-list';
+
+
+  chronologicalWorks
+    .filter(work => work.date.startsWith(year))
+    .forEach(work => {
+
+      const item =
+        document.createElement('li');
+
+
+      /* 執筆日 */
+
+      const date =
+        document.createElement('span');
+
+      date.className = 'work-date';
+
+      date.textContent = displayDate(work);
+
+
+      /* 作品名 */
+
+      const link =
+        document.createElement('a');
+
+      link.href = work.href;
+
+      link.textContent = work.title;
+
+
+      item.append(
+        date,
+        link
+      );
+
+
+      /* パロディ表記 */
+
+      if (work.parody) {
+
+        const type =
+          document.createElement('span');
+
+        type.className = 'work-type';
+
+        type.textContent = 'パロディ';
+
+        item.appendChild(type);
+
+      }
+
+      list.appendChild(item);
+
+    });
+
+
+  block.append(
+    heading,
+    list
+  );
+
+  writingOrder.appendChild(block);
+
+});
+
+
+/* ========================================
+   タイムラインの区分名
+======================================== */
+
+const timelineScroll =
+  document.querySelector('.timeline-scroll');
+
+const currentSectionLabel =
+  document.getElementById('current-section-label');
+
+const division1 =
+  document.querySelector('.division-1');
+
+const division2 =
+  document.querySelector('.division-2');
+
+/*
+  画面中央の位置に応じて、
+
+  仙薬捜索
+  諸国行脚
+  その後
+
+  を切り替えます。
+*/
+
+function updateSectionLabel() {
+
+  const timelineRect =
+    timeline.getBoundingClientRect();
+
+  const scrollRect =
+    timelineScroll.getBoundingClientRect();
+
+  const centerX =
+    scrollRect.left +
+    scrollRect.width / 2 -
+    timelineRect.left;
+
+  if (centerX >= division2.offsetLeft) {
+
+    currentSectionLabel.textContent =
+      'その後';
+
+  } else if (centerX >= division1.offsetLeft) {
+
+    currentSectionLabel.textContent =
+      '諸国行脚';
+
+  } else {
+
+    currentSectionLabel.textContent =
+      '仙薬捜索';
+
+  }
+
+}
+
+/* 横スクロール時 */
+
+timelineScroll.addEventListener(
+  'scroll',
+  updateSectionLabel,
+  { passive: true }
+);
+
+/* 画面サイズ変更時 */
+
+window.addEventListener(
+  'resize',
+  updateSectionLabel
+);
+
+/* 初期表示 */
+
+updateSectionLabel();
+
+</script>
 
 </body>
 </html>
