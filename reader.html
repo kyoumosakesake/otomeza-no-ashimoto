@@ -1,511 +1,381 @@
 <!DOCTYPE html>
 <html lang="ja">
-
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>作品を読む｜乙女座の脚元</title>
-
 <style>
-
-/* ========================================
-   基本設定
-======================================== */
-
-* {
-  box-sizing: border-box;
-}
-
-:root {
-  --background: #1d3652;
-  --foreground: #ffffff;
-  --accent: #28bfb0;
-  --font-size: 20px;
-  --reading-font:
-    "Yu Mincho",
-    "游明朝",
-    "YuMincho",
-    "Hiragino Mincho ProN",
-    serif;
-}
-
-html {
-  min-height: 100%;
-}
-
-body {
-  margin: 0;
-  min-height: 100vh;
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--reading-font);
-  transition: background-color .2s, color .2s;
-}
-
-body.light-mode {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-button,
-input {
-  font-family: inherit;
-}
-
-/* ========================================
-   ヘッダー
-======================================== */
-
-.site-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 1rem;
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 1.5rem;
-}
-
-.site-name {
-  color: var(--foreground);
-  font-size: .9rem;
-  letter-spacing: .12em;
-  text-decoration: none;
-}
-
-.settings-button {
-  padding: .55rem .9rem;
-  background: transparent;
-  color: var(--foreground);
-  border: 1px solid var(--foreground);
-  border-radius: 4px;
-  font-size: .85rem;
-  cursor: pointer;
-}
-
-.settings-button:hover {
-  color: var(--accent);
-  border-color: var(--accent);
-}
-
-/* ========================================
-   設定パネル
-======================================== */
-
-.settings-panel {
-  display: none;
-  position: fixed;
-  top: 75px;
-  right: 20px;
-  width: min(320px, calc(100vw - 40px));
-  max-height: calc(100vh - 95px);
-  overflow-y: auto;
-  padding: 1.4rem;
-  background: var(--background);
-  color: var(--foreground);
-  border: 1px solid var(--foreground);
-  border-radius: 7px;
-  box-shadow: 0 10px 35px rgba(0,0,0,.25);
-  z-index: 1000;
-}
-
-.settings-panel.open {
-  display: block;
-}
-
-.settings-title {
-  margin: 0 0 1.3rem;
-  font-size: 1rem;
-  font-weight: 400;
-}
-
-.setting-group {
-  margin-bottom: 1.4rem;
-}
-
-.setting-label {
-  display: block;
-  margin-bottom: .65rem;
-  font-size: .8rem;
-  opacity: .75;
-}
-
-.setting-buttons {
-  display: flex;
-  gap: .5rem;
-}
-
-.setting-option {
-  flex: 1;
-  padding: .6rem .3rem;
-  background: transparent;
-  color: var(--foreground);
-  border: 1px solid var(--foreground);
-  border-radius: 4px;
-  font-size: .85rem;
-  cursor: pointer;
-  opacity: .6;
-}
-
-.setting-option.active {
-  background: var(--accent);
-  color: #1d3652;
-  border-color: var(--accent);
-  opacity: 1;
-}
-
-/* ========================================
-   文字サイズスライダー
-======================================== */
-
-.font-slider-area {
-  padding: .2rem 0;
-}
-
-.font-slider {
-  display: block;
-  width: 100%;
-  margin: .6rem 0;
-  accent-color: var(--accent);
-  cursor: pointer;
-}
-
-.font-slider-labels {
-  display: flex;
-  justify-content: space-between;
-  font-family: sans-serif;
-  font-size: .7rem;
-  opacity: .65;
-}
-
-.font-size-value {
-  display: block;
-  margin-top: .8rem;
-  text-align: center;
-  font-family: sans-serif;
-  font-size: .85rem;
-}
-
-/* ========================================
-   設定を閉じる
-======================================== */
-
-.settings-close {
-  width: 100%;
-  padding: .7rem;
-  background: transparent;
-  color: var(--foreground);
-  border: 1px solid var(--foreground);
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-/* ========================================
-   読書ページ全体
-======================================== */
-
-.reading-layout {
-  width: 100%;
-  min-height: 70vh;
-}
-
-/* ========================================
-   タイトル共通
-======================================== */
-
-.work-header {
-  color: var(--foreground);
-}
-
-.work-title {
-  margin: 0;
-  font-weight: 400;
-  letter-spacing: .12em;
-  line-height: 1.8;
-}
-
-.work-date {
-  margin: 0;
-  font-size: .8rem;
-  opacity: .6;
-}
-
-/* ========================================
-   本文共通
-======================================== */
-
-.reader {
-  min-width: 0;
-  font-family: var(--reading-font);
-}
-
-.novel-text {
-  font-size: var(--font-size);
-  line-height: 2.2;
-  letter-spacing: .04em;
-  overflow-wrap: anywhere;
-}
-
-.novel-text p {
-  margin: 0;
-  padding: 0;
-  text-indent: 0;
-  white-space: pre-wrap;
-}
-
-/* ========================================
-   横書きレイアウト
-======================================== */
-
-.reading-layout.horizontal {
-  display: block;
-}
-
-.reading-layout.horizontal .work-header {
-  max-width: 800px;
-  margin: 3rem auto 2rem;
-  padding: 0 1.5rem;
-  text-align: center;
-}
-
-.reading-layout.horizontal .work-title {
-  font-size: 1.7rem;
-}
-
-.reading-layout.horizontal .work-date {
-  margin-top: .8rem;
-}
-
-.reading-layout.horizontal .reader {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 2rem 1.5rem 5rem;
-}
-
-.reading-layout.horizontal .novel-text {
-  writing-mode: horizontal-tb;
-}
-
-.reading-layout.horizontal .novel-text p {
-  display: block;
-}
-
-.reading-layout.horizontal .novel-blank-line {
-  height: 1em;
-}
-
-/* ========================================
-   縦書きレイアウト
-======================================== */
-
-/*
-  本文が右側、タイトルが左側。
-
-  本文を読み終えるとタイトルが現れます。
-*/
-
-.reading-layout.vertical {
-  display: flex;
-  flex-direction: row-reverse;
-  align-items: flex-start;
-  gap: 3rem;
-
-  width: 100%;
-  overflow-x: auto;
-  overflow-y: hidden;
-
-  padding: 2rem 1.5rem 4rem;
-
-  direction: rtl;
-  scroll-behavior: auto;
-}
-
-/* ========================================
-   縦書きタイトル
-======================================== */
-
-.reading-layout.vertical .work-header {
-  flex: 0 0 auto;
-
-  display: flex;
-  flex-direction: row-reverse;
-  align-items: flex-start;
-  gap: 1.2rem;
-
-  writing-mode: vertical-rl;
-  text-orientation: mixed;
-  direction: ltr;
-
-  height: 65vh;
-  padding: 1rem 0;
-}
-
-.reading-layout.vertical .work-title {
-  font-size: 1.2rem;
-  line-height: 1.7;
-}
-
-.reading-layout.vertical .work-date {
-  font-size: .75rem;
-  margin: 0;
-}
-
-/* ========================================
-   縦書き本文
-======================================== */
-
-.reading-layout.vertical .reader {
-  flex: 0 0 auto;
-
-  width: max-content;
-  min-width: 0;
-
-  overflow: visible;
-  padding: 1rem 0 2rem;
-
-  direction: ltr;
-}
-
-.reading-layout.vertical .novel-text {
-  writing-mode: vertical-rl;
-  text-orientation: mixed;
-
-  height: 65vh;
-
-  width: max-content;
-  min-width: 0;
-
-  direction: ltr;
-
-  margin: 0;
-}
-
-.reading-layout.vertical .novel-text p {
-  display: block;
-  margin: 0;
-  padding: 0;
-}
-
-.reading-layout.vertical .novel-blank-line {
-  display: block;
-  width: 1em;
-  height: auto;
-}
-
-/* ========================================
-   ルビ
-======================================== */
-
-ruby {
-  ruby-position: over;
-}
-
-rt {
-  font-size: .5em;
-  font-weight: normal;
-  letter-spacing: 0;
-}
-
-/* ========================================
-   フッター
-======================================== */
-
-.work-footer {
-  max-width: 800px;
-  margin: 3rem auto 5rem;
-  padding: 0 1.5rem;
-  text-align: center;
-}
-
-.back-link {
-  color: var(--foreground);
-  font-size: .9rem;
-  text-decoration: none;
-  opacity: .7;
-}
-
-.back-link:hover {
-  color: var(--accent);
-  opacity: 1;
-}
-
-/* ========================================
-   スマートフォン
-======================================== */
-
-@media (max-width: 600px) {
+  * { box-sizing: border-box; }
+
+  :root {
+    --background: #1d3652;
+    --foreground: #ffffff;
+    --accent: #28bfb0;
+    --font-size: 16px;
+    --reading-font: "Yu Mincho", "游明朝", "YuMincho", "Hiragino Mincho ProN", serif;
+  }
+
+  html { min-height: 100%; }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background: var(--background);
+    color: var(--foreground);
+    font-family: var(--reading-font);
+  }
+
+  body.light-mode {
+    --background: #ffffff;
+    --foreground: #171717;
+  }
+
+  button, input { font-family: inherit; }
 
   .site-header {
-    padding: 1.2rem 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 1.5rem;
   }
 
   .site-name {
+    color: var(--foreground);
+    font-size: .9rem;
+    letter-spacing: .12em;
+    text-decoration: none;
+  }
+
+  .settings-button {
+    padding: .55rem .9rem;
+    background: transparent;
+    color: var(--foreground);
+    border: 1px solid var(--foreground);
+    border-radius: 4px;
+    font-size: .85rem;
+    cursor: pointer;
+  }
+
+  .settings-button:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+  }
+
+  .settings-panel {
+    display: none;
+    position: fixed;
+    top: 75px;
+    right: 20px;
+    width: min(320px, calc(100vw - 40px));
+    max-height: calc(100vh - 95px);
+    overflow-y: auto;
+    padding: 1.4rem;
+    background: var(--background);
+    color: var(--foreground);
+    border: 1px solid var(--foreground);
+    border-radius: 7px;
+    box-shadow: 0 10px 35px rgba(0,0,0,.25);
+    z-index: 1000;
+  }
+
+  .settings-panel.open { display: block; }
+
+  .settings-title {
+    margin: 0 0 1.3rem;
+    font-size: 1rem;
+    font-weight: 400;
+  }
+
+  .setting-group { margin-bottom: 1.4rem; }
+
+  .setting-label {
+    display: block;
+    margin-bottom: .65rem;
     font-size: .8rem;
+    opacity: .75;
   }
 
-  .reading-layout.vertical {
-    gap: 1.5rem;
-    padding: 1rem .75rem 3rem;
-  }
-
-  .reading-layout.vertical .work-header {
-    padding: .5rem 0;
+  .setting-buttons {
+    display: flex;
     gap: .5rem;
   }
 
-  .reading-layout.vertical .work-title {
-    font-size: 1rem;
+  .setting-option {
+    flex: 1;
+    padding: .6rem .3rem;
+    background: transparent;
+    color: var(--foreground);
+    border: 1px solid var(--foreground);
+    border-radius: 4px;
+    font-size: .85rem;
+    cursor: pointer;
+    opacity: .6;
   }
 
-  .reading-layout.vertical .work-date {
-    font-size: .65rem;
+  .setting-option.active {
+    background: var(--accent);
+    color: #1d3652;
+    border-color: var(--accent);
+    opacity: 1;
   }
 
-  .reading-layout.vertical .reader {
-    padding: .5rem 0;
+  .font-slider {
+    display: block;
+    width: 100%;
+    margin: .6rem 0;
+    accent-color: var(--accent);
   }
 
-  .reading-layout.vertical .novel-text {
-    height: 65vh;
+  .font-slider-labels {
+    display: flex;
+    justify-content: space-between;
+    font: .7rem sans-serif;
+    opacity: .65;
+  }
+
+  .font-size-value {
+    display: block;
+    margin-top: .8rem;
+    text-align: center;
+    font: .85rem sans-serif;
+  }
+
+  .settings-close {
+    width: 100%;
+    padding: .7rem;
+    background: transparent;
+    color: var(--foreground);
+    border: 1px solid var(--foreground);
+    border-radius: 4px;
+    cursor: pointer;
+  }
+
+  .reading-layout {
+    width: 100%;
+    min-height: 70vh;
+  }
+
+  .work-header { color: var(--foreground); }
+
+  .work-title {
+    margin: 0;
+    font-weight: 400;
+    letter-spacing: .12em;
+    line-height: 1.8;
+  }
+
+  .work-date {
+    margin: 0;
+    font-size: .8rem;
+    opacity: .6;
+  }
+
+  .reader {
+    min-width: 0;
+    font-family: var(--reading-font);
+  }
+
+  .novel-text {
+    font-size: var(--font-size);
+    line-height: 2.2;
+    letter-spacing: .04em;
+    line-break: strict;
+    word-break: normal;
+    overflow-wrap: normal;
+  }
+
+  .novel-text p {
+    margin: 0;
+    padding: 0;
+    text-indent: 0;
+    white-space: pre-wrap;
+  }
+
+  .kinsoku-pair { white-space: nowrap; }
+
+  .tcy {
+    text-combine-upright: all;
+    -webkit-text-combine: horizontal;
+  }
+
+  ruby { ruby-position: over; }
+
+  rt {
+    font-size: .5em;
+    font-weight: normal;
+    letter-spacing: 0;
+  }
+
+  /* 横書き */
+
+  .reading-layout.horizontal { display: block; }
+
+  .reading-layout.horizontal .work-header {
+    max-width: 800px;
+    margin: 3rem auto 2rem;
+    padding: 0 1.5rem;
+    text-align: center;
   }
 
   .reading-layout.horizontal .work-title {
-    font-size: 1.4rem;
+    font-size: 1.7rem;
   }
 
-}
+  .reading-layout.horizontal .work-date {
+    margin-top: .8rem;
+  }
 
+  .reading-layout.horizontal .reader {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 5rem;
+  }
+
+  .reading-layout.horizontal .novel-text {
+    writing-mode: horizontal-tb;
+  }
+
+  .reading-layout.horizontal .novel-blank-line {
+    height: 1em;
+  }
+
+  /* 縦書き：右端にタイトル、その左に本文 */
+
+  .reading-layout.vertical {
+    display: flex;
+    flex-direction: row;
+    direction: rtl;
+    align-items: flex-start;
+    gap: 2.5rem;
+    width: 100%;
+    max-width: 100vw;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 2rem 1.5rem 4rem;
+    scroll-behavior: auto;
+    overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-y;
+  }
+
+  .reading-layout.vertical .work-header {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: row-reverse;
+    align-items: flex-start;
+    gap: 1.2rem;
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    direction: ltr;
+    height: 65vh;
+    padding: 1rem 0;
+  }
+
+  .reading-layout.vertical .work-title {
+    font-size: 1.2rem;
+    line-height: 1.7;
+  }
+
+  .reading-layout.vertical .work-date {
+    font-size: .75rem;
+    margin: 0;
+  }
+
+  .reading-layout.vertical .reader {
+    flex: 0 0 auto;
+    width: max-content;
+    min-width: 0;
+    overflow: visible;
+    padding: 1rem 0 2rem;
+    direction: ltr;
+  }
+
+  .reading-layout.vertical .novel-text {
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    direction: ltr;
+    height: 65vh;
+    width: max-content;
+    min-width: 0;
+    margin: 0;
+  }
+
+  .reading-layout.vertical .novel-blank-line {
+    display: block;
+    width: 1em;
+    height: auto;
+  }
+
+  .work-footer {
+    max-width: 800px;
+    margin: 3rem auto 5rem;
+    padding: 0 1.5rem;
+    text-align: center;
+  }
+
+  .back-link {
+    color: var(--foreground);
+    font-size: .9rem;
+    text-decoration: none;
+    opacity: .7;
+  }
+
+  .back-link:hover {
+    color: var(--accent);
+    opacity: 1;
+  }
+
+  @media (max-width: 600px) {
+    .site-header { padding: 1.2rem 1rem; }
+    .site-name { font-size: .8rem; }
+
+    .reading-layout.vertical {
+      gap: 1.5rem;
+      padding: 1rem .75rem 3rem;
+    }
+
+    .reading-layout.vertical .work-header {
+      padding: .5rem 0;
+      gap: .5rem;
+    }
+
+    .reading-layout.vertical .work-title {
+      font-size: 1rem;
+    }
+
+    .reading-layout.vertical .work-date {
+      font-size: .65rem;
+    }
+
+    .reading-layout.vertical .reader {
+      padding: .5rem 0;
+    }
+
+    .reading-layout.vertical .novel-text {
+      height: 65vh;
+    }
+
+    .reading-layout.horizontal .work-title {
+      font-size: 1.4rem;
+    }
+  }
 </style>
 </head>
-
 <body>
 
-<!-- ========================================
-     ヘッダー
-======================================== -->
-
 <header class="site-header">
-
-  <a class="site-name" href="index.html">
-    乙女座の脚元
-  </a>
-
+  <a class="site-name" href="index.html">乙女座の脚元</a>
   <button
     class="settings-button"
     id="settings-button"
     type="button"
     aria-expanded="false"
     aria-controls="settings-panel"
-  >
-    ⚙ 読書設定
-  </button>
-
+  >⚙ 読書設定</button>
 </header>
-
-<!-- ========================================
-     読書設定
-======================================== -->
 
 <div
   class="settings-panel"
@@ -513,883 +383,488 @@ rt {
   role="dialog"
   aria-label="読書設定"
 >
-
-  <h2 class="settings-title">
-    読書設定
-  </h2>
-
-  <!-- 組み方向 -->
+  <h2 class="settings-title">読書設定</h2>
 
   <div class="setting-group">
-
-    <span class="setting-label">
-      組み方向
-    </span>
-
+    <span class="setting-label">組み方向</span>
     <div class="setting-buttons">
-
       <button
-        class="setting-option active"
+        class="setting-option"
         data-setting="direction"
         data-value="vertical"
         type="button"
-      >
-        縦書き
-      </button>
-
+      >縦書き</button>
       <button
         class="setting-option"
         data-setting="direction"
         data-value="horizontal"
         type="button"
-      >
-        横書き
-      </button>
-
+      >横書き</button>
     </div>
-
   </div>
 
-  <!-- フォント -->
-
   <div class="setting-group">
-
-    <span class="setting-label">
-      フォント
-    </span>
-
+    <span class="setting-label">フォント</span>
     <div class="setting-buttons">
-
       <button
-        class="setting-option active"
+        class="setting-option"
         data-setting="font"
         data-value="mincho"
         type="button"
-      >
-        明朝体
-      </button>
-
+      >明朝体</button>
       <button
         class="setting-option"
         data-setting="font"
         data-value="gothic"
         type="button"
-      >
-        ゴシック体
-      </button>
-
+      >ゴシック体</button>
     </div>
-
   </div>
 
-  <!-- 文字サイズ -->
-
   <div class="setting-group">
-
-    <label
-      class="setting-label"
-      for="font-size-slider"
-    >
+    <label class="setting-label" for="font-size-slider">
       文字サイズ
     </label>
-
-    <div class="font-slider-area">
-
-      <input
-        class="font-slider"
-        id="font-size-slider"
-        type="range"
-        min="0"
-        max="4"
-        step="1"
-        value="2"
-        aria-label="文字サイズ"
-      >
-
-      <div class="font-slider-labels">
-        <span>小</span>
-        <span>標準</span>
-        <span>大</span>
-      </div>
-
-      <span
-        class="font-size-value"
-        id="font-size-value"
-      >
-        20px
-      </span>
-
+    <input
+      class="font-slider"
+      id="font-size-slider"
+      type="range"
+      min="0"
+      max="4"
+      step="1"
+      value="2"
+      aria-label="文字サイズ"
+    >
+    <div class="font-slider-labels">
+      <span>小</span>
+      <span>標準</span>
+      <span>大</span>
     </div>
-
+    <span class="font-size-value" id="font-size-value">16px</span>
   </div>
 
-  <!-- 画面の色 -->
-
   <div class="setting-group">
-
-    <span class="setting-label">
-      画面の色
-    </span>
-
+    <span class="setting-label">画面の色</span>
     <div class="setting-buttons">
-
       <button
-        class="setting-option active"
+        class="setting-option"
         data-setting="theme"
         data-value="dark"
         type="button"
-      >
-        ダーク
-      </button>
-
+      >ダーク</button>
       <button
         class="setting-option"
         data-setting="theme"
         data-value="light"
         type="button"
-      >
-        ライト
-      </button>
-
+      >ライト</button>
     </div>
-
   </div>
 
   <button
     class="settings-close"
     id="settings-close"
     type="button"
-  >
-    閉じる
-  </button>
-
+  >閉じる</button>
 </div>
 
-<!-- ========================================
-     読書レイアウト
-======================================== -->
-
-<div
-  class="reading-layout vertical"
-  id="reading-layout"
->
-
-  <!-- タイトル -->
-
+<div class="reading-layout vertical" id="reading-layout">
   <div class="work-header">
-
-    <h1
-      class="work-title"
-      id="work-title"
-    >
-      読み込み中…
-    </h1>
-
-    <p
-      class="work-date"
-      id="work-date"
-    ></p>
-
+    <h1 class="work-title" id="work-title">読み込み中…</h1>
+    <p class="work-date" id="work-date"></p>
   </div>
 
-  <!-- 本文 -->
-
-  <main
-    class="reader"
-    id="reader"
-  >
-
-    <article
-      class="novel-text"
-      id="novel-text"
-    >
-      <p>ここに本文が入ります。</p>
-    </article>
-
+  <main class="reader" id="reader">
+    <article class="novel-text" id="novel-text"></article>
   </main>
-
 </div>
 
-<!-- ========================================
-     フッター
-======================================== -->
-
 <footer class="work-footer">
-
-  <a
-    class="back-link"
-    href="fanworks.html"
-  >
+  <a class="back-link" href="fanworks.html">
     ← 作品一覧へ戻る
   </a>
-
 </footer>
 
-<!-- ========================================
-     作品データ
-======================================== -->
-
-<script src="novels.js"></script>
-
+<script src="novels.js?v=20261026-2"></script>
 <script>
+  const fontSizes = [12, 14, 16, 18, 20];
+  const storageKey = "otomeza-reader-settings";
 
-/* ========================================
-   文字サイズの5段階
-======================================== */
+  const defaultSettings = {
+    direction: "vertical",
+    font: "mincho",
+    theme: "dark",
+    fontSize: 16
+  };
 
-const fontSizes = [
-  16,
-  18,
-  20,
-  22,
-  24
-];
-
-/* ========================================
-   読書設定の初期値
-======================================== */
-
-const defaultSettings = {
-  direction: "vertical",
-  font: "mincho",
-  theme: "dark",
-  fontSize: 20
-};
-
-/* ========================================
-   保存済み設定の読み込み
-======================================== */
-
-let savedSettings = {};
-
-try {
-
-  savedSettings = JSON.parse(
-    localStorage.getItem("otomeza-reader-settings")
-  ) || {};
-
-} catch (error) {
-
-  savedSettings = {};
-
-}
-
-const settings = {
-  ...defaultSettings,
-  ...savedSettings
-};
-
-/*
-  以前の設定が12pxや32pxだった場合も、
-  新しい5段階の中で最も近い値に合わせます。
-*/
-
-if (!Number.isFinite(Number(settings.fontSize))) {
-  settings.fontSize = 20;
-}
-
-settings.fontSize = fontSizes.reduce(
-  (closest, size) => {
-
-    return Math.abs(size - Number(settings.fontSize))
-      < Math.abs(closest - Number(settings.fontSize))
-        ? size
-        : closest;
-
-  },
-  20
-);
-
-/* ========================================
-   要素
-======================================== */
-
-const readingLayout =
-  document.getElementById("reading-layout");
-
-const settingsButton =
-  document.getElementById("settings-button");
-
-const settingsPanel =
-  document.getElementById("settings-panel");
-
-const settingsClose =
-  document.getElementById("settings-close");
-
-const fontSizeSlider =
-  document.getElementById("font-size-slider");
-
-const fontSizeValue =
-  document.getElementById("font-size-value");
-
-/* ========================================
-   読書設定の反映
-======================================== */
-
-function applySettings() {
-
-  /*
-    縦書き・横書き
-  */
-
-  readingLayout.classList.toggle(
-    "vertical",
-    settings.direction === "vertical"
-  );
-
-  readingLayout.classList.toggle(
-    "horizontal",
-    settings.direction === "horizontal"
-  );
-
-  /*
-    フォント
-  */
-
-  const fontFamily =
-    settings.font === "gothic"
-      ? '"Yu Gothic", "游ゴシック", "YuGothic", "Hiragino Kaku Gothic ProN", sans-serif'
-      : '"Yu Mincho", "游明朝", "YuMincho", "Hiragino Mincho ProN", serif';
-
-  document.documentElement.style.setProperty(
-    "--reading-font",
-    fontFamily
-  );
-
-  /*
-    文字サイズ
-  */
-
-  document.documentElement.style.setProperty(
-    "--font-size",
-    `${settings.fontSize}px`
-  );
-
-  fontSizeValue.textContent =
-    `${settings.fontSize}px`;
-
-  fontSizeSlider.value =
-    String(fontSizes.indexOf(settings.fontSize));
-
-  /*
-    画面の色
-  */
-
-  document.body.classList.toggle(
-    "light-mode",
-    settings.theme === "light"
-  );
-
-  /*
-    選択中のボタン
-  */
-
-  document.querySelectorAll(
-    ".setting-option"
-  ).forEach(button => {
-
-    const key = button.dataset.setting;
-    const value = button.dataset.value;
-
-    const active =
-      settings[key] === value;
-
-    button.classList.toggle(
-      "active",
-      active
-    );
-
-    button.setAttribute(
-      "aria-pressed",
-      String(active)
-    );
-
-  });
-
-}
-
-/* ========================================
-   読書設定の保存
-======================================== */
-
-function saveSettings() {
+  let savedSettings = {};
 
   try {
+    savedSettings = JSON.parse(localStorage.getItem(storageKey)) || {};
+  } catch (error) {
+    savedSettings = {};
+  }
 
-    localStorage.setItem(
-      "otomeza-reader-settings",
-      JSON.stringify(settings)
+  const settings = {
+    ...defaultSettings,
+    ...savedSettings
+  };
+
+  // 以前の文字サイズ設定から移行するときは、
+  // 標準の16pxに戻します。
+  if (settings.fontScaleVersion !== 2) {
+    settings.fontSize = 16;
+  }
+
+  settings.fontScaleVersion = 2;
+
+  if (!fontSizes.includes(Number(settings.fontSize))) {
+    settings.fontSize = 16;
+  }
+
+  settings.fontSize = Number(settings.fontSize);
+
+  if (!["vertical", "horizontal"].includes(settings.direction)) {
+    settings.direction = "vertical";
+  }
+
+  if (!["mincho", "gothic"].includes(settings.font)) {
+    settings.font = "mincho";
+  }
+
+  if (!["dark", "light"].includes(settings.theme)) {
+    settings.theme = "dark";
+  }
+
+  const layout = document.getElementById("reading-layout");
+  const settingsButton = document.getElementById("settings-button");
+  const settingsPanel = document.getElementById("settings-panel");
+  const fontSizeSlider = document.getElementById("font-size-slider");
+
+  function saveSettings() {
+    try {
+      localStorage.setItem(storageKey, JSON.stringify(settings));
+    } catch (error) {
+      // 保存できなくても読書は続けられます。
+    }
+  }
+
+  function applySettings() {
+    layout.classList.toggle(
+      "vertical",
+      settings.direction === "vertical"
     );
 
-  } catch (error) {
+    layout.classList.toggle(
+      "horizontal",
+      settings.direction === "horizontal"
+    );
 
-    /* 保存できない場合も継続 */
+    document.documentElement.style.setProperty(
+      "--reading-font",
+      settings.font === "gothic"
+        ? '"Yu Gothic", "游ゴシック", "YuGothic", "Hiragino Kaku Gothic ProN", sans-serif'
+        : '"Yu Mincho", "游明朝", "YuMincho", "Hiragino Mincho ProN", serif'
+    );
 
+    document.documentElement.style.setProperty(
+      "--font-size",
+      `${settings.fontSize}px`
+    );
+
+    fontSizeSlider.value = String(
+      fontSizes.indexOf(settings.fontSize)
+    );
+
+    document.getElementById("font-size-value").textContent =
+      `${settings.fontSize}px`;
+
+    document.body.classList.toggle(
+      "light-mode",
+      settings.theme === "light"
+    );
+
+    document.querySelectorAll(".setting-option").forEach(button => {
+      const active =
+        settings[button.dataset.setting] === button.dataset.value;
+
+      button.classList.toggle("active", active);
+      button.setAttribute("aria-pressed", String(active));
+    });
   }
 
-}
+  function resetReadingPosition() {
+    if (settings.direction !== "vertical") return;
 
-/* ========================================
-   設定ボタン
-======================================== */
+    // RTLではスクロール位置0が右端です。
+    // 右端に配置したタイトルから読み始めます。
+    layout.scrollLeft = 0;
+  }
 
-document.querySelectorAll(
-  ".setting-option"
-).forEach(button => {
+  function resetAfterLayout() {
+    requestAnimationFrame(() => {
+      resetReadingPosition();
+      requestAnimationFrame(resetReadingPosition);
+    });
+  }
 
-  button.addEventListener("click", () => {
+  document.querySelectorAll(".setting-option").forEach(button => {
+    button.addEventListener("click", () => {
+      const previousDirection = settings.direction;
 
-    const previousDirection =
-      settings.direction;
+      settings[button.dataset.setting] = button.dataset.value;
 
-    settings[button.dataset.setting] =
-      button.dataset.value;
+      applySettings();
+      saveSettings();
 
-    applySettings();
-    saveSettings();
-
-    /*
-      横書きから縦書きへ切り替えたときは
-      本文の冒頭を表示します。
-    */
-
-    if (
-      button.dataset.setting === "direction" &&
-      settings.direction === "vertical" &&
-      previousDirection !== "vertical"
-    ) {
-
-      requestAnimationFrame(() => {
-        resetReadingPosition();
-      });
-
-    }
-
+      if (
+        settings.direction === "vertical" &&
+        previousDirection !== "vertical"
+      ) {
+        resetAfterLayout();
+      }
+    });
   });
 
-});
+  fontSizeSlider.addEventListener("input", () => {
+    settings.fontSize = fontSizes[Number(fontSizeSlider.value)];
+    applySettings();
+    saveSettings();
+  });
 
-/* ========================================
-   文字サイズスライダー
-======================================== */
-
-fontSizeSlider.addEventListener("input", () => {
-
-  const index = Number(fontSizeSlider.value);
-
-  settings.fontSize = fontSizes[index];
-
-  applySettings();
-  saveSettings();
-
-});
-
-/* ========================================
-   設定パネルの開閉
-======================================== */
-
-function toggleSettingsPanel(open) {
-
-  settingsPanel.classList.toggle(
-    "open",
-    open
-  );
-
-  settingsButton.setAttribute(
-    "aria-expanded",
-    String(open)
-  );
-
-}
-
-settingsButton.addEventListener("click", () => {
-
-  toggleSettingsPanel(
-    !settingsPanel.classList.contains("open")
-  );
-
-});
-
-settingsClose.addEventListener("click", () => {
-
-  toggleSettingsPanel(false);
-
-});
-
-document.addEventListener("click", event => {
-
-  if (
-    !settingsPanel.contains(event.target) &&
-    !settingsButton.contains(event.target)
-  ) {
-    toggleSettingsPanel(false);
+  function toggleSettingsPanel(open) {
+    settingsPanel.classList.toggle("open", open);
+    settingsButton.setAttribute("aria-expanded", String(open));
   }
 
-});
+  settingsButton.addEventListener("click", () => {
+    toggleSettingsPanel(
+      !settingsPanel.classList.contains("open")
+    );
+  });
 
-document.addEventListener("keydown", event => {
+  document.getElementById("settings-close").addEventListener(
+    "click",
+    () => toggleSettingsPanel(false)
+  );
 
-  if (event.key === "Escape") {
-    toggleSettingsPanel(false);
-  }
+  document.addEventListener("click", event => {
+    if (
+      !settingsPanel.contains(event.target) &&
+      !settingsButton.contains(event.target)
+    ) {
+      toggleSettingsPanel(false);
+    }
+  });
 
-});
+  document.addEventListener("keydown", event => {
+    if (event.key === "Escape") {
+      toggleSettingsPanel(false);
+    }
+  });
 
-/* ========================================
-   HTMLの特殊文字を変換
-======================================== */
-
-function escapeHTML(value) {
-
-  return String(value).replace(
-    /[&<>"']/g,
-    char => ({
+  function escapeHTML(value) {
+    return String(value).replace(/[&<>"']/g, char => ({
       "&": "&amp;",
       "<": "&lt;",
       ">": "&gt;",
       '"': "&quot;",
       "'": "&#39;"
-    })[char]
-  );
-
-}
-
-/* ========================================
-   小説本文の整形
-
-   ・1行を1段落として表示
-   ・行頭の全角スペースを維持
-   ・冒頭・途中・末尾の空行を維持
-   ・ルビを変換
-======================================== */
-
-function formatNovelText(text) {
-
-  /*
-    改行コードのみ統一します。
-
-    trim()は使用せず、
-    本文の空行を削除しません。
-  */
-
-  const source = String(text ?? "")
-    .replace(/\r\n?/g, "\n");
-
-  if (source.length === 0) {
-
-    return "<p>ここに本文が入ります。</p>";
-
+    })[char]);
   }
 
-  /*
-    ルビ記法
+  function formatPlainText(value) {
+    // 「!?」など2文字の記号を縦中横にします。
+    // 「～」「〜」は直前の文字と組にして、
+    // 行頭への孤立を防ぎます。
 
-    [[rb:漢字 > ふりがな]]
-  */
+    return String(value)
+      .split(/([!?！？]{2}|[^\s～〜][～〜])/g)
+      .map(part => {
+        if (/^[!?！？]{2}$/.test(part)) {
+          return `<span class="tcy">${escapeHTML(part)}</span>`;
+        }
 
-  const rubyPattern =
-    /\[\[rb:\s*([^>\]\n]+?)\s*>\s*([^\]\n]+?)\s*\]\]/g;
+        if (/^[^\s～〜][～〜]$/.test(part)) {
+          return `<span class="kinsoku-pair">${escapeHTML(part)}</span>`;
+        }
 
-  return source.split("\n").map(line => {
+        return escapeHTML(part);
+      })
+      .join("");
+  }
 
-    /*
-      空行はそのまま残します。
-    */
+  function formatNovelText(text) {
+    const source = String(text ?? "").replace(/\r\n?/g, "\n");
 
-    if (line === "") {
-
-      return '<div class="novel-blank-line"></div>';
-
+    if (source.length === 0) {
+      return "<p>ここに本文が入ります。</p>";
     }
 
-    let html = "";
-    let lastIndex = 0;
+    const rubyPattern =
+      /\[\[rb:\s*([^>\]\n]+?)\s*>\s*([^\]\n]+?)\s*\]\]/g;
 
-    for (const match of line.matchAll(rubyPattern)) {
+    return source.split("\n").map(line => {
+      // 空行も削除せず、そのまま表示します。
+      if (line === "") {
+        return '<div class="novel-blank-line"></div>';
+      }
 
-      html += escapeHTML(
-        line.slice(lastIndex, match.index)
-      );
+      let html = "";
+      let lastIndex = 0;
 
-      const base =
-        escapeHTML(match[1].trim());
+      for (const match of line.matchAll(rubyPattern)) {
+        html += formatPlainText(
+          line.slice(lastIndex, match.index)
+        );
 
-      const reading =
-        escapeHTML(match[2].trim());
+        html +=
+          `<ruby>${escapeHTML(match[1].trim())}` +
+          `<rt>${escapeHTML(match[2].trim())}</rt></ruby>`;
 
-      html +=
-        `<ruby>${base}<rt>${reading}</rt></ruby>`;
+        lastIndex = match.index + match[0].length;
+      }
 
-      lastIndex =
-        match.index + match[0].length;
+      html += formatPlainText(line.slice(lastIndex));
 
-    }
+      return `<p>${html}</p>`;
+    }).join("\n");
+  }
 
-    html += escapeHTML(
-      line.slice(lastIndex)
-    );
+  const workId =
+    new URLSearchParams(window.location.search).get("work");
 
-    return `<p>${html}</p>`;
+  const novelList =
+    typeof novels !== "undefined" && Array.isArray(novels)
+      ? novels
+      : [];
 
-  }).join("\n");
-
-}
-
-/* ========================================
-   URLから作品IDを取得
-======================================== */
-
-const params =
-  new URLSearchParams(
-    window.location.search
-  );
-
-const workId =
-  params.get("work");
-
-/* ========================================
-   novels.jsから作品を取得
-======================================== */
-
-const novelList =
-  typeof novels !== "undefined" &&
-  Array.isArray(novels)
-    ? novels
-    : [];
-
-const currentWork =
-  novelList.find(
+  const currentWork = novelList.find(
     work => work.id === workId
   );
 
-/* ========================================
-   作品を表示
-======================================== */
+  if (currentWork) {
+    document.getElementById("work-title").textContent =
+      currentWork.title;
 
-if (currentWork) {
+    document.getElementById("work-date").textContent =
+      currentWork.date || "";
 
-  document
-    .getElementById("work-title")
-    .textContent = currentWork.title;
+    document.getElementById("novel-text").innerHTML =
+      formatNovelText(currentWork.text);
 
-  document
-    .getElementById("work-date")
-    .textContent = currentWork.date || "";
+    document.title =
+      `${currentWork.title}｜乙女座の脚元`;
+  } else {
+    document.getElementById("work-title").textContent =
+      "作品が見つかりません";
 
-  document
-    .getElementById("novel-text")
-    .innerHTML = formatNovelText(
-      currentWork.text
-    );
+    document.getElementById("work-date").textContent = "";
 
-  document.title =
-    `${currentWork.title}｜乙女座の脚元`;
-
-} else {
-
-  document
-    .getElementById("work-title")
-    .textContent = "作品が見つかりません";
-
-  document
-    .getElementById("work-date")
-    .textContent = "";
-
-  document
-    .getElementById("novel-text")
-    .innerHTML =
+    document.getElementById("novel-text").innerHTML =
       "<p>作品データを確認してください。</p>";
-
-}
-
-/* ========================================
-   縦書きの読み始め位置
-======================================== */
-
-function resetReadingPosition() {
-
-  if (settings.direction !== "vertical") {
-    return;
   }
 
-  /*
-    RTLの横スクロールでは
-    右端が scrollLeft = 0 です。
-  */
-
-  readingLayout.scrollLeft = 0;
-
-  /*
-    冒頭の空行も含め、
-    本文の最初から読み始めます。
-  */
-
-  const firstElement =
-    document.querySelector(
-      "#novel-text > :first-child"
-    );
-
-  if (!firstElement) {
-    return;
-  }
-
-  firstElement.scrollIntoView({
-    behavior: "instant",
-    block: "nearest",
-    inline: "nearest"
-  });
-
-}
-
-/* ========================================
-   縦書きのマウスホイール操作
-======================================== */
-
-/*
-  縦書きのときだけ、
-  マウスホイールの上下を
-  左右スクロールに変換します。
-
-  ホイールを下へ回す：
-    本文を左へ1行分進める。
-
-  ホイールを上へ回す：
-    本文を右へ1行分戻す。
-
-  1行分の幅は
-  文字サイズ × 行間(2.2)
-  を基準にします。
-*/
-
-readingLayout.addEventListener(
-  "wheel",
-  event => {
-
-    /*
-      横書きでは通常の操作を維持。
-    */
-
-    if (settings.direction !== "vertical") {
-      return;
-    }
-
-    /*
-      Ctrl + ホイールによる
-      ブラウザの拡大縮小は妨げない。
-    */
-
-    if (event.ctrlKey) {
-      return;
-    }
-
-    /*
-      縦方向のホイール入力がない場合は
-      通常の横スクロールを利用。
-    */
-
-    if (event.deltaY === 0) {
-      return;
-    }
-
-    /*
-      横方向の操作が主である場合は
-      ブラウザ標準の操作を優先。
-    */
-
+  // PC：ホイールで縦書き本文を横に読み進めます。
+  layout.addEventListener("wheel", event => {
     if (
-      Math.abs(event.deltaX) >
-      Math.abs(event.deltaY)
+      settings.direction !== "vertical" ||
+      event.ctrlKey ||
+      event.deltaY === 0
     ) {
       return;
     }
 
-    /*
-      1行分の移動距離。
-    */
+    if (Math.abs(event.deltaX) > Math.abs(event.deltaY)) {
+      return;
+    }
 
-    const lineWidth =
-      settings.fontSize * 2.2;
-
-    /*
-      ホイールを下へ回すと
-      RTLの負方向（左側）へ進む。
-    */
+    const maxScroll =
+      layout.scrollWidth - layout.clientWidth;
 
     const direction =
       event.deltaY > 0 ? -1 : 1;
 
-    const current =
-      readingLayout.scrollLeft;
+    const current = layout.scrollLeft;
 
-    const maxScroll =
-      readingLayout.scrollWidth -
-      readingLayout.clientWidth;
-
-    /*
-      これ以上進めない端では
-      通常のページスクロールを許可。
-    */
-
-    const atEnd =
-      direction === -1 &&
-      current <= -maxScroll + 1;
-
-    const atStart =
-      direction === 1 &&
-      current >= -1;
-
-    if (atEnd || atStart) {
+    if (
+      (direction < 0 && current <= -maxScroll + 1) ||
+      (direction > 0 && current >= -1)
+    ) {
       return;
     }
 
-    /*
-      縦スクロールを止めて、
-      横へ1行分移動する。
-    */
-
     event.preventDefault();
 
-    readingLayout.scrollLeft +=
-      direction * lineWidth;
+    layout.scrollLeft +=
+      direction * settings.fontSize * 2.2;
+  }, { passive: false });
 
-  },
-  {
-    passive: false
-  }
-);
+  // スマホ：左右のスワイプで横スクロールします。
+  let lastTouchX = null;
+  let lastTouchY = null;
 
-/* ========================================
-   初期表示
-======================================== */
+  layout.addEventListener("touchstart", event => {
+    if (
+      settings.direction !== "vertical" ||
+      event.touches.length !== 1
+    ) {
+      return;
+    }
 
-applySettings();
+    lastTouchX = event.touches[0].clientX;
+    lastTouchY = event.touches[0].clientY;
+  }, { passive: true });
 
-/*
-  ブラウザによる前回位置の復元を防ぐ。
-*/
+  layout.addEventListener("touchmove", event => {
+    if (
+      settings.direction !== "vertical" ||
+      event.touches.length !== 1 ||
+      lastTouchX === null
+    ) {
+      return;
+    }
 
-if ("scrollRestoration" in history) {
-  history.scrollRestoration = "manual";
-}
+    const x = event.touches[0].clientX;
+    const y = event.touches[0].clientY;
 
-/*
-  ページ読み込み後に
-  本文の冒頭を表示します。
-*/
+    const dx = x - lastTouchX;
+    const dy = y - lastTouchY;
 
-window.addEventListener("load", () => {
+    if (
+      Math.abs(dx) > Math.abs(dy) &&
+      layout.scrollWidth > layout.clientWidth
+    ) {
+      event.preventDefault();
+      layout.scrollLeft += dx;
+    }
 
-  requestAnimationFrame(() => {
+    lastTouchX = x;
+    lastTouchY = y;
+  }, { passive: false });
 
-    resetReadingPosition();
-
-    window.scrollTo(0, 0);
-
+  layout.addEventListener("touchend", () => {
+    lastTouchX = null;
+    lastTouchY = null;
   });
 
-});
+  layout.addEventListener("touchcancel", () => {
+    lastTouchX = null;
+    lastTouchY = null;
+  });
 
+  if ("scrollRestoration" in history) {
+    history.scrollRestoration = "manual";
+  }
+
+  applySettings();
+  saveSettings();
+  resetAfterLayout();
+
+  window.addEventListener("load", () => {
+    resetAfterLayout();
+    window.scrollTo(0, 0);
+  });
 </script>
-
 </body>
 </html>
