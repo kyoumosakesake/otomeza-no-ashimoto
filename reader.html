@@ -143,7 +143,7 @@
     scroll-behavior: auto;
     overscroll-behavior-x: contain;
     -webkit-overflow-scrolling: touch;
-    touch-action: pan-y; /* 縦の操作はブラウザ、横の操作は下のJSが担当 */
+    touch-action: auto; /* 横スワイプはブラウザのネイティブスクロールに任せる */
   }
   .reading-layout.vertical .work-header {
     flex: 0 0 auto;
