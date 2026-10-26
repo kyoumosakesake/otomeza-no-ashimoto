@@ -146,6 +146,7 @@
     touch-action: auto; /* 横スワイプはブラウザのネイティブスクロールに任せる */
   }
   .reading-layout.vertical .work-header {
+    order: -1; /* PCでは従来どおりタイトルを冒頭に */
     flex: 0 0 auto;
     display: flex;
     flex-direction: row-reverse;
@@ -195,7 +196,7 @@
       -webkit-overflow-scrolling: touch;
     }
     .reading-layout.vertical .work-header {
-      order: 0;
+      order: 0; /* スマホではrow-reverseの右端へ配置 */
       padding: .5rem 0;
       gap: .5rem;
       flex-direction: row; /* タイトル→日付の順に配置 */
@@ -268,13 +269,13 @@
 </div>
 
 <div class="reading-layout vertical" id="reading-layout">
+  <main class="reader" id="reader">
+    <article class="novel-text" id="novel-text"></article>
+  </main>
   <div class="work-header">
     <h1 class="work-title" id="work-title">読み込み中…</h1>
     <p class="work-date" id="work-date"></p>
   </div>
-  <main class="reader" id="reader">
-    <article class="novel-text" id="novel-text"></article>
-  </main>
 </div>
 
 <footer class="work-footer"><a class="back-link" href="fanworks.html">← 作品一覧へ戻る</a></footer>
