@@ -1,10 +1,10 @@
-// Firebase Console > プロジェクトの設定 > ウェブアプリ からコピーしてください。
 export const firebaseConfig = {
-  apiKey: 'REPLACE_ME',
-  authDomain: 'REPLACE_ME.firebaseapp.com',
-  projectId: 'REPLACE_ME',
-  storageBucket: 'REPLACE_ME.firebasestorage.app',
-  appId: 'REPLACE_ME'
+  apiKey: "AIzaSyCTyaBtyL7uFtOG5L64FZZl_Z9C6o_Y0DA",
+  authDomain: "karasu-archive.firebaseapp.com",
+  projectId: "karasu-archive",
+  storageBucket: "karasu-archive.firebasestorage.app",
+  messagingSenderId: "887663262019",
+  appId: "1:887663262019:web:0dabda57f9cfd5ea5cd7f6"
 };
-// Firebase Authentication の「ユーザーの UID」を設定してください。
-export const OWNER_UID = 'REPLACE_WITH_YOUR_AUTH_UID';
+
+export const OWNER_UID = "REPLACE_WITH_YOUR_AUTH_UID";
