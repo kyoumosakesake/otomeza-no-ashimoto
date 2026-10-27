@@ -206,7 +206,7 @@
     writing-mode: vertical-rl;
     text-orientation: mixed;
     direction: ltr;
-    height: calc(100dvh - 3rem);
+    height: calc(100dvh - 3rem - var(--font-size));
     width: max-content;
     min-width: 0;
     margin: 0;
@@ -303,10 +303,12 @@
     .reading-layout.vertical .mobile-settings-button {
       margin-left: 2.25rem;
       margin-inline-start: 1rem;
+      position: relative;
+      left: -1rem; /* 画面の左方向へ1文字分ずらす */
     }
     /* 上下の余白を確保し、本文が画面下にはみ出さない高さにする */
     .reading-layout.vertical .novel-text {
-      height: max(360px, calc(100dvh - 110px));
+      height: max(360px, calc(100dvh - 110px + var(--font-size)));
     }
     .reading-layout.vertical .work-header {
       height: max(360px, calc(100dvh - 110px));
