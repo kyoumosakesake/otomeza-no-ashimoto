@@ -171,7 +171,9 @@
     max-width: 100vw;
     overflow-x: auto;
     overflow-y: hidden;
-    padding: 2rem 1.5rem 4rem;
+    height: 100dvh;
+    min-height: 0;
+    padding: 1.25rem 1.5rem .35rem;
     scroll-behavior: auto;
     overscroll-behavior-x: contain;
     -webkit-overflow-scrolling: touch;
@@ -197,14 +199,14 @@
     width: max-content;
     min-width: 0;
     overflow: visible;
-    padding: 1rem 0 2rem;
+    padding: .5rem 0 .35rem;
     direction: ltr;
   }
   .reading-layout.vertical .novel-text {
     writing-mode: vertical-rl;
     text-orientation: mixed;
     direction: ltr;
-    height: 65vh;
+    height: calc(100dvh - 3rem);
     width: max-content;
     min-width: 0;
     margin: 0;
@@ -242,11 +244,11 @@
   }
   /* 縦書きでは設定を横スクロールの先頭にだけ表示する */
   body.vertical-reading .site-header { display: none; }
-  /* 矢印は縦書き時に反時計回りへ90度回す */
+  /* ↩ の矢印の先端が左を向く角度にする */
   .reading-layout.vertical .vertical-end-link a {
     display: inline-block;
     writing-mode: horizontal-tb;
-    transform: rotate(-90deg);
+    transform: rotate(0deg);
     transform-origin: center;
   }
   .reading-layout.vertical .novel-blank-line { display: block; width: 1em; height: auto; }
@@ -282,6 +284,8 @@
       direction: ltr;
       flex-direction: row;
       gap: 0;
+      height: auto;
+      min-height: 70vh;
       padding: 2.25rem .75rem 2rem;
       overflow-x: scroll;
       overflow-y: hidden;
@@ -298,6 +302,7 @@
     }
     .reading-layout.vertical .mobile-settings-button {
       margin-left: 2.25rem;
+      margin-inline-start: 1rem;
     }
     /* 上下の余白を確保し、本文が画面下にはみ出さない高さにする */
     .reading-layout.vertical .novel-text {
