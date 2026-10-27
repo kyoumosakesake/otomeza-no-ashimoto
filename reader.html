@@ -178,6 +178,7 @@
     touch-action: auto; /* 横スワイプはブラウザのネイティブスクロールに任せる */
   }
   .reading-layout.vertical .work-header {
+    display: none;
     flex: 0 0 auto;
     display: flex;
     flex-direction: row-reverse;
@@ -208,6 +209,46 @@
     min-width: 0;
     margin: 0;
   }
+  .reading-layout.vertical .work-header { display: none; }
+  /* PC・スマホ共通：タイトルと設定を本文の最初の列に置く。 */
+  .reading-layout.vertical .mobile-vertical-title {
+    display: block;
+    margin-block-end: 1.5rem;
+    font-size: 16px;
+    line-height: 1.8;
+    letter-spacing: .12em;
+  }
+  .reading-layout.vertical .mobile-vertical-title h2 {
+    margin: 0;
+    font-size: 1em;
+    line-height: 1.8;
+    font-weight: 400;
+  }
+  .reading-layout.vertical .mobile-vertical-title .mobile-date {
+    margin: 0;
+    font-size: .7em;
+    opacity: .6;
+    letter-spacing: 0;
+  }
+  .reading-layout.vertical .mobile-settings-button {
+    display: block;
+    writing-mode: horizontal-tb;
+    white-space: nowrap;
+    font-family: sans-serif;
+    font-size: 12px;
+    padding: .5rem .65rem;
+    width: max-content;
+    margin: 0 0 0 2rem;
+  }
+  /* 縦書きでは設定を横スクロールの先頭にだけ表示する */
+  body.vertical-reading .site-header { display: none; }
+  /* 矢印は縦書き時に反時計回りへ90度回す */
+  .reading-layout.vertical .vertical-end-link a {
+    display: inline-block;
+    writing-mode: horizontal-tb;
+    transform: rotate(-90deg);
+    transform-origin: center;
+  }
   .reading-layout.vertical .novel-blank-line { display: block; width: 1em; height: auto; }
   /* 縦書きでは本文の最後の列に「作品一覧へ戻る」を置く。 */
   .vertical-end-link { display: none; }
@@ -231,29 +272,17 @@
   }
   .reading-layout.vertical + .work-footer { display: none; }
   .work-footer { max-width: 800px; margin: 3rem auto 5rem; padding: 0 1.5rem; text-align: center; }
-  .back-link { color: var(--foreground); font-size: .9rem; text-decoration: none; opacity: .7; }
+  .back-link { color: var(--foreground); font-size: 1.7rem; text-decoration: none; opacity: .7; }
   .back-link:hover { color: var(--accent); opacity: 1; }
   @media (max-width: 600px) {
     .site-header { padding: 1.2rem 1rem; }
-    /* スマホ縦書きでは設定ボタンを本文の冒頭に移す */
-    body.mobile-vertical-reading .site-header { display: none; }
-    .reading-layout.vertical .mobile-settings-button {
-      display: block;
-      writing-mode: horizontal-tb;
-      white-space: nowrap;
-      font-family: sans-serif;
-      font-size: 12px;
-      padding: .5rem .65rem;
-      margin: 0 0 1.2rem;
-      width: max-content;
-    }
     .site-name { font-size: .8rem; }
     /* LTRのスクロール座標と既存のドラッグ操作を維持する。 */
     .reading-layout.vertical {
       direction: ltr;
       flex-direction: row;
       gap: 0;
-      padding: 1rem .75rem 3rem;
+      padding: 2.25rem .75rem 2rem;
       overflow-x: scroll;
       overflow-y: hidden;
       touch-action: pan-y;
@@ -263,31 +292,19 @@
        スマホ縦書きでは本文の最初の列として表示する。 */
     .reading-layout.vertical .work-header { display: none; }
     .reading-layout.vertical .reader { padding: .5rem 0; }
+    /* ページ上端・設定ボタンとタイトルの間に余白を作る */
     .reading-layout.vertical .mobile-vertical-title {
-      display: block;
-      margin-block-end: 1.5rem;
-      font-size: 16px;
-      line-height: 1.8;
-      letter-spacing: .12em;
+      padding-inline-start: 1rem;
     }
-    .reading-layout.vertical .mobile-vertical-title h2 {
-      margin: 0;
-      font-size: 1em;
-      line-height: 1.8;
-      font-weight: 400;
-    }
-    .reading-layout.vertical .mobile-vertical-title .mobile-date {
-      margin: 0;
-      font-size: .7em;
-      opacity: .6;
-      letter-spacing: 0;
+    .reading-layout.vertical .mobile-settings-button {
+      margin-left: 2.25rem;
     }
     /* 上下の余白を確保し、本文が画面下にはみ出さない高さにする */
     .reading-layout.vertical .novel-text {
-      height: max(360px, calc(100dvh - 215px));
+      height: max(360px, calc(100dvh - 110px));
     }
     .reading-layout.vertical .work-header {
-      height: max(360px, calc(100dvh - 215px));
+      height: max(360px, calc(100dvh - 110px));
     }
     .reading-layout.horizontal .work-title { font-size: 1.4rem; }
   }
@@ -342,7 +359,7 @@
   </main>
 </div>
 
-<footer class="work-footer"><a class="back-link" href="fanworks.html">← 作品一覧へ戻る</a></footer>
+<footer class="work-footer"><a class="back-link" href="fanworks.html" aria-label="作品一覧へ戻る" title="作品一覧へ戻る">↩︎</a></footer>
 
 <script src="novels.js?v=20261026-4"></script>
 <script>
@@ -381,8 +398,7 @@
     document.documentElement.style.setProperty("--font-size", `${settings.fontSize}px`);
     fontSizeSlider.value = String(fontSizes.indexOf(settings.fontSize));
     document.body.classList.toggle("light-mode", settings.theme === "light");
-    document.body.classList.toggle("mobile-vertical-reading",
-      window.matchMedia("(max-width: 600px)").matches && settings.direction === "vertical");
+    document.body.classList.toggle("vertical-reading", settings.direction === "vertical");
     document.querySelectorAll(".setting-option").forEach(button => {
       const active = settings[button.dataset.setting] === button.dataset.value;
       button.classList.toggle("active", active);
@@ -477,7 +493,7 @@
     document.getElementById("novel-text").innerHTML = "<p>作品データを確認してください。</p>";
   }
 
-  // モバイル縦書きのタイトルは本文の最初の列に置く。
+  // PC・スマホとも縦書きのタイトルは本文の最初の列に置く。
   // 本文データは変更せず、横書きではこの要素を非表示にする。
   if (currentWork) {
     const mobileHeading = document.createElement("div");
@@ -508,8 +524,7 @@
   document.getElementById("novel-text").append(verticalEndLink);
 
   window.addEventListener("resize", () => {
-    document.body.classList.toggle("mobile-vertical-reading",
-      window.matchMedia("(max-width: 600px)").matches && settings.direction === "vertical");
+    document.body.classList.toggle("vertical-reading", settings.direction === "vertical");
   });
 
   // PC：ホイール1回で縦書きの約1行分を横に進めます。
