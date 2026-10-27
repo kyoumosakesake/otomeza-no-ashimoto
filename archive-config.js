@@ -7,4 +7,4 @@ export const firebaseConfig = {
   appId: "1:887663262019:web:0dabda57f9cfd5ea5cd7f6"
 };
 
-export const OWNER_UID = "REPLACE_WITH_YOUR_AUTH_UID";
+export const OWNER_UID = "qMjlTm0XCLOzbcxdFczgG9LG6v33";
