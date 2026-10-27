@@ -3,715 +3,1701 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>作品を読む｜乙女座の脚元</title>
+<title>地獄楽（佐杠・杠佐）｜乙女座の脚元</title>
 <style>
-  * { box-sizing: border-box; }
-  :root {
-    --background: #1d3652;
-    --foreground: #ffffff;
-    --accent: #28bfb0;
-    --font-size: 16px;
-    --reading-font: "Yu Mincho", "游明朝", "YuMincho", "Hiragino Mincho ProN", serif;
-  }
-  html { min-height: 100%; }
-  body {
-    margin: 0;
-    min-height: 100vh;
-    background: var(--background);
-    color: var(--foreground);
-    font-family: var(--reading-font);
-  }
-  body.light-mode { --background: #ffffff; --foreground: #171717; }
-  button, input { font-family: inherit; }
-  .site-header {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    gap: 1rem;
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 1.5rem;
-  }
-  .site-name {
-    color: var(--foreground);
-    font-size: .9rem;
-    letter-spacing: .12em;
-    text-decoration: none;
-  }
-  .settings-button {
-    padding: .55rem .9rem;
-    background: transparent;
-    color: var(--foreground);
-    border: 1px solid var(--foreground);
-    border-radius: 4px;
-    font-size: .85rem;
-    cursor: pointer;
-  }
-  .settings-button:hover { color: var(--accent); border-color: var(--accent); }
-  .settings-panel {
-    display: none;
-    position: absolute;
-    top: 75px;
-    right: 20px;
-    width: min(320px, calc(100vw - 40px));
-    max-height: calc(100vh - 95px);
-    overflow-y: auto;
-    padding: 1.4rem;
-    background: var(--background);
-    color: var(--foreground);
-    border: 1px solid var(--foreground);
-    border-radius: 7px;
-    box-shadow: 0 10px 35px rgba(0,0,0,.25);
-    z-index: 1000;
-  }
-  .settings-panel.open { display: block; }
-  .settings-title { margin: 0 0 1.3rem; font-size: 1rem; font-weight: 400; }
-  .setting-group { margin-bottom: 1.4rem; }
-  .setting-label { display: block; margin-bottom: .65rem; font-size: .8rem; opacity: .75; }
-  .setting-buttons { display: flex; gap: .5rem; }
-  .setting-option {
-    flex: 1;
-    padding: .6rem .3rem;
-    background: transparent;
-    color: var(--foreground);
-    border: 1px solid var(--foreground);
-    border-radius: 4px;
-    font-size: .85rem;
-    cursor: pointer;
-    opacity: .6;
-  }
-  .setting-option.active {
-    background: var(--accent);
-    color: #1d3652;
-    border-color: var(--accent);
-    opacity: 1;
-  }
-  .slider-wrap { position: relative; padding: .35rem 0 .5rem; }
-  .font-slider {
-    display: block;
-    position: relative;
-    z-index: 2;
-    width: 100%;
-    margin: .5rem 0;
-    accent-color: var(--accent);
-    background: transparent;
-  }
-  .slider-dots {
-    position: absolute;
-    z-index: 1;
-    left: 8px;
-    right: 8px;
-    top: calc(.35rem + .5rem + 8px);
-    display: flex;
-    justify-content: space-between;
-    pointer-events: none;
-  }
-  .slider-dots span {
-    width: 5px;
-    height: 5px;
-    border-radius: 50%;
-    background: var(--foreground);
-    opacity: .8;
-    transform: translate(-50%, -50%);
-  }
-  .slider-dots span:first-child { transform: translate(0, -50%); }
-  .slider-dots span:last-child { transform: translate(-100%, -50%); }
-  .font-slider-labels { display: flex; justify-content: space-between; font: .7rem sans-serif; opacity: .65; }
-  .settings-close {
-    width: 100%; padding: .7rem;
-    background: var(--foreground);
-    color: var(--background);
-    border: 1px solid var(--foreground);
-    border-radius: 4px; cursor: pointer;
-  }
-  .reading-layout { width: 100%; min-height: 70vh; }
-  .work-header { color: var(--foreground); }
-  .work-title { margin: 0; font-weight: 400; letter-spacing: .12em; line-height: 1.8; }
-  .work-date { margin: 0; font-size: .8rem; opacity: .6; }
-  .reader { min-width: 0; font-family: var(--reading-font); }
-  .novel-text {
-    font-size: var(--font-size);
-    line-height: 2.2;
-    letter-spacing: 1px;
-    line-break: strict;
-    word-break: normal;
-    hanging-punctuation: allow-end;
-    overflow-wrap: normal;
-  }
-  /* スマホ縦書きのみ、本文と同じ組版フローにタイトルを入れる */
-  .mobile-vertical-title { display: none; }
-  .novel-text p { margin: 0; padding: 0; text-indent: 0; white-space: pre-wrap; }
-  .kinsoku-pair { white-space: nowrap; }
-  .tcy { text-combine-upright: all; -webkit-text-combine: horizontal; }
-  ruby { ruby-position: over; }
-  rt { font-size: .5em; font-weight: normal; letter-spacing: 0; }
+/* 基本設定 */
+* {
+  box-sizing: border-box;
+}
+:root {
+  --background: #1d3652;
+  --accent: #28bfb0;
+  --white: #ffffff;
+}
+body {
+  margin: 0;
+  background: var(--background);
+  color: var(--white);
+  font-family: "Yu Mincho", "游明朝", "YuMincho", serif;
+}
+button, a {
+  font-family: inherit;
+}
+.page {
+  width: min(1200px, 94%);
+  margin: 0 auto;
+  padding: 4rem 0 5rem;
+}
+.page-title {
+  margin: 0 0 2.5rem;
+  text-align: center;
+  font-size: 2rem;
+  font-weight: 400;
+  letter-spacing: .12em;
+}
 
-  /* 横書き */
-  .reading-layout.horizontal { display: block; }
-  .reading-layout.horizontal .work-header {
-    max-width: 800px; margin: 3rem auto 2rem;
-    padding: 0 1.5rem; text-align: center;
-  }
-  .reading-layout.horizontal .work-title { font-size: 1.7rem; }
-  .reading-layout.horizontal .work-date { margin-top: .8rem; }
-  .reading-layout.horizontal .reader {
-    max-width: 800px; margin: 0 auto; padding: 2rem 1.5rem 5rem;
-  }
-  .reading-layout.horizontal .novel-text { writing-mode: horizontal-tb; }
-  .reading-layout.horizontal .novel-blank-line { height: 1em; }
+/* タブ */
+.tabs {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin-bottom: 2.5rem;
+}
+.tab-button {
+  padding: .5rem .2rem;
+  background: transparent;
+  color: var(--white);
+  border: none;
+  border-bottom: 1px solid transparent;
+  font-size: 1.1rem;
+  cursor: pointer;
+  opacity: .55;
+  transition: opacity .2s, border-color .2s;
+}
+.tab-button.active {
+  opacity: 1;
+  border-bottom-color: var(--accent);
+}
+.tab-button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 5px;
+}
+.tab-content {
+  display: none;
+}
+.tab-content.active {
+  display: block;
+}
 
-  /* 縦書き：右端にタイトル、その左に本文 */
-  .reading-layout.vertical {
-    display: flex;
-    flex-direction: row;
-    direction: rtl;
-    align-items: flex-start;
-    gap: 2.5rem;
-    width: 100%;
-    max-width: 100vw;
-    overflow-x: auto;
-    overflow-y: hidden;
-    height: 100dvh;
-    min-height: 0;
-    padding: 1.25rem 1.5rem .35rem;
-    scroll-behavior: auto;
-    overscroll-behavior-x: contain;
-    -webkit-overflow-scrolling: touch;
-    touch-action: auto; /* 横スワイプはブラウザのネイティブスクロールに任せる */
+/* 凡例 */
+.legend {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: .8rem 1.5rem;
+  margin-bottom: 1rem;
+  font-size: .8rem;
+}
+.legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: .45rem;
+  white-space: nowrap;
+}
+.legend-dot {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--white);
+  flex-shrink: 0;
+}
+.legend-dot.parody {
+  background: transparent;
+  border: 2px solid var(--white);
+}
+.legend-item.latest-legend {
+  color: var(--accent);
+}
+.latest-legend-dots {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.legend-dot.latest-filled {
+  background: var(--accent);
+}
+.legend-dot.latest-outline {
+  background: transparent;
+  border: 2px solid var(--accent);
+}
+
+/* 関係性タイムライン */
+.timeline-area {
+  position: relative;
+  --timeline-top-space: 18rem;
+}
+.timeline-scroll {
+  position: relative;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: var(--timeline-top-space) 1rem 8rem;
+  scrollbar-color: rgba(255,255,255,.25) transparent;
+  -webkit-overflow-scrolling: touch;
+}
+.timeline {
+  position: relative;
+  width: 4200px;
+  height: 360px;
+  margin: 0 auto;
+}
+.timeline-line {
+  position: absolute;
+  left: 55px;
+  right: 55px;
+  top: 210px;
+  height: 7px;
+  background: var(--accent);
+  border-radius: 999px;
+  z-index: 1;
+}
+.slide-guide-text {
+  position: absolute;
+  left: 55px;
+  top: 174px;
+  color: var(--accent);
+  font-size: .8rem;
+  letter-spacing: .08em;
+  white-space: nowrap;
+  z-index: 10;
+}
+.fixed-arrow-head {
+  position: absolute;
+  right: 3px;
+  top: calc(var(--timeline-top-space) + 199px);
+  width: 0;
+  height: 0;
+  border-top: 15px solid transparent;
+  border-bottom: 15px solid transparent;
+  border-left: 25px solid var(--accent);
+  pointer-events: none;
+  z-index: 100;
+}
+
+/* 区分 */
+.division-line {
+  position: absolute;
+  top: 90px;
+  height: 170px;
+  width: 1px;
+  background: rgba(255,255,255,.25);
+  z-index: 0;
+}
+.division-1 {
+  left: 40%;
+}
+.division-2 {
+  left: 80%;
+}
+.current-section-label {
+  position: absolute;
+  top: calc(var(--timeline-top-space) + 250px);
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: .86rem;
+  letter-spacing: .08em;
+  opacity: .65;
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 20;
+}
+
+/* 作品ポイント */
+.story-point {
+  position: absolute;
+  left: var(--x);
+  top: calc(210px + var(--offset, -54px));
+  transform: translate(-50%, -50%);
+  z-index: 5;
+}
+.point-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: var(--white);
+  color: var(--background);
+  font-size: .82rem;
+  font-weight: 600;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,.16);
+  transition:
+    transform .15s,
+    background .15s,
+    color .15s;
+}
+.point-button:hover,
+.point-button:focus-visible,
+.point-button[aria-expanded="true"] {
+  background: var(--accent);
+  color: var(--white);
+  transform: scale(1.12);
+  outline: none;
+}
+
+/* パロディ */
+.story-point.parody .point-button {
+  background: var(--background);
+  color: var(--white);
+  border: 2px solid var(--white);
+}
+.story-point.parody .point-button:hover,
+.story-point.parody .point-button:focus-visible,
+.story-point.parody .point-button[aria-expanded="true"] {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* 最新の小説 */
+.story-point.latest .point-button {
+  background: var(--accent);
+  color: var(--background);
+}
+.story-point.latest.parody .point-button {
+  background: var(--background);
+  color: var(--accent);
+  border: 2px solid var(--accent);
+}
+.story-point.latest .point-button:hover,
+.story-point.latest .point-button:focus-visible,
+.story-point.latest .point-button[aria-expanded="true"] {
+  transform: scale(1.15);
+}
+
+/* ポップアップ */
+.story-popup {
+  position: fixed;
+  width: 265px;
+  max-width: calc(100vw - 24px);
+  padding: 1.15rem 1.1rem 1rem;
+  background: var(--white);
+  color: var(--background);
+  border-radius: 8px;
+  box-shadow: 0 8px 30px rgba(0,0,0,.35);
+  z-index: 999999;
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .15s, visibility .15s;
+  text-align: left;
+}
+.story-popup.open {
+  visibility: visible;
+  opacity: 1;
+  pointer-events: auto;
+}
+.popup-close {
+  position: absolute;
+  top: 7px;
+  right: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  background: transparent;
+  border: none;
+  color: var(--background);
+  font-family: sans-serif;
+  font-size: 23px;
+  font-weight: 300;
+  line-height: 1;
+  cursor: pointer;
+  opacity: .55;
+}
+.popup-close:hover,
+.popup-close:focus-visible {
+  opacity: 1;
+  outline: none;
+}
+.story-title {
+  margin: 0 28px .45rem 0;
+  font-size: 1.08rem;
+  font-weight: 600;
+  line-height: 1.5;
+}
+.story-date {
+  margin: 0 0 .25rem;
+  font-size: .79rem;
+  line-height: 1.5;
+  opacity: .6;
+}
+.story-characters {
+  margin: 0 0 .7rem;
+  font-size: .79rem;
+  line-height: 1.5;
+  opacity: .6;
+}
+.story-detail {
+  margin: 0 0 .85rem;
+  font-size: .83rem;
+  line-height: 1.7;
+}
+.story-link {
+  display: inline-block;
+  color: var(--background);
+  font-size: .85rem;
+  text-decoration: none;
+  border-bottom: 1px solid var(--accent);
+}
+.story-link:hover {
+  opacity: .6;
+}
+
+/* 執筆順 */
+.writing-order {
+  max-width: 760px;
+  margin: 0 auto;
+}
+.latest-work-card {
+  display: block;
+  margin-bottom: 4rem;
+  padding: 1.5rem 1.7rem;
+  background: var(--accent);
+  color: var(--background);
+  border-radius: 5px;
+  text-decoration: none;
+  transition: opacity .2s;
+}
+.latest-work-card:hover {
+  opacity: .85;
+}
+.latest-card-label {
+  margin: 0 0 1rem;
+  font-size: .8rem;
+  letter-spacing: .12em;
+}
+.latest-card-date {
+  margin: 0 0 .35rem;
+  font-size: .8rem;
+  opacity: .8;
+}
+.latest-card-title {
+  margin: 0 0 .35rem;
+  font-size: 1.35rem;
+  font-weight: 400;
+  line-height: 1.6;
+}
+.latest-card-characters {
+  margin: 0;
+  font-size: .8rem;
+  opacity: .8;
+}
+.latest-card-detail {
+  margin: 1.1rem 0 0;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(29,54,82,.25);
+  font-size: .9rem;
+  line-height: 1.8;
+}
+.year-block {
+  margin-bottom: 3.7rem;
+}
+.year-title {
+  margin: 0 0 1.3rem;
+  font-size: 1.1rem;
+  font-weight: 400;
+  letter-spacing: .12em;
+  opacity: .7;
+}
+.work-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.work-list li {
+  display: flex;
+  align-items: baseline;
+  gap: 1rem;
+  padding: .9rem 0;
+  border-bottom: 1px solid rgba(255,255,255,.13);
+}
+.work-date {
+  flex: 0 0 215px;
+  font-size: .82rem;
+  opacity: .65;
+  font-variant-numeric: tabular-nums;
+}
+.work-info {
+  display: flex;
+  flex-direction: column;
+  gap: .3rem;
+  min-width: 0;
+}
+.work-list a {
+  color: var(--white);
+  font-size: 1.02rem;
+  line-height: 1.6;
+  text-decoration: none;
+}
+.work-list a:hover {
+  opacity: .65;
+}
+.work-meta {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-size: .75rem;
+  opacity: .55;
+}
+.work-type {
+  white-space: nowrap;
+}
+
+/* 戻る */
+.back-link {
+  display: block;
+  width: fit-content;
+  margin: 5rem auto 0;
+  color: var(--white);
+  font-size: .95rem;
+  text-decoration: none;
+  opacity: .7;
+}
+.back-link:hover {
+  opacity: 1;
+  color: var(--accent);
+}
+
+/* スマートフォン */
+@media (max-width: 600px) {
+  .page {
+    padding-top: 3rem;
   }
-  .reading-layout.vertical .work-header {
-    display: none;
-    flex: 0 0 auto;
-    display: flex;
-    flex-direction: row-reverse;
-    align-items: flex-start;
-    gap: 1.2rem;
-    writing-mode: vertical-rl;
-    text-orientation: mixed;
-    direction: ltr;
-    height: 65vh;
-    padding: 1rem 0;
-  }
-  .reading-layout.vertical .work-title { font-size: 1.2rem; line-height: 1.7; }
-  .reading-layout.vertical .work-date { font-size: .75rem; margin: 0; }
-  .reading-layout.vertical .reader {
-    flex: 0 0 auto;
-    width: max-content;
-    min-width: 0;
-    overflow: visible;
-    padding: .5rem 0 .35rem;
-    direction: ltr;
-  }
-  .reading-layout.vertical .novel-text {
-    writing-mode: vertical-rl;
-    text-orientation: mixed;
-    direction: ltr;
-    height: calc(100dvh - 3rem - var(--font-size));
-    width: max-content;
-    min-width: 0;
-    margin: 0;
-  }
-  .reading-layout.vertical .work-header { display: none; }
-  /* PC・スマホ共通：タイトルと設定を本文の最初の列に置く。 */
-  .reading-layout.vertical .mobile-vertical-title {
-    display: block;
-    margin-block-end: 1.5rem;
-    font-size: 16px;
-    line-height: 1.8;
-    letter-spacing: .12em;
-  }
-  .reading-layout.vertical .mobile-vertical-title h2 {
-    margin: 0;
-    font-size: 1em;
-    line-height: 1.8;
-    font-weight: 400;
-  }
-  .reading-layout.vertical .mobile-vertical-title .mobile-date {
-    margin: 0;
-    font-size: .7em;
-    opacity: .6;
-    letter-spacing: 0;
-  }
-  .reading-layout.vertical .mobile-settings-button {
-    display: block;
-    writing-mode: horizontal-tb;
-    white-space: nowrap;
-    font-family: sans-serif;
-    font-size: 12px;
-    padding: .5rem .65rem;
-    width: max-content;
-    margin: 0 0 0 2rem;
-  }
-  /* 縦書きでは設定を横スクロールの先頭にだけ表示する */
-  body.vertical-reading .site-header { display: none; }
-  /* ↩ の矢印の先端が左を向く角度にする */
-  .reading-layout.vertical .vertical-end-link a {
-    display: inline-block;
-    writing-mode: horizontal-tb;
-    transform: rotate(0deg);
-    transform-origin: center;
-  }
-  .reading-layout.vertical .novel-blank-line { display: block; width: 1em; height: auto; }
-  /* 縦書きでは本文の最後の列に「作品一覧へ戻る」を置く。 */
-  .vertical-end-link { display: none; }
-  .reading-layout.vertical .vertical-end-link {
-    display: block;
-    margin-block-start: 2.5em;
-    margin-block-end: 1.5em;
-    font-size: .9em;
-    line-height: 2;
-    white-space: nowrap;
-  }
-  .reading-layout.vertical .vertical-end-link a {
-    color: var(--foreground);
-    text-decoration: none;
-    opacity: .75;
-  }
-  .reading-layout.vertical .vertical-end-link a:hover { color: var(--accent); opacity: 1; }
-  .reading-layout.vertical .vertical-end-link a {
+  .page-title {
     font-size: 1.7rem;
-    line-height: 1.5;
   }
-  .reading-layout.vertical + .work-footer { display: none; }
-  .work-footer { max-width: 800px; margin: 3rem auto 5rem; padding: 0 1.5rem; text-align: center; }
-  .back-link { color: var(--foreground); font-size: 1.7rem; text-decoration: none; opacity: .7; }
-  .back-link:hover { color: var(--accent); opacity: 1; }
-  @media (max-width: 600px) {
-    .site-header { padding: 1.2rem 1rem; }
-    .site-name { font-size: .8rem; }
-    /* LTRのスクロール座標と既存のドラッグ操作を維持する。 */
-    .reading-layout.vertical {
-      direction: ltr;
-      flex-direction: row;
-      gap: 0;
-      height: auto;
-      min-height: 70vh;
-      padding: 2.25rem .75rem 2rem;
-      overflow-x: scroll;
-      overflow-y: hidden;
-      touch-action: pan-y;
-      -webkit-overflow-scrolling: touch;
-    }
-    /* タイトルを独立したflex要素にすると並びが反転するため、
-       スマホ縦書きでは本文の最初の列として表示する。 */
-    .reading-layout.vertical .work-header { display: none; }
-    .reading-layout.vertical .reader { padding: .5rem 0; }
-    /* ページ上端・設定ボタンとタイトルの間に余白を作る */
-    .reading-layout.vertical .mobile-vertical-title {
-      padding-inline-start: 1rem;
-    }
-    .reading-layout.vertical .mobile-settings-button {
-      margin-left: 2.25rem;
-      margin-inline-start: 1rem;
-      position: relative;
-      left: -1rem; /* 画面の左方向へ1文字分ずらす */
-    }
-    /* 上下の余白を確保し、本文が画面下にはみ出さない高さにする */
-    .reading-layout.vertical .novel-text {
-      height: max(360px, calc(100dvh - 110px + var(--font-size)));
-    }
-    .reading-layout.vertical .work-header {
-      height: max(360px, calc(100dvh - 110px));
-    }
-    .reading-layout.horizontal .work-title { font-size: 1.4rem; }
+  .tabs {
+    margin-bottom: 2rem;
   }
+  .tab-button {
+    font-size: 1rem;
+  }
+  .legend {
+    gap: .7rem 1rem;
+    font-size: .73rem;
+    margin-bottom: .5rem;
+  }
+  .legend-dot {
+    width: 13px;
+    height: 13px;
+  }
+  .latest-legend-dots {
+    gap: 3px;
+  }
+  .timeline-area {
+    --timeline-top-space: 19rem;
+  }
+  .point-button {
+    width: 50px;
+    height: 50px;
+    font-size: .95rem;
+  }
+  .story-popup {
+    width: 240px;
+  }
+  .latest-work-card {
+    padding: 1.3rem 1.4rem;
+  }
+  .work-list li {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: .35rem;
+  }
+  .work-date {
+    flex: none;
+  }
+}
 
-  /* PC縦書き専用：左右の端にカーソルを寄せるとページ送りが現れる */
-  .desktop-page-turn {
-    display: none;
-  }
-  @media (min-width: 601px) and (hover: hover) and (pointer: fine) {
-    body.vertical-reading .desktop-page-turn {
-      position: fixed;
-      top: 0;
-      bottom: 0;
-      z-index: 30;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 48px;
-      padding: 0;
-      border: 0;
-      border-radius: 0;
-      background: transparent;
-      color: var(--foreground);
-      opacity: 0;
-      cursor: pointer;
-      font-size: 16px;
-      transition: opacity .2s ease, background-color .2s ease;
-    }
-    body.vertical-reading .desktop-page-turn:hover,
-    body.vertical-reading .desktop-page-turn:focus-visible {
-      opacity: 1;
-      background: rgba(110, 130, 160, .12);
-    }
-    body.vertical-reading .desktop-page-turn.left { left: 0; }
-    body.vertical-reading .desktop-page-turn.right { right: 0; }
-  }
+/* ブックマーク：関係性は頭文字を残して左上に星を重ねる */
+.story-point.bookmarked .point-button::after {
+  content: "★";
+  position: absolute;
+  top: -11px;
+  left: -11px;
+  display: grid;
+  place-items: center;
+  width: 23px;
+  height: 23px;
+  border-radius: 50%;
+  background: var(--background);
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  font: 15px/1 sans-serif;
+  box-shadow: 0 2px 6px rgba(0,0,0,.25);
+  pointer-events: none;
+}
+
+/* 執筆順：作品名の左上に星を表示 */
+.work-list li.bookmarked .work-info {
+  position: relative;
+}
+.work-list li.bookmarked .work-info::before {
+  content: "★";
+  position: absolute;
+  top: -12px;
+  left: -18px;
+  color: var(--accent);
+  font: 14px/1 sans-serif;
+  pointer-events: none;
+}
+.latest-work-card.bookmarked {
+  position: relative;
+}
+.latest-work-card.bookmarked::before {
+  content: "★";
+  position: absolute;
+  top: 7px;
+  left: 9px;
+  color: var(--background);
+  font: 16px/1 sans-serif;
+  pointer-events: none;
+}
 </style>
 </head>
 <body>
-<header class="site-header">
-  <button class="settings-button" id="settings-button" type="button" aria-expanded="false" aria-controls="settings-panel">⚙ 読書設定</button>
-</header>
 
-<div class="settings-panel" id="settings-panel" role="dialog" aria-label="読書設定">
-  <h2 class="settings-title">読書設定</h2>
-  <div class="setting-group">
-    <span class="setting-label">組み方向</span>
-    <div class="setting-buttons">
-      <button class="setting-option" data-setting="direction" data-value="vertical" type="button">縦書き</button>
-      <button class="setting-option" data-setting="direction" data-value="horizontal" type="button">横書き</button>
-    </div>
+<main class="page">
+  <h1 class="page-title">
+    地獄楽（佐杠・杠佐）
+  </h1>
+
+  <!-- タブ -->
+  <div
+    class="tabs"
+    role="tablist"
+    aria-label="作品の並び方"
+  >
+    <button
+      class="tab-button active"
+      type="button"
+      role="tab"
+      aria-selected="true"
+      aria-controls="timeline-tab"
+      data-tab="timeline-tab"
+    >
+      関係性
+    </button>
+
+    <button
+      class="tab-button"
+      type="button"
+      role="tab"
+      aria-selected="false"
+      aria-controls="writing-tab"
+      data-tab="writing-tab"
+    >
+      執筆順
+    </button>
   </div>
-  <div class="setting-group">
-    <span class="setting-label">フォント</span>
-    <div class="setting-buttons">
-      <button class="setting-option" data-setting="font" data-value="mincho" type="button">明朝体</button>
-      <button class="setting-option" data-setting="font" data-value="gothic" type="button">ゴシック体</button>
+
+  <!-- 関係性 -->
+  <section
+    id="timeline-tab"
+    class="tab-content active"
+    role="tabpanel"
+  >
+    <div class="legend">
+      <span class="legend-item">
+        <span class="legend-dot"></span>
+        本編
+      </span>
+
+      <span class="legend-item">
+        <span class="legend-dot parody"></span>
+        パロディ
+      </span>
+
+      <span class="legend-item latest-legend">
+        <span class="latest-legend-dots">
+          <span class="legend-dot latest-filled"></span>
+          <span class="legend-dot latest-outline"></span>
+        </span>
+        最新の小説
+      </span>
     </div>
-  </div>
-  <div class="setting-group">
-    <label class="setting-label" for="font-size-slider">文字サイズ</label>
-    <div class="slider-wrap">
-      <div class="slider-dots" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
-      <input class="font-slider" id="font-size-slider" type="range" min="0" max="4" step="1" value="2" aria-label="文字サイズ（12・14・16・18・20ピクセル）">
+
+    <div class="timeline-area">
+      <div
+        class="fixed-arrow-head"
+        aria-hidden="true"
+      ></div>
+
+      <div
+        class="current-section-label"
+        id="current-section-label"
+      >
+        仙薬捜索
+      </div>
+
+      <div class="timeline-scroll">
+        <div
+          class="timeline"
+          id="timeline"
+        >
+          <div class="timeline-line"></div>
+          <div class="slide-guide-text">
+            スライドして移動
+          </div>
+          <div class="division-line division-1"></div>
+          <div class="division-line division-2"></div>
+        </div>
+      </div>
     </div>
-    <div class="font-slider-labels"><span>小</span><span>標準</span><span>大</span></div>
-  </div>
-  <div class="setting-group">
-    <span class="setting-label">画面の色</span>
-    <div class="setting-buttons">
-      <button class="setting-option" data-setting="theme" data-value="dark" type="button">ダーク</button>
-      <button class="setting-option" data-setting="theme" data-value="light" type="button">ライト</button>
-    </div>
-  </div>
-  <button class="settings-close" id="settings-close" type="button">閉じる</button>
+  </section>
+
+  <!-- 執筆順 -->
+  <section
+    id="writing-tab"
+    class="tab-content"
+    role="tabpanel"
+  >
+    <div
+      class="writing-order"
+      id="writing-order"
+    ></div>
+  </section>
+
+  <a
+    class="back-link"
+    href="works.html"
+  >
+    ← 作品一覧へ
+  </a>
+</main>
+
+<!-- 最前面ポップアップ -->
+<div
+  class="story-popup"
+  id="story-popup"
+  role="dialog"
+  aria-label="作品情報"
+  aria-hidden="true"
+>
+  <button
+    class="popup-close"
+    id="popup-close"
+    type="button"
+    aria-label="閉じる"
+  >
+    ×
+  </button>
+
+  <p
+    class="story-title"
+    id="popup-title"
+  ></p>
+
+  <p
+    class="story-date"
+    id="popup-date"
+  ></p>
+
+  <p
+    class="story-characters"
+    id="popup-characters"
+  ></p>
+
+  <p
+    class="story-detail"
+    id="popup-detail"
+  ></p>
+
+  <a
+    class="story-link"
+    id="popup-link"
+    href="#"
+  >
+    読む
+  </a>
 </div>
 
-<div class="reading-layout vertical" id="reading-layout">
-  <div class="work-header">
-    <h1 class="work-title" id="work-title">読み込み中…</h1>
-    <p class="work-date" id="work-date"></p>
-  </div>
-  <main class="reader" id="reader">
-    <article class="novel-text" id="novel-text"></article>
-  </main>
-</div>
-
-<button class="desktop-page-turn left" id="desktop-page-left" type="button" aria-label="次のページへ" title="次のページへ">◀</button>
-<button class="desktop-page-turn right" id="desktop-page-right" type="button" aria-label="前のページへ" title="前のページへ">▶</button>
-
-<footer class="work-footer"><a class="back-link" href="fanworks.html" aria-label="作品一覧へ戻る" title="作品一覧へ戻る">↩︎</a></footer>
-
-<script src="novels.js?v=20261026-4"></script>
 <script>
-  const fontSizes = [12, 14, 16, 18, 20];
-  const storageKey = "otomeza-reader-settings";
-  const defaultSettings = { direction: "vertical", font: "mincho", theme: "dark", fontSize: 16 };
-  let savedSettings = {};
-  try { savedSettings = JSON.parse(localStorage.getItem(storageKey)) || {}; }
-  catch (error) { savedSettings = {}; }
-  const settings = { ...defaultSettings, ...savedSettings };
-  // 以前の5段階（16～24px）から移行するときは標準を16pxに戻します。
-  if (settings.fontScaleVersion !== 2) settings.fontSize = 16;
-  settings.fontScaleVersion = 2;
-  if (!fontSizes.includes(Number(settings.fontSize))) settings.fontSize = 16;
-  settings.fontSize = Number(settings.fontSize);
-  if (!["vertical", "horizontal"].includes(settings.direction)) settings.direction = "vertical";
-  if (!["mincho", "gothic"].includes(settings.font)) settings.font = "mincho";
-  if (!["dark", "light"].includes(settings.theme)) settings.theme = "dark";
+/* reader.html と共通のブックマーク情報を表示する */
+const bookmarkStorageKey = "otomeza-bookmarked-works-v1";
 
-  const layout = document.getElementById("reading-layout");
-  const settingsButton = document.getElementById("settings-button");
-  const settingsPanel = document.getElementById("settings-panel");
-  const fontSizeSlider = document.getElementById("font-size-slider");
-
-  function saveSettings() {
-    try { localStorage.setItem(storageKey, JSON.stringify(settings)); }
-    catch (error) { /* 保存できなくても読書は続けられます */ }
+function getBookmarkedIds() {
+  try {
+    const data = JSON.parse(
+      localStorage.getItem(bookmarkStorageKey) || "[]"
+    );
+    return new Set(Array.isArray(data) ? data : []);
+  } catch (_) {
+    return new Set();
   }
-  function applySettings() {
-    layout.classList.toggle("vertical", settings.direction === "vertical");
-    layout.classList.toggle("horizontal", settings.direction === "horizontal");
-    document.documentElement.style.setProperty("--reading-font",
-      settings.font === "gothic"
-        ? '"Yu Gothic", "游ゴシック", "YuGothic", "Hiragino Kaku Gothic ProN", sans-serif'
-        : '"Yu Mincho", "游明朝", "YuMincho", "Hiragino Mincho ProN", serif');
-    document.documentElement.style.setProperty("--font-size", `${settings.fontSize}px`);
-    fontSizeSlider.value = String(fontSizes.indexOf(settings.fontSize));
-    document.body.classList.toggle("light-mode", settings.theme === "light");
-    document.body.classList.toggle("vertical-reading", settings.direction === "vertical");
-    document.querySelectorAll(".setting-option").forEach(button => {
-      const active = settings[button.dataset.setting] === button.dataset.value;
-      button.classList.toggle("active", active);
-      button.setAttribute("aria-pressed", String(active));
+}
+
+function bookmarkIdForWork(work) {
+  try {
+    return new URL(work.href, location.href)
+      .searchParams.get("work");
+  } catch (_) {
+    return null;
+  }
+}
+
+function refreshBookmarkMarks() {
+  const ids = getBookmarkedIds();
+  document.querySelectorAll("[data-bookmark-id]").forEach(element => {
+    element.classList.toggle(
+      "bookmarked",
+      ids.has(element.dataset.bookmarkId)
+    );
+  });
+}
+
+window.addEventListener("pageshow", refreshBookmarkMarks);
+window.addEventListener("storage", event => {
+  if (event.key === bookmarkStorageKey) {
+    refreshBookmarkMarks();
+  }
+});
+
+/* 作品データ
+   characters: 文字数。現在はすべて仮の999字。
+   latest: 最新作のみ true にします。
+*/
+const works = [
+  {
+    title: "やわらかなひびきで",
+    date: "2023-07-04",
+    characters: 999,
+    detail: "佐切さんの呼び名に関する140字小説",
+    score: 4.0,
+    href: "reader.html?work=yawarakana-hibiki"
+  },
+  {
+    title: "あなたの心がわからない",
+    date: "2023-07-04",
+    characters: 999,
+    detail: "やきもちがわからない佐切さんの140字小説",
+    score: 4.0,
+    href: "reader.html?work=anata-no-kokoro"
+  },
+  {
+    title: "心を震わせる呼び",
+    date: "2023-07-04",
+    characters: 999,
+    detail: "旧名の方が好きな佐切さんの140字小説",
+    score: 4.0,
+    href: "reader.html?work=kokoro-wo-furuwaseru-yobi"
+  },
+  {
+    title: "心臓（ハート）の危機",
+    date: "2023-07-04",
+    characters: 999,
+    detail: "大切な人は守らねばという佐切さんの140字小説",
+    score: 4.3,
+    href: "reader.html?work=heart-no-kiki"
+  },
+  {
+    title: "私の甘味（スイーツ）",
+    date: "2023-07-04",
+    characters: 999,
+    detail: "甘いものが好きなのを見てるだけで満足な杠さんの140字小説",
+    score: 4.2,
+    href: "reader.html?work=watashi-no-sweets"
+  },
+  {
+    title: "買わねば損",
+    date: "2023-07-04",
+    characters: 999,
+    detail: "やけくそに言っても佐切さんは涼しい顔、な140字小説",
+    score: 4.4,
+    href: "reader.html?work=kawaneba-son"
+  },
+  {
+    title: "ありのままで",
+    date: "2023-07-04",
+    characters: 999,
+    detail: "自分の傷を明かした杠さんの140字小説",
+    score: 6.0,
+    href: "reader.html?work=arinomamade"
+  },
+  {
+    title: "ざわつき",
+    date: "2023-07-04",
+    characters: 999,
+    detail: "首斬りに従事してきた佐切さんの140字小説",
+    score: 5.5,
+    href: "reader.html?work=zawatsuki"
+  },
+  {
+    title: "相克の逢",
+    date: "2023-07-04",
+    characters: 999,
+    detail: "タオが伝わる感覚についての140字小説",
+    score: 8.4,
+    href: "reader.html?work=sokoku-no-ai"
+  },
+  {
+    title: "乱し満たすもの",
+    date: "2023-07-04",
+    characters: 999,
+    detail: "たったひとことの切り返しに惑う140字小説",
+    score: 8.5,
+    href: "reader.html?work=midashi-mitasu-mono"
+  },
+  {
+    title: "共に過ごす時間",
+    date: "2023-07-04",
+    characters: 999,
+    detail: "傷も歳も受け入れるほどの、140字小説",
+    score: 9.0,
+    href: "reader.html?work=tomo-ni-sugosu-jikan"
+  },
+  {
+    title: "愉楽を知るは",
+    date: "2023-07-07",
+    characters: 999,
+    detail: "原作で出てきたユラクなんたらを「活用」した小説。杠さんが攻め気味です",
+    score: 7.9,
+    href: "reader.html?work=yuraku-wo-shiru-wa"
+  },
+  {
+    title: "手にしたい光",
+    date: "2023-07-07",
+    characters: 999,
+    detail: "ふたりが結ばれるシチュを考えた小説",
+    score: 7.9,
+    href: "reader.html?work=te-ni-shitai-hikari"
+  },
+  {
+    title: "その心、満たされるまで",
+    date: "2023-07-08",
+    characters: 999,
+    detail: "思いが強い佐切さんについての小説",
+    score: 8.3,
+    href: "reader.html?work=sono-kokoro-mitasareru-made"
+  },
+  {
+    title: "不安を断ち切って",
+    date: "2023-07-12",
+    characters: 999,
+    detail: "自分の気持ちを持て余しはじめた杠さんの小説",
+    score: 6.8,
+    href: "reader.html?work=fuan-wo-tachikitte"
+  },
+  {
+    title: "I am too happy.",
+    date: "2023-07-15",
+    characters: 999,
+    detail: "とりこしくろう初のR-18小説。わいの答えはこれや（火炎瓶を投げつける）。佐切さんが攻めです",
+    score: 8.1,
+    href: "reader.html?work=i-am-too-happy"
+  },
+  {
+    title: "Blue Green シリーズ",
+    date: "2023-07-20",
+    endDate: "2023-08-07",
+    characters: 999,
+    detail: "京の都に来た佐杠のすったもんだ。とりこしくろう初のシリーズ作",
+    score: 5.5,
+    href: "reader.html?work=blue-green"
+  },
+  {
+    title: "宵語り",
+    date: "2023-08-12",
+    characters: 999,
+    detail: "にゃんこ目線から見た佐杠の小説。うっすら性描写ありまして佐切さんが攻めです",
+    score: 9.0,
+    href: "reader.html?work=yoigatari"
+  },
+  {
+    title: "筆が滑る",
+    date: "2023-09-30",
+    characters: 999,
+    detail: "書きたいものをつい書いてしまう佐切さんの短編",
+    score: 5.5,
+    href: "reader.html?work=fude-ga-suberu"
+  },
+  {
+    title: "お互い様",
+    date: "2023-09-30",
+    characters: 999,
+    detail: "酔っぱらった佐切さんについての短編",
+    score: 5.6,
+    href: "reader.html?work=otagaisama"
+  },
+  {
+    title: "ひとをみるひとよ",
+    date: "2023-09-30",
+    characters: 999,
+    detail: "杠さんの運命についての短編",
+    score: 7.7,
+    href: "reader.html?work=hito-wo-miru-hito-yo"
+  },
+  {
+    title: "あらがい・いきがい",
+    date: "2023-09-30",
+    characters: 999,
+    detail: "それでも生きていくふたりの短編",
+    score: 9.5,
+    href: "reader.html?work=aragai-ikigai"
+  },
+  {
+    title: "嘘つきの本音",
+    date: "2023-10-30",
+    characters: 999,
+    detail: "島で別れてからの杠さんの独白小説",
+    score: 3.9,
+    href: "reader.html?work=usotsuki-no-honne"
+  },
+  {
+    title: "養護教諭の佐切さんと生徒の杠さん シリーズ",
+    date: "2024-02-04",
+    endDate: "2024-04-18",
+    characters: 999,
+    detail: "立場上恋愛はできないけど、のすったもんだシリーズ",
+    score: 8.0,
+    parody: true,
+    href: "reader.html?work=yogo-kyoyu"
+  },
+  {
+    title: "とけてしまうくらい",
+    date: "2024-05-02",
+    characters: 999,
+    detail: "もしも最中に自分の傷がばれてしまったら、な杠さんの短編。R-18で佐切さんが攻め",
+    score: 8.2,
+    href: "reader.html?work=tokete-shimau-kurai"
+  },
+  {
+    title: "まっすぐな曲者",
+    date: "2024-05-02",
+    characters: 999,
+    detail: "そういうときにも素直に自分を出せない杠さんの短編。R-18で佐切さんが攻め",
+    score: 8.4,
+    href: "reader.html?work=massugu-na-kusemono"
+  },
+  {
+    title: "限度まで蒸らされて",
+    date: "2024-05-02",
+    characters: 999,
+    detail: "進化した佐切さんにいいようにされてしまう杠さんの短編。R-18で佐切さんが攻め",
+    score: 8.4,
+    href: "reader.html?work=gendo-made-murasarete"
+  },
+  {
+    title: "あなたの心を味わいたい",
+    date: "2024-05-02",
+    characters: 999,
+    detail: "いつもとは違う雰囲気にしてみた杠さんの短編。R-18で杠さんが攻め",
+    score: 8.5,
+    href: "reader.html?work=anata-no-kokoro-wo-ajiwaitai"
+  },
+  {
+    title: "丸餅ふたつ",
+    date: "2025-01-25",
+    characters: 999,
+    detail: "ちょっと暗い考えになっちゃう佐切さんの小説",
+    score: 8.6,
+    href: "reader.html?work=marumochi-futatsu"
+  },
+  {
+    title: "ふたり、手を繋いだら",
+    date: "2025-12-31",
+    characters: 999,
+    detail: "もう昔の自分ではないと確信する佐切さんの小説",
+    score: 6.5,
+    href: "reader.html?work=futari-te-wo-tsunaidara"
+  },
+  {
+    title: "ただそばに",
+    date: "2025-12-31",
+    characters: 999,
+    detail: "隣に居ないと、居ても、なんか落ちつかないふたりの小説。ちょい喧嘩？させたかった",
+    score: 6.3,
+    href: "reader.html?work=tada-soba-ni"
+  },
+  {
+    title: "風邪の功名",
+    date: "2026-01-13",
+    characters: 999,
+    detail: "風邪をひいてしまった佐切さんの小説",
+    score: 5.8,
+    href: "reader.html?work=kaze-no-komyo"
+  },
+  {
+    title: "また進むため",
+    date: "2026-01-23",
+    characters: 999,
+    detail: "過去を払拭する杠さんの小説",
+    score: 6.1,
+    href: "reader.html?work=mata-susumu-tame"
+  },
+  {
+    title: "忍ぶれど",
+    date: "2026-02-01",
+    characters: 999,
+    detail: "杠さんがひたすら耐える小説",
+    score: 7.8,
+    href: "reader.html?work=shinoburedo"
+  },
+  {
+    title: "ひとつ目の羽ばたき",
+    date: "2026-02-14",
+    characters: 999,
+    detail: "佐切さんが山田家を出る小説",
+    score: 2.5,
+    href: "reader.html?work=hitotsume-no-habataki"
+  },
+  {
+    title: "前向きに進む",
+    date: "2026-03-14",
+    characters: 999,
+    detail: "佐切さんのちょっとしたひとことについての短編",
+    score: 4.2,
+    href: "reader.html?work=maemuki-ni-susumu"
+  },
+  {
+    title: "たしかな色のある世界",
+    date: "2026-03-14",
+    characters: 999,
+    detail: "好きって、どういうことだろうと考える短編",
+    score: 5.5,
+    href: "reader.html?work=tashikana-iro-no-aru-sekai"
+  },
+  {
+    title: "ふくらむ手土産",
+    date: "2026-03-14",
+    characters: 999,
+    detail: "思わぬものに救われる短編",
+    score: 6.2,
+    href: "reader.html?work=fukuramu-temiyage"
+  },
+  {
+    title: "秘めごとは向こう側に",
+    date: "2026-03-14",
+    characters: 999,
+    detail: "第三者目線のふたりについての短編",
+    score: 9.2,
+    href: "reader.html?work=himegoto-wa-mukougawa-ni"
+  },
+  {
+    title: "花は散るゆえに",
+    date: "2026-03-21",
+    characters: 999,
+    detail: "今がとても幸せ。だからこそ……の小説",
+    score: 9.6,
+    href: "reader.html?work=hana-wa-chiru-yue-ni"
+  },
+  {
+    title: "...Me too.",
+    date: "2026-04-07",
+    characters: 999,
+    detail: "初夜、が明けたふたりについての小説",
+    score: 8.1,
+    href: "reader.html?work=me-too"
+  },
+  {
+    title: "夢のつづきは",
+    date: "2026-04-15",
+    characters: 999,
+    detail: "ちょっと不思議な小説",
+    score: 6.0,
+    href: "reader.html?work=yume-no-tsuzuki-wa"
+  },
+  {
+    title: "雪女の佐切さんと鬼の杠さん シリーズ",
+    date: "2026-05-03",
+    endDate: "2026-05-20",
+    characters: 999,
+    detail: "グッズから着想を得たすったもんだシリーズ",
+    score: 7.9,
+    parody: true,
+    href: "reader.html?work=yukionna-oni"
+  },
+  {
+    title: "追いかけっこ",
+    date: "2026-06-28",
+    characters: 999,
+    detail: "お互いに「自分には持っていないものをこの人は持っている」と思い合っているふたりの小説",
+    score: 4.0,
+    href: "reader.html?work=oikakekko"
+  },
+  {
+    title: "恋を鳴くには",
+    date: "2026-07-05",
+    characters: 999,
+    detail: "もだもだ杠さんの小説",
+    score: 6.9,
+    href: "reader.html?work=koi-wo-naku-niwa"
+  },
+  {
+    title: "生に冒され",
+    date: "2026-07-18",
+    characters: 999,
+    detail: "島で別れてからの佐切さんの独白小説",
+    score: 2.6,
+    href: "reader.html?work=sei-ni-okasare"
+  },
+  {
+    title: "再会の夜",
+    date: "2026-09-30",
+    characters: 999,
+    detail: "ふたりがふたたび出会ってすぐの小説",
+    score: 4.0,
+    href: "reader.html?work=saikai-no-yoru"
+  },
+  {
+    title: "旅は道連れ",
+    date: "2026-10-20",
+    characters: 999,
+    detail: "まだわからないけど、今は。という小説",
+    score: 4.0,
+    latest: true,
+    href: "reader.html?work=tabi-wa-michizure"
+  }
+];
+
+/* 執筆日・文字数の表示 */
+works.forEach((work, index) => {
+  work.originalIndex = index;
+});
+
+const chronologicalWorks = [...works].sort((a, b) =>
+  a.date.localeCompare(b.date) ||
+  a.originalIndex - b.originalIndex
+);
+
+function displayDate(work) {
+  return work.endDate
+    ? `${work.date} ～ ${work.endDate}`
+    : work.date;
+}
+
+function displayCharacters(work) {
+  if (
+    work.characters === undefined ||
+    work.characters === null
+  ) {
+    return "";
+  }
+  return `${Number(work.characters).toLocaleString("ja-JP")}字`;
+}
+
+/* 最新作の取得 */
+const latestWork =
+  works.find(work => work.latest === true);
+
+/* ポップアップ */
+const popup =
+  document.getElementById("story-popup");
+const popupClose =
+  document.getElementById("popup-close");
+const popupTitle =
+  document.getElementById("popup-title");
+const popupDate =
+  document.getElementById("popup-date");
+const popupCharacters =
+  document.getElementById("popup-characters");
+const popupDetail =
+  document.getElementById("popup-detail");
+const popupLink =
+  document.getElementById("popup-link");
+
+let activePoint = null;
+let activeButton = null;
+
+/* ポップアップの位置 */
+function positionPopup(button) {
+  const rect =
+    button.getBoundingClientRect();
+
+  const popupWidth =
+    popup.offsetWidth;
+  const popupHeight =
+    popup.offsetHeight;
+
+  const margin = 12;
+  const gap = 12;
+
+  let left =
+    rect.left +
+    rect.width / 2 -
+    popupWidth / 2;
+
+  let top =
+    rect.top -
+    popupHeight -
+    gap;
+
+  left = Math.max(
+    margin,
+    Math.min(
+      left,
+      window.innerWidth - popupWidth - margin
+    )
+  );
+
+  if (top < margin) {
+    top = rect.bottom + gap;
+  }
+
+  if (
+    top + popupHeight >
+    window.innerHeight - margin
+  ) {
+    top =
+      window.innerHeight -
+      popupHeight -
+      margin;
+  }
+
+  top = Math.max(margin, top);
+
+  popup.style.left = `${left}px`;
+  popup.style.top = `${top}px`;
+}
+
+/* ポップアップを開く */
+function openPopup(work, point, button) {
+  closePopup();
+
+  popupTitle.textContent =
+    work.title;
+  popupDate.textContent =
+    displayDate(work);
+
+  const characters =
+    displayCharacters(work);
+
+  popupCharacters.textContent =
+    characters;
+
+  popupCharacters.style.display =
+    characters ? "block" : "none";
+
+  popupDetail.textContent =
+    work.detail;
+  popupLink.href =
+    work.href;
+
+  activePoint = point;
+  activeButton = button;
+
+  button.setAttribute(
+    "aria-expanded",
+    "true"
+  );
+
+  popup.classList.add("open");
+  popup.setAttribute(
+    "aria-hidden",
+    "false"
+  );
+
+  positionPopup(button);
+}
+
+/* ポップアップを閉じる */
+function closePopup() {
+  popup.classList.remove("open");
+  popup.setAttribute(
+    "aria-hidden",
+    "true"
+  );
+
+  if (activeButton) {
+    activeButton.setAttribute(
+      "aria-expanded",
+      "false"
+    );
+  }
+
+  activePoint = null;
+  activeButton = null;
+}
+
+/* ×ボタン */
+popupClose.addEventListener("click", event => {
+  event.stopPropagation();
+  closePopup();
+});
+
+/* ポップアップの外側 */
+document.addEventListener("click", event => {
+  if (
+    !event.target.closest(".story-popup") &&
+    !event.target.closest(".point-button")
+  ) {
+    closePopup();
+  }
+});
+
+/* Escapeキー */
+document.addEventListener("keydown", event => {
+  if (event.key === "Escape") {
+    closePopup();
+  }
+});
+
+/* タブ切り替え */
+const tabButtons =
+  document.querySelectorAll(".tab-button");
+const tabContents =
+  document.querySelectorAll(".tab-content");
+
+tabButtons.forEach(button => {
+  button.addEventListener("click", () => {
+    closePopup();
+
+    tabButtons.forEach(item => {
+      item.classList.remove("active");
+      item.setAttribute("aria-selected", "false");
     });
-  }
-  function resetReadingPosition() {
-    if (settings.direction !== "vertical") return;
-    // スマホはLTR座標。右端（タイトル）から読み始めます。
-    if (mobileScreen.matches) {
-      layout.scrollLeft = layout.scrollWidth - layout.clientWidth;
-    } else {
-      layout.scrollLeft = 0;
+
+    tabContents.forEach(item => {
+      item.classList.remove("active");
+    });
+
+    button.classList.add("active");
+    button.setAttribute(
+      "aria-selected",
+      "true"
+    );
+
+    document
+      .getElementById(button.dataset.tab)
+      .classList.add("active");
+
+    if (button.dataset.tab === "timeline-tab") {
+      requestAnimationFrame(updateSectionLabel);
     }
-  }
-  function resetAfterLayout() {
-    requestAnimationFrame(() => {
-      resetReadingPosition();
-      requestAnimationFrame(resetReadingPosition);
-    });
-  }
-  document.querySelectorAll(".setting-option").forEach(button => {
-    button.addEventListener("click", () => {
-      const previousDirection = settings.direction;
-      settings[button.dataset.setting] = button.dataset.value;
-      applySettings();
-      saveSettings();
-      if (settings.direction === "vertical" && previousDirection !== "vertical") resetAfterLayout();
-    });
   });
-  fontSizeSlider.addEventListener("input", () => {
-    settings.fontSize = fontSizes[Number(fontSizeSlider.value)];
-    applySettings();
-    saveSettings();
-  });
-  function toggleSettingsPanel(open) {
-    settingsPanel.classList.toggle("open", open);
-    settingsButton.setAttribute("aria-expanded", String(open));
-  }
-  settingsButton.addEventListener("click", () => toggleSettingsPanel(!settingsPanel.classList.contains("open")));
-  document.getElementById("settings-close").addEventListener("click", () => toggleSettingsPanel(false));
-  document.addEventListener("click", event => {
-    if (!settingsPanel.contains(event.target) && !settingsButton.contains(event.target)) toggleSettingsPanel(false);
-  });
-  document.addEventListener("keydown", event => {
-    if (event.key === "Escape") toggleSettingsPanel(false);
-  });
+});
 
-  function escapeHTML(value) {
-    return String(value).replace(/[&<>"']/g, char => ({
-      "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
-    })[char]);
+/* 関係性タイムライン */
+const timeline =
+  document.getElementById("timeline");
+
+const groups = {};
+
+works.forEach(work => {
+  const key = work.score.toFixed(1);
+
+  if (!groups[key]) {
+    groups[key] = [];
   }
-  function formatPlainText(value) {
-    // 「!?」など2文字の記号を縦中横にします。
-    // 「～」「〜」は直前の文字と組にして行頭への孤立を防ぎます。
-    return String(value).split(/([!?！？]{2}|[^\s～〜][～〜])/g).map(part => {
-      if (/^[!?！？]{2}$/.test(part)) return `<span class="tcy">${escapeHTML(part)}</span>`;
-      if (/^[^\s～〜][～〜]$/.test(part)) return `<span class="kinsoku-pair">${escapeHTML(part)}</span>`;
-      return escapeHTML(part);
-    }).join("");
+
+  groups[key].push(work);
+});
+
+Object.values(groups).forEach(group => {
+  group.sort((a, b) =>
+    a.date.localeCompare(b.date) ||
+    a.originalIndex - b.originalIndex
+  );
+});
+
+works.forEach(work => {
+  const group =
+    groups[work.score.toFixed(1)];
+
+  const index =
+    group.indexOf(work);
+
+  const offset =
+    -58 - ((group.length - 1 - index) * 52);
+
+  createTimelinePoint(work, offset);
+});
+
+/* 作品ポイント生成 */
+function createTimelinePoint(work, offset) {
+  const point =
+    document.createElement("div");
+
+  point.className = "story-point";
+  point.dataset.bookmarkId = bookmarkIdForWork(work) || "";
+
+  if (work.parody) {
+    point.classList.add("parody");
   }
-  function formatNovelText(text) {
-    const source = String(text ?? "").replace(/\r\n?/g, "\n");
-    if (source.length === 0) return "<p>ここに本文が入ります。</p>";
-    const rubyPattern = /\[\[rb:\s*([^>\]\n]+?)\s*>\s*([^\]\n]+?)\s*\]\]/g;
-    return source.split("\n").map(line => {
-      if (line === "") return '<div class="novel-blank-line"></div>';
-      let html = "";
-      let lastIndex = 0;
-      for (const match of line.matchAll(rubyPattern)) {
-        html += formatPlainText(line.slice(lastIndex, match.index));
-        html += `<ruby>${escapeHTML(match[1].trim())}<rt>${escapeHTML(match[2].trim())}</rt></ruby>`;
-        lastIndex = match.index + match[0].length;
+
+  if (work.latest) {
+    point.classList.add("latest");
+  }
+
+  const x =
+    8 +
+    ((work.score - 2.5) / (9.6 - 2.5)) * 89.5;
+
+  point.style.setProperty(
+    "--x",
+    `${x}%`
+  );
+
+  point.style.setProperty(
+    "--offset",
+    `${offset}px`
+  );
+
+  const button =
+    document.createElement("button");
+
+  button.type = "button";
+  button.className = "point-button";
+
+  button.setAttribute(
+    "aria-label",
+    work.title
+  );
+
+  button.setAttribute(
+    "aria-expanded",
+    "false"
+  );
+
+  button.textContent =
+    Array.from(work.title)[0];
+
+  point.appendChild(button);
+  timeline.appendChild(point);
+
+  button.addEventListener("click", event => {
+    event.stopPropagation();
+
+    if (activePoint === point) {
+      closePopup();
+      return;
+    }
+
+    openPopup(work, point, button);
+  });
+}
+
+/* 執筆順 */
+const writingOrder =
+  document.getElementById("writing-order");
+
+/* 最新作カード */
+if (latestWork) {
+  const card =
+    document.createElement("a");
+
+  card.className = "latest-work-card";
+  card.dataset.bookmarkId = bookmarkIdForWork(latestWork) || "";
+  card.href = latestWork.href;
+
+  const label =
+    document.createElement("p");
+
+  label.className = "latest-card-label";
+  label.textContent = "最新の小説";
+
+  const date =
+    document.createElement("p");
+
+  date.className = "latest-card-date";
+  date.textContent =
+    displayDate(latestWork);
+
+  const title =
+    document.createElement("h2");
+
+  title.className = "latest-card-title";
+  title.textContent =
+    latestWork.title;
+
+  const characters =
+    document.createElement("p");
+
+  characters.className =
+    "latest-card-characters";
+
+  characters.textContent =
+    displayCharacters(latestWork);
+
+  if (!displayCharacters(latestWork)) {
+    characters.style.display = "none";
+  }
+
+  const detail =
+    document.createElement("p");
+
+  detail.className = "latest-card-detail";
+  detail.textContent =
+    latestWork.detail;
+
+  card.append(
+    label,
+    date,
+    title,
+    characters,
+    detail
+  );
+
+  writingOrder.appendChild(card);
+}
+
+/* 年ごとの作品一覧 */
+const years = [
+  ...new Set(
+    chronologicalWorks.map(work =>
+      work.date.slice(0, 4)
+    )
+  )
+];
+
+years.forEach(year => {
+  const block =
+    document.createElement("section");
+
+  block.className = "year-block";
+
+  const heading =
+    document.createElement("h2");
+
+  heading.className = "year-title";
+  heading.textContent = `${year}年`;
+
+  const list =
+    document.createElement("ul");
+
+  list.className = "work-list";
+
+  chronologicalWorks
+    .filter(work => work.date.startsWith(year))
+    .forEach(work => {
+      const item =
+        document.createElement("li");
+
+      item.dataset.bookmarkId = bookmarkIdForWork(work) || "";
+
+      const date =
+        document.createElement("span");
+
+      date.className = "work-date";
+      date.textContent =
+        displayDate(work);
+
+      const info =
+        document.createElement("div");
+
+      info.className = "work-info";
+
+      const link =
+        document.createElement("a");
+
+      link.href = work.href;
+      link.textContent = work.title;
+
+      const meta =
+        document.createElement("div");
+
+      meta.className = "work-meta";
+
+      const characters =
+        document.createElement("span");
+
+      characters.className =
+        "work-characters";
+
+      characters.textContent =
+        displayCharacters(work);
+
+      if (displayCharacters(work)) {
+        meta.appendChild(characters);
       }
-      html += formatPlainText(line.slice(lastIndex));
-      return `<p>${html}</p>`;
-    }).join("\n");
-  }
 
-  const workId = new URLSearchParams(window.location.search).get("work");
-  const novelList = typeof novels !== "undefined" && Array.isArray(novels) ? novels : [];
-  const currentWork = novelList.find(work => work.id === workId);
-  if (currentWork) {
-    document.getElementById("work-title").textContent = currentWork.title;
-    document.getElementById("work-date").textContent = currentWork.date || "";
-    document.getElementById("novel-text").innerHTML = formatNovelText(currentWork.text);
-    document.title = `${currentWork.title}｜乙女座の脚元`;
+      if (work.parody) {
+        const type =
+          document.createElement("span");
+
+        type.className = "work-type";
+        type.textContent = "パロディ";
+
+        meta.appendChild(type);
+      }
+
+      info.appendChild(link);
+
+      if (meta.children.length > 0) {
+        info.appendChild(meta);
+      }
+
+      item.append(
+        date,
+        info
+      );
+
+      list.appendChild(item);
+    });
+
+  block.append(
+    heading,
+    list
+  );
+
+  writingOrder.appendChild(block);
+});
+
+/* タイムラインの区分名 */
+const timelineScroll =
+  document.querySelector(".timeline-scroll");
+
+const currentSectionLabel =
+  document.getElementById("current-section-label");
+
+const division1 =
+  document.querySelector(".division-1");
+
+const division2 =
+  document.querySelector(".division-2");
+
+function updateSectionLabel() {
+  const timelineRect =
+    timeline.getBoundingClientRect();
+
+  const scrollRect =
+    timelineScroll.getBoundingClientRect();
+
+  const centerX =
+    scrollRect.left +
+    scrollRect.width / 2 -
+    timelineRect.left;
+
+  if (centerX >= division2.offsetLeft) {
+    currentSectionLabel.textContent =
+      "その後";
+  } else if (centerX >= division1.offsetLeft) {
+    currentSectionLabel.textContent =
+      "諸国行脚";
   } else {
-    document.getElementById("work-title").textContent = "作品が見つかりません";
-    document.getElementById("work-date").textContent = "";
-    document.getElementById("novel-text").innerHTML = "<p>作品データを確認してください。</p>";
+    currentSectionLabel.textContent =
+      "仙薬捜索";
   }
+}
 
-  // PC・スマホとも縦書きのタイトルは本文の最初の列に置く。
-  // 本文データは変更せず、横書きではこの要素を非表示にする。
-  if (currentWork) {
-    const mobileHeading = document.createElement("div");
-    mobileHeading.className = "mobile-vertical-title";
-    const mobileTitle = document.createElement("h2");
-    mobileTitle.textContent = currentWork.title;
-    const mobileDate = document.createElement("p");
-    mobileDate.className = "mobile-date";
-    mobileDate.textContent = currentWork.date || "";
-    const mobileSettings = document.createElement("button");
-    mobileSettings.type = "button";
-    mobileSettings.className = "settings-button mobile-settings-button";
-    mobileSettings.textContent = "⚙ 読書設定";
-    mobileSettings.setAttribute("aria-label", "読書設定を開く");
-    mobileSettings.addEventListener("click", event => {
-      event.stopPropagation();
-      settingsButton.click();
-    });
-    mobileHeading.append(mobileSettings, mobileTitle, mobileDate);
-    document.getElementById("novel-text").prepend(mobileHeading);
+/* スクロール時 */
+timelineScroll.addEventListener(
+  "scroll",
+  () => {
+    updateSectionLabel();
+    closePopup();
+  },
+  { passive: true }
+);
+
+/* 画面サイズ変更時 */
+window.addEventListener("resize", () => {
+  updateSectionLabel();
+
+  if (activeButton) {
+    positionPopup(activeButton);
   }
+});
 
-  // 縦書きでは本文の末尾に縦書きリンクを置く。
-  // 横書きでは非表示になるので、従来のフッターを使う。
-  const verticalEndLink = document.createElement("div");
-  verticalEndLink.className = "vertical-end-link";
-  verticalEndLink.innerHTML = '<a href="fanworks.html" aria-label="作品一覧へ戻る" title="作品一覧へ戻る">↩︎</a>';
-  document.getElementById("novel-text").append(verticalEndLink);
+/* ページ縦スクロール時 */
+window.addEventListener(
+  "scroll",
+  () => {
+    closePopup();
+  },
+  { passive: true }
+);
 
-  window.addEventListener("resize", () => {
-    document.body.classList.toggle("vertical-reading", settings.direction === "vertical");
-  });
-
-  // PC：ホイール1回で縦書きの約1行分を横に進めます。
-  layout.addEventListener("wheel", event => {
-    if (settings.direction !== "vertical" || event.ctrlKey || event.deltaY === 0) return;
-    if (Math.abs(event.deltaX) > Math.abs(event.deltaY)) return;
-    const maxScroll = layout.scrollWidth - layout.clientWidth;
-    const direction = event.deltaY > 0 ? -1 : 1;
-    const current = layout.scrollLeft;
-    if ((direction < 0 && current <= -maxScroll + 1) ||
-        (direction > 0 && current >= -1)) return;
-    event.preventDefault();
-    layout.scrollLeft += direction * settings.fontSize * 2.2;
-  }, { passive: false });
-
-  // スマホ縦書き専用：ドラッグ操作と左右端タップ。
-  // PCのホイール処理は上記のまま変更しません。
-  const mobileScreen = window.matchMedia("(max-width: 600px)");
-  let gesture = null;
-  let inertiaFrame = null;
-
-  function mobileVertical() {
-    return mobileScreen.matches && settings.direction === "vertical";
-  }
-
-  function stopInertia() {
-    if (inertiaFrame !== null) {
-      cancelAnimationFrame(inertiaFrame);
-      inertiaFrame = null;
-    }
-  }
-
-  function coast(velocity) {
-    let last = performance.now();
-    function frame(now) {
-      const elapsed = Math.min(now - last, 32);
-      last = now;
-      const previous = layout.scrollLeft;
-      layout.scrollLeft -= velocity * elapsed;
-      velocity *= Math.pow(0.94, elapsed / 16);
-      const reachedEdge = Math.abs(layout.scrollLeft - previous) < 0.2;
-      if (Math.abs(velocity) > 0.035 && !reachedEdge) {
-        inertiaFrame = requestAnimationFrame(frame);
-      } else {
-        inertiaFrame = null;
-      }
-    }
-    inertiaFrame = requestAnimationFrame(frame);
-  }
-
-  layout.addEventListener("touchstart", event => {
-    if (!mobileVertical() || event.touches.length !== 1) return;
-    stopInertia();
-    const touch = event.touches[0];
-    gesture = {
-      startX: touch.clientX,
-      startY: touch.clientY,
-      lastX: touch.clientX,
-      lastY: touch.clientY,
-      lastTime: performance.now(),
-      velocity: 0,
-      dragging: false,
-      vertical: false
-    };
-  }, { passive: true });
-
-  layout.addEventListener("touchmove", event => {
-    if (!mobileVertical() || !gesture || event.touches.length !== 1) return;
-    const touch = event.touches[0];
-    const x = touch.clientX;
-    const y = touch.clientY;
-    const totalX = x - gesture.startX;
-    const totalY = y - gesture.startY;
-
-    if (!gesture.dragging && !gesture.vertical) {
-      if (Math.abs(totalX) > 6 && Math.abs(totalX) > Math.abs(totalY)) {
-        gesture.dragging = true;
-      } else if (Math.abs(totalY) > 6 && Math.abs(totalY) > Math.abs(totalX)) {
-        gesture.vertical = true;
-      }
-    }
-
-    if (gesture.dragging) {
-      // 指が右へ動いたら本文も右へ動くように、スクロール座標は逆方向に更新します。
-      event.preventDefault();
-      const now = performance.now();
-      const elapsed = Math.max(1, now - gesture.lastTime);
-      const dx = x - gesture.lastX;
-      layout.scrollLeft -= dx;
-      const measured = Math.max(-1.8, Math.min(1.8, dx / elapsed));
-      gesture.velocity = gesture.velocity * 0.5 + measured * 0.5;
-    }
-    gesture.lastX = x;
-    gesture.lastY = y;
-    gesture.lastTime = performance.now();
-  }, { passive: false });
-
-  layout.addEventListener("touchend", event => {
-    if (!gesture || !mobileVertical()) { gesture = null; return; }
-    const touch = event.changedTouches[0];
-    const deltaX = touch.clientX - gesture.startX;
-    const deltaY = touch.clientY - gesture.startY;
-    const dragged = gesture.dragging || Math.abs(deltaX) > 10 || Math.abs(deltaY) > 10;
-
-    if (gesture.dragging) {
-      if (Math.abs(gesture.velocity) > 0.08) coast(gesture.velocity);
-    } else if (!dragged) {
-      const rect = layout.getBoundingClientRect();
-      const x = touch.clientX - rect.left;
-      const edgeWidth = Math.min(85, rect.width * 0.22);
-      const step = layout.clientWidth * 0.85;
-      if (x < edgeWidth) {
-        // 左端タップ：次のページへ。
-        layout.scrollTo({ left: layout.scrollLeft - step, behavior: "smooth" });
-      } else if (x > rect.width - edgeWidth) {
-        // 右端タップ：前のページへ。
-        layout.scrollTo({ left: layout.scrollLeft + step, behavior: "smooth" });
-      }
-    }
-    gesture = null;
-  }, { passive: true });
-
-  layout.addEventListener("touchcancel", () => {
-    gesture = null;
-    stopInertia();
-  }, { passive: true });
-
-
-  // PC縦書き：画面幅の90%ずつページを送る（右＝戻る、左＝進む）。
-  function turnDesktopPage(direction) {
-    if (settings.direction !== "vertical" || window.matchMedia("(max-width: 600px)").matches) return;
-    layout.scrollBy({ left: direction * layout.clientWidth * 0.9, behavior: "smooth" });
-  }
-  document.getElementById("desktop-page-left").addEventListener("click", () => turnDesktopPage(-1));
-  document.getElementById("desktop-page-right").addEventListener("click", () => turnDesktopPage(1));
-
-  if ("scrollRestoration" in history) history.scrollRestoration = "manual";
-  applySettings();
-  saveSettings();
-  resetAfterLayout();
-  window.addEventListener("load", () => {
-    resetAfterLayout();
-    window.scrollTo(0, 0);
-  });
+/* 初期表示 */
+updateSectionLabel();
+refreshBookmarkMarks();
 </script>
 </body>
 </html>
