@@ -10,7 +10,7 @@
     --background: #1d3652;
     --foreground: #ffffff;
     --accent: #28bfb0;
-    --font-size: 16px;
+    --font-size: 19px;
     --reading-font: "Yu Mincho", "游明朝", "YuMincho", "Hiragino Mincho ProN", serif;
   }
   html { min-height: 100%; }
@@ -348,6 +348,22 @@
     body.vertical-reading .desktop-page-turn.left { left: 0; }
     body.vertical-reading .desktop-page-turn.right { right: 0; }
   }
+
+  /* 本文末尾：戻る・ブックマーク・共有 */
+  .end-actions { display: inline-flex; align-items: center; justify-content: center; gap: 1.15rem; }
+  .end-action { display: inline-flex; align-items: center; justify-content: center; padding: .2rem; border: 0; background: transparent; color: var(--foreground); font: 1.7rem/1.5 sans-serif; opacity: .75; text-decoration: none; cursor: pointer; }
+  .end-action:hover, .end-action:focus-visible { color: var(--accent); opacity: 1; }
+  .end-action.bookmarked { color: var(--accent); opacity: 1; }
+  .share-status { position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%); z-index: 1200; background: var(--foreground); color: var(--background); padding: .65rem 1rem; border-radius: 5px; font: .8rem/1.6 sans-serif; box-shadow: 0 5px 18px rgba(0,0,0,.25); max-width: calc(100vw - 2rem); text-align: center; }
+  .share-status[hidden] { display: none; }
+  .reading-layout.vertical .vertical-end-link { white-space: normal; }
+  .reading-layout.vertical .vertical-end-link .end-actions { writing-mode: horizontal-tb; flex-direction: column; gap: .9rem; }
+  .reading-layout.vertical .vertical-end-link .end-action { writing-mode: horizontal-tb; transform: none; }
+  .work-footer .end-actions { display: flex; }
+  @media (max-width: 600px) {
+    /* 縦書きの読書設定とタイトルの間に十分な余白を追加 */
+    .reading-layout.vertical .mobile-settings-button { margin-left: 4rem; }
+  }
 </style>
 </head>
 <body>
@@ -375,7 +391,7 @@
     <label class="setting-label" for="font-size-slider">文字サイズ</label>
     <div class="slider-wrap">
       <div class="slider-dots" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
-      <input class="font-slider" id="font-size-slider" type="range" min="0" max="4" step="1" value="2" aria-label="文字サイズ（12・14・16・18・20ピクセル）">
+      <input class="font-slider" id="font-size-slider" type="range" min="0" max="4" step="1" value="2" aria-label="文字サイズ（15・17・19・21・23ピクセル）">
     </div>
     <div class="font-slider-labels"><span>小</span><span>標準</span><span>大</span></div>
   </div>
@@ -402,21 +418,32 @@
 <button class="desktop-page-turn left" id="desktop-page-left" type="button" aria-label="次のページへ" title="次のページへ">◀</button>
 <button class="desktop-page-turn right" id="desktop-page-right" type="button" aria-label="前のページへ" title="前のページへ">▶</button>
 
-<footer class="work-footer"><a class="back-link" href="fanworks.html" aria-label="作品一覧へ戻る" title="作品一覧へ戻る">↩︎</a></footer>
+<footer class="work-footer">
+  <div class="end-actions" aria-label="読書後の操作">
+    <a class="end-action" href="fanworks.html" aria-label="作品一覧へ戻る" title="作品一覧へ戻る">↩︎</a>
+    <button class="end-action bookmark-action" type="button" aria-label="ブックマークに追加" title="ブックマークに追加" aria-pressed="false">☆</button>
+    <button class="end-action share-action" type="button" aria-label="作品を共有" title="作品を共有">↗</button>
+  </div>
+</footer>
+<div class="share-status" id="share-status" role="status" aria-live="polite" hidden></div>
 
 <script src="novels.js?v=20261026-4"></script>
 <script>
-  const fontSizes = [12, 14, 16, 18, 20];
+  const fontSizes = [15, 17, 19, 21, 23];
   const storageKey = "otomeza-reader-settings";
-  const defaultSettings = { direction: "vertical", font: "mincho", theme: "dark", fontSize: 16 };
+  const defaultSettings = { direction: "vertical", font: "mincho", theme: "dark", fontSize: 19 };
   let savedSettings = {};
   try { savedSettings = JSON.parse(localStorage.getItem(storageKey)) || {}; }
   catch (error) { savedSettings = {}; }
   const settings = { ...defaultSettings, ...savedSettings };
-  // 以前の5段階（16～24px）から移行するときは標準を16pxに戻します。
-  if (settings.fontScaleVersion !== 2) settings.fontSize = 16;
-  settings.fontScaleVersion = 2;
-  if (!fontSizes.includes(Number(settings.fontSize))) settings.fontSize = 16;
+  // 旧5段階の選択位置を維持しながら、新しい15～23pxの5段階に移行します。
+  if (settings.fontScaleVersion !== 3) {
+    const oldSizes = settings.fontScaleVersion === 2 ? [12, 14, 16, 18, 20] : [16, 18, 20, 22, 24];
+    const oldIndex = oldSizes.indexOf(Number(settings.fontSize));
+    settings.fontSize = oldIndex >= 0 ? fontSizes[oldIndex] : 19;
+  }
+  settings.fontScaleVersion = 3;
+  if (!fontSizes.includes(Number(settings.fontSize))) settings.fontSize = 19;
   settings.fontSize = Number(settings.fontSize);
   if (!["vertical", "horizontal"].includes(settings.direction)) settings.direction = "vertical";
   if (!["mincho", "gothic"].includes(settings.font)) settings.font = "mincho";
@@ -563,8 +590,87 @@
   // 横書きでは非表示になるので、従来のフッターを使う。
   const verticalEndLink = document.createElement("div");
   verticalEndLink.className = "vertical-end-link";
-  verticalEndLink.innerHTML = '<a href="fanworks.html" aria-label="作品一覧へ戻る" title="作品一覧へ戻る">↩︎</a>';
+  verticalEndLink.innerHTML = `<div class="end-actions" aria-label="読書後の操作">
+    <a class="end-action" href="fanworks.html" aria-label="作品一覧へ戻る" title="作品一覧へ戻る">↩︎</a>
+    <button class="end-action bookmark-action" type="button" aria-label="ブックマークに追加" title="ブックマークに追加" aria-pressed="false">☆</button>
+    <button class="end-action share-action" type="button" aria-label="作品を共有" title="作品を共有">↗</button>
+  </div>`;
   document.getElementById("novel-text").append(verticalEndLink);
+
+
+  // 読書画面と作品一覧で共通のブックマーク保存領域。
+  const bookmarkStorageKey = "otomeza-bookmarked-works-v1";
+  function getBookmarks() {
+    try {
+      const saved = JSON.parse(localStorage.getItem(bookmarkStorageKey) || "[]");
+      return new Set(Array.isArray(saved) ? saved.filter(id => typeof id === "string") : []);
+    } catch (_) { return new Set(); }
+  }
+  function updateBookmarkButtons() {
+    const saved = Boolean(currentWork && getBookmarks().has(currentWork.id));
+    document.querySelectorAll(".bookmark-action").forEach(button => {
+      button.textContent = saved ? "★" : "☆";
+      button.classList.toggle("bookmarked", saved);
+      button.setAttribute("aria-pressed", String(saved));
+      button.setAttribute("aria-label", saved ? "ブックマークを解除" : "ブックマークに追加");
+      button.title = saved ? "ブックマークを解除" : "ブックマークに追加";
+      button.disabled = !currentWork;
+    });
+  }
+  document.querySelectorAll(".bookmark-action").forEach(button => {
+    button.addEventListener("click", () => {
+      if (!currentWork) return;
+      const saved = getBookmarks();
+      if (saved.has(currentWork.id)) saved.delete(currentWork.id);
+      else saved.add(currentWork.id);
+      try { localStorage.setItem(bookmarkStorageKey, JSON.stringify([...saved])); }
+      catch (_) { showShareStatus("ブックマークを保存できませんでした"); }
+      updateBookmarkButtons();
+    });
+  });
+  updateBookmarkButtons();
+  window.addEventListener("pageshow", updateBookmarkButtons);
+  window.addEventListener("storage", event => {
+    if (event.key === bookmarkStorageKey) updateBookmarkButtons();
+  });
+
+  let shareStatusTimer;
+  function showShareStatus(message) {
+    const status = document.getElementById("share-status");
+    status.textContent = message;
+    status.hidden = false;
+    clearTimeout(shareStatusTimer);
+    shareStatusTimer = setTimeout(() => { status.hidden = true; }, 3500);
+  }
+  async function shareCurrentWork() {
+    if (!currentWork) return;
+    const url = new URL(window.location.href);
+    url.hash = "";
+    // 作品URLに読書設定等の余計なクエリが付かないようにする。
+    url.search = new URLSearchParams({ work: currentWork.id }).toString();
+    const text = `『${currentWork.title}』\n佐切×杠｜地獄楽`;
+    const fullText = `${text}\n${url.href}`;
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: currentWork.title, text, url: url.href });
+        return;
+      } catch (error) {
+        if (error && error.name === "AbortError") return;
+        // 共有機能が利用できない場合はコピーに切り替える。
+      }
+    }
+    try {
+      await navigator.clipboard.writeText(fullText);
+      showShareStatus("タイトル・カップリング・URLをコピーしました");
+    } catch (_) {
+      // HTTP環境などでクリップボードが使えない場合も文面を取得できるようにする。
+      window.prompt("共有用の文章をコピーしてください", fullText);
+    }
+  }
+  document.querySelectorAll(".share-action").forEach(button => {
+    button.disabled = !currentWork;
+    button.addEventListener("click", shareCurrentWork);
+  });
 
   window.addEventListener("resize", () => {
     document.body.classList.toggle("vertical-reading", settings.direction === "vertical");
@@ -666,6 +772,7 @@
   }, { passive: false });
 
   layout.addEventListener("touchend", event => {
+    if (event.target.closest("a, button, input, select, textarea")) { gesture = null; return; }
     if (!gesture || !mobileVertical()) { gesture = null; return; }
     const touch = event.changedTouches[0];
     const deltaX = touch.clientX - gesture.startX;
