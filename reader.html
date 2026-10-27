@@ -313,6 +313,39 @@
     }
     .reading-layout.horizontal .work-title { font-size: 1.4rem; }
   }
+
+  /* PC縦書き専用：左右の端にカーソルを寄せるとページ送りが現れる */
+  .desktop-page-turn {
+    display: none;
+  }
+  @media (min-width: 601px) and (hover: hover) and (pointer: fine) {
+    body.vertical-reading .desktop-page-turn {
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      z-index: 30;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 48px;
+      padding: 0;
+      border: 0;
+      border-radius: 0;
+      background: transparent;
+      color: var(--foreground);
+      opacity: 0;
+      cursor: pointer;
+      font-size: 16px;
+      transition: opacity .2s ease, background-color .2s ease;
+    }
+    body.vertical-reading .desktop-page-turn:hover,
+    body.vertical-reading .desktop-page-turn:focus-visible {
+      opacity: 1;
+      background: rgba(110, 130, 160, .12);
+    }
+    body.vertical-reading .desktop-page-turn.left { left: 0; }
+    body.vertical-reading .desktop-page-turn.right { right: 0; }
+  }
 </style>
 </head>
 <body>
@@ -363,6 +396,9 @@
     <article class="novel-text" id="novel-text"></article>
   </main>
 </div>
+
+<button class="desktop-page-turn left" id="desktop-page-left" type="button" aria-label="次のページへ" title="次のページへ">◀</button>
+<button class="desktop-page-turn right" id="desktop-page-right" type="button" aria-label="前のページへ" title="前のページへ">▶</button>
 
 <footer class="work-footer"><a class="back-link" href="fanworks.html" aria-label="作品一覧へ戻る" title="作品一覧へ戻る">↩︎</a></footer>
 
@@ -656,6 +692,15 @@
     gesture = null;
     stopInertia();
   }, { passive: true });
+
+
+  // PC縦書き：画面幅の90%ずつページを送る（右＝戻る、左＝進む）。
+  function turnDesktopPage(direction) {
+    if (settings.direction !== "vertical" || window.matchMedia("(max-width: 600px)").matches) return;
+    layout.scrollBy({ left: direction * layout.clientWidth * 0.9, behavior: "smooth" });
+  }
+  document.getElementById("desktop-page-left").addEventListener("click", () => turnDesktopPage(-1));
+  document.getElementById("desktop-page-right").addEventListener("click", () => turnDesktopPage(1));
 
   if ("scrollRestoration" in history) history.scrollRestoration = "manual";
   applySettings();
