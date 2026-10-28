@@ -1,4 +1,6 @@
 <!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="referrer" content="no-referrer"><title>交信｜乙女座の脚元</title><link rel="stylesheet" href="koushin.css"><style>
+/* このページの背景に固定された小さな星だけを非表示にする。上部の二つの星と送信演出は維持。 */
+body::before { display: none !important; }
 /* 送信成功後だけ表示する、2秒間の交信演出 */
 .koushin-transmission {
   position: fixed; inset: 0; z-index: 9999;
