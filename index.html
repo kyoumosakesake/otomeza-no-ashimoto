@@ -15,13 +15,21 @@
 
     .hero {
       min-height: 100vh;
+      min-height: 100dvh;
+      position: relative;
       display: flex;
       flex-direction: column;
-      justify-content: center;
       align-items: center;
       text-align: center;
       padding: 2rem;
       box-sizing: border-box;
+    }
+
+    .hero-heading {
+      position: absolute;
+      bottom: calc(50% + 5rem);
+      left: 1rem;
+      right: 1rem;
     }
 
     .site-title {
@@ -30,6 +38,12 @@
       font-size: 2.4rem;
       font-weight: 400;
       letter-spacing: 0.12em;
+      animation: title-breathe 6s ease-in-out infinite;
+    }
+
+    @keyframes title-breathe {
+      0%, 100% { opacity: .95; text-shadow: 0 0 2px rgba(255,255,255,.06); }
+      50% { opacity: .52; text-shadow: 0 0 16px rgba(255,255,255,.22); }
     }
 
     .site-description {
@@ -44,7 +58,10 @@
       justify-content: center;
       align-items: center;
 
-      margin-top: 3rem;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
       padding: 0.8rem 1.8rem;
 
       background: #28bfb0;
@@ -64,12 +81,16 @@
 
     .open-button:hover {
       opacity: 0.85;
-      transform: translateY(-2px);
+      transform: translate(-50%, calc(-50% - 2px));
     }
 
     .open-button:focus-visible {
       outline: 2px solid #ffffff;
       outline-offset: 4px;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .site-title { animation: none; }
     }
 
     @media (max-width: 600px) {
@@ -111,13 +132,10 @@
 
   <main class="hero">
 
-    <h1 class="site-title">
-      乙女座の脚元
-    </h1>
-
-    <p class="site-description">
-      とりこしくろうによる書きものなど
-    </p>
+    <div class="hero-heading">
+      <h1 class="site-title">乙女座の脚元</h1>
+      <p class="site-description">とりこしくろうのひとつの在り処</p>
+    </div>
 
     <a class="open-button" href="menu.html" id="site-open">
       ひらく
