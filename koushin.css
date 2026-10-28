@@ -1,1 +1,76 @@
-:root{--bg:#1d3652;--accent:#28bfb0;--ink:#f7f9fa;--muted:#b9cbd8;--line:rgba(40,191,176,.34);--panel:rgba(255,255,255,.045)}*{box-sizing:border-box}html{background:var(--bg)}body{margin:0;background:var(--bg);color:var(--ink);font-family:'Yu Mincho','Hiragino Mincho ProN','Noto Serif JP',serif;line-height:1.95}button,input,textarea{font:inherit}a{color:inherit;text-decoration:none}a:hover{color:var(--accent)}.shell{max-width:850px;margin:auto;padding:28px 24px 100px}.nav{display:flex;justify-content:space-between;gap:16px;color:var(--muted);font-size:13px}.nav span{letter-spacing:.12em}.hero{margin:78px 0 46px;text-align:center}.hero .symbol{font-size:23px;color:var(--accent);letter-spacing:.5em}.hero h1{font-weight:400;letter-spacing:.32em;font-size:clamp(32px,7vw,49px);margin:12px 0 20px}.hero p{font-size:14px;line-height:2.3;color:var(--muted)}.line{border:0;border-top:1px solid var(--line);margin:35px 0}.panel{max-width:650px;margin:0 auto}.label{display:block;font-size:14px;margin:0 0 9px;letter-spacing:.1em}.text{display:block;width:100%;background:var(--panel);border:1px solid var(--line);color:var(--ink);padding:16px;border-radius:3px;line-height:1.9;resize:vertical;min-height:220px}.text:focus,input:focus{outline:2px solid var(--accent);outline-offset:2px}.text.small{min-height:130px}.actions{display:flex;gap:12px;flex-wrap:wrap;margin:24px 0}.btn{display:inline-block;padding:10px 20px;border:1px solid var(--line);border-radius:3px;background:transparent;color:var(--ink);cursor:pointer}.btn:hover{border-color:var(--accent);color:var(--accent)}.btn.primary{background:var(--accent);border-color:var(--accent);color:#0a283a}.btn:disabled{opacity:.5;cursor:wait}.hint,.status{font-size:13px;color:var(--muted)}.status{min-height:1.8em}.note{font-size:13px;color:var(--muted);line-height:2}.receipt{border:1px solid var(--line);padding:22px;background:var(--panel);margin-top:24px}.receipt input{width:100%;padding:11px;background:#102a43;border:1px solid var(--line);color:var(--ink);font-size:13px}.entry{white-space:pre-wrap;overflow-wrap:anywhere;line-height:2;background:var(--panel);border:1px solid var(--line);padding:18px;margin:14px 0 25px}.meta{font-size:12px;color:var(--muted)}.divider{border:0;border-top:1px solid var(--line);margin:28px 0}.tabs{display:flex;flex-wrap:wrap;gap:9px;margin:20px 0}.tab[aria-pressed=true]{color:#09283a;background:var(--accent);border-color:var(--accent)}.admin-row{border-bottom:1px solid var(--line);padding:19px 0}.admin-row p{white-space:pre-wrap;overflow-wrap:anywhere;font-size:14px;color:var(--muted);margin:8px 0}.admin-row .actions{margin:9px 0}.admin-row .actions .btn{padding:5px 12px;font-size:13px}.field{display:grid;gap:7px;margin:14px 0}.field input{width:100%;background:var(--panel);border:1px solid var(--line);color:var(--ink);padding:12px}.hide,[hidden]{display:none!important}@media(max-width:550px){.shell{padding:23px 18px 75px}.hero{margin:58px 0 37px}.receipt{padding:15px}.nav{font-size:12px}}
+/* 交信 ─ 夜の通信室 / 既存の3ページ共通スタイル */
+:root {
+  color-scheme: dark;
+  --bg:#101e35;
+  --accent:#8ad6c9;
+  --ink:#f1f2ed;
+  --muted:#bac9d5;
+  --line:rgba(138,214,201,.29);
+  --panel:rgba(15,39,61,.75);
+  --deep:#09182c;
+}
+*{box-sizing:border-box}
+html{background:var(--bg)}
+body{
+  margin:0;min-height:100vh;color:var(--ink);
+  font-family:'Yu Mincho','Hiragino Mincho ProN','Noto Serif JP',serif;
+  line-height:1.95;
+  background:
+    radial-gradient(circle at 50% 5%,rgba(55,105,129,.23),transparent 42%),
+    radial-gradient(circle at 85% 44%,rgba(36,81,108,.13),transparent 32%),
+    linear-gradient(180deg,#142942 0%,#0e1d34 58%,#0a172a 100%);
+  background-attachment:fixed;
+}
+body:before{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.48;
+  background-image:
+    radial-gradient(circle,rgba(230,247,245,.85) 0 .7px,transparent 1.2px),
+    radial-gradient(circle,rgba(141,218,209,.75) 0 .65px,transparent 1.2px);
+  background-size:187px 211px,269px 293px;
+  background-position:33px 58px,107px 139px;
+  mask-image:linear-gradient(to bottom,#000 0%,transparent 85%);
+}
+button,input,textarea{font:inherit}
+a{color:inherit;text-decoration:none}
+a:hover{color:var(--accent)}
+.shell{position:relative;z-index:1;max-width:850px;margin:auto;padding:28px 24px 100px}
+.nav{display:flex;justify-content:space-between;gap:16px;color:var(--muted);font-size:13px;border-bottom:1px solid rgba(138,214,201,.13);padding-bottom:15px}
+.nav span{letter-spacing:.16em}
+.hero{position:relative;margin:77px 0 45px;text-align:center}
+.hero .symbol{display:inline-block;font-size:19px;color:var(--accent);letter-spacing:.55em;text-shadow:0 0 16px rgba(138,214,201,.55);animation:signalGlow 5s ease-in-out infinite}
+.hero h1{font-weight:400;letter-spacing:.32em;font-size:clamp(32px,7vw,49px);margin:13px 0 20px;text-shadow:0 0 26px rgba(203,234,233,.12)}
+.hero p{font-size:14px;line-height:2.3;color:var(--muted)}
+.line{border:0;border-top:1px solid var(--line);margin:35px 0;position:relative}
+.panel{max-width:650px;margin:0 auto;padding:0 0 24px;position:relative}
+.panel:before{content:"SIGNAL / 01";position:absolute;top:-18px;right:0;color:rgba(138,214,201,.5);font-family:Georgia,serif;font-size:10px;letter-spacing:.2em}
+.label{display:block;font-size:14px;margin:0 0 13px;letter-spacing:.15em}
+.text{display:block;width:100%;background:rgba(6,23,40,.65);border:1px solid var(--line);color:var(--ink);padding:19px 20px;border-radius:2px;line-height:2;resize:vertical;min-height:220px;box-shadow:inset 0 0 28px rgba(5,18,34,.26),0 10px 40px rgba(0,0,0,.09);transition:border-color .25s,box-shadow .25s}
+.text::placeholder{color:#91a6b4}
+.text:focus,input:focus{outline:1px solid var(--accent);outline-offset:3px;border-color:var(--accent);box-shadow:0 0 18px rgba(138,214,201,.1)}
+.text.small{min-height:130px}
+.actions{display:flex;gap:12px;flex-wrap:wrap;margin:24px 0}
+.btn{display:inline-block;padding:10px 20px;border:1px solid var(--line);border-radius:2px;background:rgba(11,31,50,.6);color:var(--ink);cursor:pointer;transition:background .25s,border-color .25s,color .25s,box-shadow .25s}
+.btn:hover{border-color:var(--accent);color:var(--accent);box-shadow:0 0 16px rgba(138,214,201,.12)}
+.btn.primary{background:rgba(86,164,158,.2);border-color:var(--accent);color:#e8fff9;box-shadow:0 0 16px rgba(138,214,201,.08)}
+.btn.primary:hover{background:rgba(96,181,170,.32);box-shadow:0 0 24px rgba(138,214,201,.2)}
+.btn:disabled{opacity:.5;cursor:wait}
+.hint,.status{font-size:13px;color:var(--muted)}
+.status{min-height:1.8em}
+.note{font-size:13px;color:var(--muted);line-height:2.1;border-left:1px solid rgba(138,214,201,.27);padding-left:14px}
+.receipt{border:1px solid var(--line);padding:22px;background:var(--panel);margin-top:24px;box-shadow:0 10px 35px rgba(0,0,0,.12)}
+.receipt input{width:100%;padding:11px;background:var(--deep);border:1px solid var(--line);color:var(--ink);font-size:13px}
+.entry{white-space:pre-wrap;overflow-wrap:anywhere;line-height:2;background:var(--panel);border:1px solid var(--line);padding:18px;margin:14px 0 25px}
+.meta{font-size:12px;color:var(--muted)}
+.divider{border:0;border-top:1px solid var(--line);margin:28px 0}
+.tabs{display:flex;flex-wrap:wrap;gap:9px;margin:20px 0}
+.tab[aria-pressed=true]{color:#e8fff9;background:rgba(86,164,158,.25);border-color:var(--accent)}
+.admin-row{border-bottom:1px solid var(--line);padding:19px 0}
+.admin-row p{white-space:pre-wrap;overflow-wrap:anywhere;font-size:14px;color:var(--muted);margin:8px 0}
+.admin-row .actions{margin:9px 0}
+.admin-row .actions .btn{padding:5px 12px;font-size:13px}
+.field{display:grid;gap:7px;margin:14px 0}
+.field input{width:100%;background:var(--panel);border:1px solid var(--line);color:var(--ink);padding:12px}
+.hide,[hidden]{display:none!important}
+@keyframes signalGlow{0%,100%{opacity:.62;text-shadow:0 0 9px rgba(138,214,201,.25)}50%{opacity:1;text-shadow:0 0 22px rgba(138,214,201,.7)}}
+@media(prefers-reduced-motion:reduce){.hero .symbol{animation:none}}
+@media(max-width:550px){.shell{padding:23px 18px 75px}.hero{margin:58px 0 37px}.receipt{padding:15px}.nav{font-size:12px}.text{padding:15px}}
