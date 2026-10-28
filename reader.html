@@ -151,6 +151,8 @@
     break-inside: avoid;
   }
   .kinsoku-pair { white-space: nowrap; }
+  /* 連続するダッシュのみ字間を詰め、線の途切れを防ぐ */
+  .dash-run { letter-spacing: 0; white-space: nowrap; }
   .tcy { text-combine-upright: all; -webkit-text-combine: horizontal; }
   ruby { ruby-position: over; }
   rt { font-size: .5em; font-weight: normal; letter-spacing: 0; }
@@ -322,6 +324,8 @@
     .reading-layout.vertical .work-header {
       height: max(360px, calc(100dvh - 110px));
     }
+    /* スマホ縦書きだけ、本文末尾の戻る・星・共有ボタンを隠す */
+    .reading-layout.vertical .vertical-end-link { display: none; }
     .reading-layout.horizontal .work-title { font-size: 1.4rem; }
   }
 
@@ -534,7 +538,8 @@
   function formatPlainText(value) {
     // 「!?」など2文字の記号を縦中横にします。
     // 「～」「〜」は直前の文字と組にして行頭への孤立を防ぎます。
-    return String(value).split(/([!?！？]{2}|[^\s～〜][～〜])/g).map(part => {
+    return String(value).split(/(─{2,}|[!?！？]{2}|[^\s～〜][～〜])/g).map(part => {
+      if (/^─{2,}$/.test(part)) return `<span class="dash-run">${escapeHTML(part)}</span>`;
       if (/^[!?！？]{2}$/.test(part)) return `<span class="tcy">${escapeHTML(part)}</span>`;
       if (/^[^\s～〜][～〜]$/.test(part)) return `<span class="kinsoku-pair">${escapeHTML(part)}</span>`;
       return escapeHTML(part);
