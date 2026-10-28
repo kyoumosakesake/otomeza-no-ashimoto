@@ -1,7 +1,33 @@
-<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="referrer" content="no-referrer"><title>交信の記録｜乙女座の脚元</title><link rel="stylesheet" href="koushin.css"></head><body><main class="shell"><nav class="nav"><a href="koushin.html">← 交信へ戻る</a><span>交信の記録</span></nav><header class="hero"><div class="symbol">✦ · ✦</div><h1>交信の記録</h1><p>ここは、あなたが届けた言葉のための場所です。</p></header><section class="panel"><p id="status" class="status" role="status" aria-live="polite">読み込み中……</p><section id="content" hidden><h2 class="label">あなたの言葉</h2><div id="body" class="entry"></div><p id="date" class="meta"></p><hr class="divider"><h2 class="label">お返事</h2><div id="reply" class="entry"></div><p class="note">お返事は一度だけです。届かない場合もあります。</p><hr class="divider"><button id="remove" class="btn" type="button">送信を取り消す</button><p class="note">取り消すと、このメッセージと返信は削除され、元には戻せません。管理者がすでに読んだ内容までは取り消せません。</p></section></section></main><script type="module">
+<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="referrer" content="no-referrer"><title>交信の結果｜乙女座の脚元</title><link rel="stylesheet" href="koushin.css"></head><body><main class="shell"><nav class="nav"><a href="koushin.html">← 交信へ戻る</a><span>交信の結果</span></nav><header class="hero"><div class="symbol">✦ · ✦</div><h1>交信の結果</h1><p>ここは、あなたが届けた言葉のための場所です。</p></header><section class="panel"><p id="status" class="status" role="status" aria-live="polite">読み込み中……</p><section id="content" hidden><h2 class="label">あなたの言葉</h2><div id="body" class="entry"></div><p id="date" class="meta"></p><hr class="divider"><h2 class="label">お返事</h2><div id="reply" class="entry"></div><p class="note">お返事は一度だけです。届かない場合もあります。</p><hr class="divider"><button id="remove" class="btn" type="button">送信を取り消す</button><p class="note">取り消すと、このメッセージと返信は削除され、元には戻せません。管理者がすでに読んだ内容までは取り消せません。</p></section></section>
+<footer style="max-width:650px;margin:46px auto 0;padding-top:24px;border-top:1px solid rgba(138,214,201,.29);text-align:center">
+  <p id="leave-warning" class="note" style="text-align:left;margin:0 0 22px">
+    <strong>秘密のリンクを保存してください。</strong><br>
+    このページのURLには、あなた専用の秘密の情報が含まれています。保存せずに移動すると、後から返信を確認できなくなる場合があります。リンクを他の人に見せないでください。
+  </p>
+  <div class="actions" style="justify-content:center;margin:0 0 14px">
+    <button type="button" id="copy-result-link" class="btn">秘密のリンクをコピー</button>
+    <a id="go-menu" href="menu.html" class="btn">メニュー一覧へ</a>
+  </div>
+  <p id="copy-result-status" class="hint" role="status" aria-live="polite"></p>
+</footer>
+</main><script type="module">
 import {db} from './archive-common.js';
 import {doc,getDoc,deleteDoc} from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js';
-const $=s=>document.querySelector(s);const id=new URLSearchParams(location.hash.slice(1)).get('id');const valid=!!id&&/^[A-Za-z0-9_-]{43}$/.test(id);if(!valid){$('#status').textContent='秘密のリンクが正しくありません。';}else{load();}
+const $=s=>document.querySelector(s);
+const copyButton=$('#copy-result-link');
+copyButton.addEventListener('click',async()=>{
+  try{
+    await navigator.clipboard.writeText(location.href);
+    $('#copy-result-status').textContent='秘密のリンクをコピーしました。安全な場所に保存してください。';
+  }catch(e){
+    $('#copy-result-status').textContent='コピーできませんでした。ブラウザのアドレスバーからURLをコピーして保存してください。';
+  }
+});
+$('#go-menu').addEventListener('click',e=>{
+  if(!valid)return;
+  if(!confirm('秘密のリンクは保存しましたか？\n\n保存していない場合、後から返信を確認できなくなる可能性があります。\n\nメニュー一覧へ移動しますか？'))e.preventDefault();
+});
+const id=new URLSearchParams(location.hash.slice(1)).get('id');const valid=!!id&&/^[A-Za-z0-9_-]{43}$/.test(id);if(!valid){$('#status').textContent='秘密のリンクが正しくありません。';copyButton.hidden=true;$('#leave-warning').hidden=true;}else{load();}
 async function load(){try{const snap=await getDoc(doc(db,'koushin',id));if(!snap.exists()){$('#status').textContent='メッセージが見つかりません。取り消し済みの可能性があります。';return;}const data=snap.data();$('#body').textContent=data.body||'';$('#reply').textContent=data.reply||'まだお返事はありません。';$('#date').textContent=data.createdAt?.toDate?.().toLocaleString('ja-JP')||'';$('#status').textContent='';$('#content').hidden=false;}catch(e){console.error(e);$('#status').textContent='読み込めませんでした。設定または通信状態をご確認ください。';}}
-$('#remove').onclick=async()=>{if(!confirm('送信を取り消し、メッセージと返信を完全に削除しますか？'))return;$('#remove').disabled=true;try{await deleteDoc(doc(db,'koushin',id));$('#content').hidden=true;$('#status').textContent='送信を取り消しました。';history.replaceState(null,'',location.pathname);}catch(e){console.error(e);$('#status').textContent='取り消せませんでした。もう一度お試しください。';$('#remove').disabled=false;}};
+$('#remove').onclick=async()=>{if(!confirm('送信を取り消し、メッセージと返信を完全に削除しますか？'))return;$('#remove').disabled=true;try{await deleteDoc(doc(db,'koushin',id));$('#content').hidden=true;$('#status').textContent='送信を取り消しました。';history.replaceState(null,'',location.pathname);copyButton.hidden=true;$('#leave-warning').hidden=true;}catch(e){console.error(e);$('#status').textContent='取り消せませんでした。もう一度お試しください。';$('#remove').disabled=false;}};
 </script></body></html>
