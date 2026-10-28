@@ -116,20 +116,20 @@ button, a {
 /* 関係性タイムライン */
 .timeline-area {
   position: relative;
-  --timeline-top-space: 18rem;
+  --timeline-top-space: 18rem; /* JavaScriptで画面高に合わせて調整 */
 }
 .timeline-scroll {
   position: relative;
   overflow-x: auto;
   overflow-y: hidden;
-  padding: var(--timeline-top-space) 1rem 8rem;
+  padding: var(--timeline-top-space) 1rem 1.5rem;
   scrollbar-color: rgba(255,255,255,.25) transparent;
   -webkit-overflow-scrolling: touch;
 }
 .timeline {
   position: relative;
   width: 4200px;
-  height: 360px;
+  height: 300px;
   margin: 0 auto;
 }
 .timeline-line {
@@ -483,7 +483,7 @@ button, a {
     gap: 3px;
   }
   .timeline-area {
-    --timeline-top-space: 19rem;
+    --timeline-top-space: 19rem; /* 読み込み後に画面高に合わせて調整 */
   }
   .point-button {
     width: 50px;
@@ -1359,7 +1359,10 @@ tabButtons.forEach(button => {
       .classList.add("active");
 
     if (button.dataset.tab === "timeline-tab") {
-      requestAnimationFrame(updateSectionLabel);
+      requestAnimationFrame(() => {
+        adjustTimelineHeight();
+        updateSectionLabel();
+      });
     }
   });
 });
@@ -1643,6 +1646,21 @@ const division1 =
 const division2 =
   document.querySelector(".division-2");
 
+/* 凡例（本編・パロディ・最新の小説）の位置は変えず、
+   下の区分名が画面の上から約80%に来るように余白を調整。 */
+function adjustTimelineHeight() {
+  const area = document.querySelector(".timeline-area");
+  if (!area || !document.getElementById("timeline-tab").classList.contains("active")) return;
+  const viewportHeight = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+  const areaTop = area.getBoundingClientRect().top;
+  // 区分名はタイムラインの上余白 + 250px の位置に表示されます。
+  const desiredSpace = viewportHeight * 0.8 - areaTop - 250;
+  // 作品ポイントが上部で見切れないよう最低限の余白を確保します。
+  const minSpace = window.matchMedia("(max-width: 600px)").matches ? 70 : 100;
+  const space = Math.max(minSpace, Math.min(340, desiredSpace));
+  area.style.setProperty("--timeline-top-space", `${space}px`);
+}
+
 function updateSectionLabel() {
   const timelineRect =
     timeline.getBoundingClientRect();
@@ -1679,6 +1697,7 @@ timelineScroll.addEventListener(
 
 /* 画面サイズ変更時 */
 window.addEventListener("resize", () => {
+  adjustTimelineHeight();
   updateSectionLabel();
 
   if (activeButton) {
@@ -1696,7 +1715,10 @@ window.addEventListener(
 );
 
 /* 初期表示 */
+adjustTimelineHeight();
 updateSectionLabel();
+window.addEventListener("load", adjustTimelineHeight);
+if (window.visualViewport) window.visualViewport.addEventListener("resize", adjustTimelineHeight);
 refreshBookmarkMarks();
 </script>
 </body>
