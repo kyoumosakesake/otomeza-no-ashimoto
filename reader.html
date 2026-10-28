@@ -151,8 +151,8 @@
     break-inside: avoid;
   }
   .kinsoku-pair { white-space: nowrap; }
-  /* 連続するダッシュのみ字間を詰め、線の途切れを防ぐ */
-  .dash-run { letter-spacing: 0; white-space: nowrap; }
+  /* ダッシュ同士は密着させ、前後の本文とは各1px離す */
+  .dash-run { letter-spacing: 0; white-space: nowrap; margin-inline: 1px; }
   .tcy { text-combine-upright: all; -webkit-text-combine: horizontal; }
   ruby { ruby-position: over; }
   rt { font-size: .5em; font-weight: normal; letter-spacing: 0; }
