@@ -141,6 +141,15 @@
   /* スマホ縦書きのみ、本文と同じ組版フローにタイトルを入れる */
   .mobile-vertical-title { display: none; }
   .novel-text p { margin: 0; padding: 0; text-indent: 0; white-space: pre-wrap; }
+  /* シリーズ作品の章タイトル：読書設定の本文サイズより常に2px大きく表示 */
+  .novel-text p.novel-chapter-title {
+    font-size: calc(var(--font-size) + 2px);
+    font-weight: 700;
+    margin-block-start: 1.3em;
+    margin-block-end: .6em;
+    text-indent: 0;
+    break-inside: avoid;
+  }
   .kinsoku-pair { white-space: nowrap; }
   .tcy { text-combine-upright: all; -webkit-text-combine: horizontal; }
   ruby { ruby-position: over; }
@@ -427,7 +436,7 @@
 </footer>
 <div class="share-status" id="share-status" role="status" aria-live="polite" hidden></div>
 
-<script src="novels.js?v=20261026-4"></script>
+<script src="novels.js?v=20261029-series"></script>
 <script>
   const fontSizes = [15, 17, 19, 21, 23];
   const storageKey = "otomeza-reader-settings";
@@ -531,11 +540,17 @@
       return escapeHTML(part);
     }).join("");
   }
-  function formatNovelText(text) {
+  function formatNovelText(text, chapterTitles = []) {
     const source = String(text ?? "").replace(/\r\n?/g, "\n");
     if (source.length === 0) return "<p>ここに本文が入ります。</p>";
+    const chapterSet = new Set(chapterTitles);
     const rubyPattern = /\[\[rb:\s*([^>\]\n]+?)\s*>\s*([^\]\n]+?)\s*\]\]/g;
     return source.split("\n").map(line => {
+      // DOCXで太字だった独立段落のみを章タイトルとして扱う。
+      const chapterMatch = /^\[\[chapter:(.*?)\]\]$/.exec(line);
+      if (chapterMatch && chapterSet.has(chapterMatch[1])) {
+        return `<p class="novel-chapter-title">${escapeHTML(chapterMatch[1])}</p>`;
+      }
       if (line === "") return '<div class="novel-blank-line"></div>';
       let html = "";
       let lastIndex = 0;
@@ -555,7 +570,7 @@
   if (currentWork) {
     document.getElementById("work-title").textContent = currentWork.title;
     document.getElementById("work-date").textContent = currentWork.date || "";
-    document.getElementById("novel-text").innerHTML = formatNovelText(currentWork.text);
+    document.getElementById("novel-text").innerHTML = formatNovelText(currentWork.text, currentWork.chapterTitles || []);
     document.title = `${currentWork.title}｜乙女座の脚元`;
   } else {
     document.getElementById("work-title").textContent = "作品が見つかりません";
