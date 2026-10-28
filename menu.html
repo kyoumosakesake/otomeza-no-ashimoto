@@ -14,26 +14,49 @@
     }
 
     .menu-page {
+      position: relative;
       min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
+      min-height: 100dvh;
+      box-sizing: border-box;
       text-align: center;
       padding: 2rem;
-      box-sizing: border-box;
+    }
+
+    /* トップページの見出しと同じ位置・文字サイズ */
+    .menu-heading {
+      position: absolute;
+      bottom: calc(50% + 5rem);
+      left: 1rem;
+      right: 1rem;
     }
 
     .menu-title {
-      margin: 0 0 3rem;
-      font-size: 2rem;
+      margin: 0;
+      font-size: 2.4rem;
       font-weight: 400;
       letter-spacing: 0.12em;
+    }
+
+    /* トップページのサブタイトル分の高さを確保（表示はしない） */
+    .menu-heading-spacer {
+      margin: 1rem 0 0;
+      font-size: 1.15rem;
+      line-height: 1.8;
+      visibility: hidden;
+    }
+
+    .menu-nav {
+      position: absolute;
+      top: 50%;
+      left: 1rem;
+      right: 1rem;
+      transform: translateY(-43%);
     }
 
     .menu-list {
       display: flex;
       flex-direction: column;
+      align-items: center;
       gap: 1.8rem;
       margin: 0;
       padding: 0;
@@ -41,13 +64,12 @@
     }
 
     .menu-link {
+      display: inline-block;
       color: #ffffff;
       font-size: 1.35rem;
       letter-spacing: 0.08em;
       text-decoration: none;
-      transition:
-        opacity 0.2s ease,
-        transform 0.2s ease;
+      transition: opacity 0.2s ease, transform 0.2s ease;
     }
 
     .menu-link:hover {
@@ -61,25 +83,31 @@
     }
 
     .back-link {
-      margin-top: 4rem;
+      position: absolute;
+      top: calc(50% + 10rem);
+      left: 50%;
+      transform: translateX(-50%);
       color: #ffffff;
       font-size: 0.95rem;
       text-decoration: none;
       opacity: 0.75;
+      white-space: nowrap;
     }
 
-    .back-link:hover {
-      opacity: 1;
-    }
+    .back-link:hover { opacity: 1; }
 
     @media (max-width: 600px) {
-      .menu-title {
-        font-size: 1.7rem;
-      }
+      .menu-title { font-size: 2rem; }
+      .menu-heading-spacer { font-size: 1rem; }
+      .menu-link { font-size: 1.2rem; }
+      .menu-list { gap: 1.55rem; }
+      .back-link { top: calc(50% + 8.6rem); }
+    }
 
-      .menu-link {
-        font-size: 1.2rem;
-      }
+    /* 高さが小さい端末でも重なりを避ける */
+    @media (max-height: 570px) {
+      .menu-page { min-height: 570px; }
+      .menu-heading { bottom: calc(50% + 5rem); }
     }
   </style>
 </head>
@@ -88,11 +116,12 @@
 
   <main class="menu-page">
 
-    <h1 class="menu-title">
-      乙女座の脚元
-    </h1>
+    <div class="menu-heading">
+      <h1 class="menu-title">乙女座の脚元</h1>
+      <p class="menu-heading-spacer" aria-hidden="true">とりこしくろうのひとつの在り処</p>
+    </div>
 
-    <nav>
+    <nav class="menu-nav">
       <ul class="menu-list">
 
         <li>
