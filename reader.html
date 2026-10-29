@@ -377,6 +377,52 @@
     /* 縦書きの読書設定とタイトルの間に十分な余白を追加 */
     .reading-layout.vertical .mobile-settings-button { margin-left: 4rem; }
   }
+
+  /* 140字小説：閲覧設定が縦書きでも、画像と併載本文は常に横書き。 */
+  .reading-layout.microfiction,
+  .reading-layout.microfiction.horizontal {
+    display: block;
+    width: 100%; max-width: none; height: auto; min-height: 70vh;
+    overflow: visible; padding: 0; direction: ltr;
+  }
+  .reading-layout.microfiction .work-header {
+    display: block; max-width: 1200px; margin: 2rem auto 1.5rem;
+    padding: 0 1.5rem; text-align: center;
+    writing-mode: horizontal-tb; height: auto;
+  }
+  .reading-layout.microfiction .work-title { font-size: 1.6rem; }
+  .reading-layout.microfiction .work-date { margin-top: .5rem; }
+  .reading-layout.microfiction .reader {
+    width: 100%; max-width: 1200px; margin: 0 auto;
+    padding: 1.5rem 1.5rem 2rem; overflow: visible;
+  }
+  .reading-layout.microfiction .novel-text {
+    writing-mode: horizontal-tb; direction: ltr; width: 100%; height: auto;
+    margin: 0; line-height: 1.9; letter-spacing: .035em;
+  }
+  .microfiction-pair {
+    display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.55fr);
+    align-items: center; gap: clamp(1.5rem, 4vw, 4rem);
+    width: 100%;
+  }
+  .microfiction-copy {
+    writing-mode: horizontal-tb; min-width: 0;
+    font-size: var(--font-size); line-height: 1.95;
+    overflow-wrap: anywhere;
+  }
+  .microfiction-copy p { margin: 0; padding: 0; white-space: pre-wrap; }
+  .microfiction-image { display: block; width: 100%; height: auto; aspect-ratio: 910 / 590; object-fit: contain; }
+  .microfiction-figure { margin: 0; min-width: 0; }
+  .reading-layout.microfiction .mobile-vertical-title,
+  .reading-layout.microfiction .vertical-end-link { display: none; }
+  body.microfiction-reading .setting-group:has([data-setting="direction"]) { display: none; }
+  @media (max-width: 600px) {
+    .reading-layout.microfiction .work-header { margin: 1rem auto 1.25rem; padding: 0 1rem; }
+    .reading-layout.microfiction .work-title { font-size: 1.35rem; }
+    .reading-layout.microfiction .reader { padding: .75rem 1rem 2rem; }
+    .microfiction-pair { display: flex; flex-direction: column-reverse; align-items: stretch; gap: 1.5rem; }
+    .microfiction-copy { line-height: 2; }
+  }
 </style>
 </head>
 <body>
@@ -440,7 +486,7 @@
 </footer>
 <div class="share-status" id="share-status" role="status" aria-live="polite" hidden></div>
 
-<script src="novels.js?v=20261029-series"></script>
+<script src="novels.js?v=20261029-all48"></script>
 <script>
   const fontSizes = [15, 17, 19, 21, 23];
   const storageKey = "otomeza-reader-settings";
@@ -472,8 +518,9 @@
     catch (error) { /* 保存できなくても読書は続けられます */ }
   }
   function applySettings() {
-    layout.classList.toggle("vertical", settings.direction === "vertical");
-    layout.classList.toggle("horizontal", settings.direction === "horizontal");
+    const displayDirection = isMicrofiction ? "horizontal" : settings.direction;
+    layout.classList.toggle("vertical", displayDirection === "vertical");
+    layout.classList.toggle("horizontal", displayDirection === "horizontal");
     document.documentElement.style.setProperty("--reading-font",
       settings.font === "gothic"
         ? '"Yu Gothic", "游ゴシック", "YuGothic", "Hiragino Kaku Gothic ProN", sans-serif'
@@ -481,15 +528,15 @@
     document.documentElement.style.setProperty("--font-size", `${settings.fontSize}px`);
     fontSizeSlider.value = String(fontSizes.indexOf(settings.fontSize));
     document.body.classList.toggle("light-mode", settings.theme === "light");
-    document.body.classList.toggle("vertical-reading", settings.direction === "vertical");
+    document.body.classList.toggle("vertical-reading", displayDirection === "vertical");
     document.querySelectorAll(".setting-option").forEach(button => {
-      const active = settings[button.dataset.setting] === button.dataset.value;
+      const active = (button.dataset.setting === "direction" ? displayDirection : settings[button.dataset.setting]) === button.dataset.value;
       button.classList.toggle("active", active);
       button.setAttribute("aria-pressed", String(active));
     });
   }
   function resetReadingPosition() {
-    if (settings.direction !== "vertical") return;
+    if (isMicrofiction || settings.direction !== "vertical") return;
     // スマホはLTR座標。右端（タイトル）から読み始めます。
     if (mobileScreen.matches) {
       layout.scrollLeft = layout.scrollWidth - layout.clientWidth;
@@ -506,6 +553,7 @@
   document.querySelectorAll(".setting-option").forEach(button => {
     button.addEventListener("click", () => {
       const previousDirection = settings.direction;
+      if (isMicrofiction && button.dataset.setting === "direction") return;
       settings[button.dataset.setting] = button.dataset.value;
       applySettings();
       saveSettings();
@@ -572,10 +620,22 @@
   const workId = new URLSearchParams(window.location.search).get("work");
   const novelList = typeof novels !== "undefined" && Array.isArray(novels) ? novels : [];
   const currentWork = novelList.find(work => work.id === workId);
+  const isMicrofiction = Boolean(currentWork && currentWork.format === "microfiction");
+  layout.classList.toggle("microfiction", isMicrofiction);
+  document.body.classList.toggle("microfiction-reading", isMicrofiction);
   if (currentWork) {
     document.getElementById("work-title").textContent = currentWork.title;
     document.getElementById("work-date").textContent = currentWork.date || "";
-    document.getElementById("novel-text").innerHTML = formatNovelText(currentWork.text, currentWork.chapterTitles || []);
+    if (isMicrofiction) {
+      const image = escapeHTML(currentWork.image || "");
+      const title = escapeHTML(currentWork.title);
+      document.getElementById("novel-text").innerHTML = `<div class="microfiction-pair">
+        <div class="microfiction-copy">${formatNovelText(String(currentWork.text || "").trim(), [])}</div>
+        <figure class="microfiction-figure"><img class="microfiction-image" src="${image}" alt="『${title}』の縦書き画像" width="910" height="590" loading="eager"></figure>
+      </div>`;
+    } else {
+      document.getElementById("novel-text").innerHTML = formatNovelText(currentWork.text, currentWork.chapterTitles || []);
+    }
     document.title = `${currentWork.title}｜乙女座の脚元`;
   } else {
     document.getElementById("work-title").textContent = "作品が見つかりません";
@@ -585,7 +645,7 @@
 
   // PC・スマホとも縦書きのタイトルは本文の最初の列に置く。
   // 本文データは変更せず、横書きではこの要素を非表示にする。
-  if (currentWork) {
+  if (currentWork && !isMicrofiction) {
     const mobileHeading = document.createElement("div");
     mobileHeading.className = "mobile-vertical-title";
     const mobileTitle = document.createElement("h2");
@@ -693,12 +753,12 @@
   });
 
   window.addEventListener("resize", () => {
-    document.body.classList.toggle("vertical-reading", settings.direction === "vertical");
+    document.body.classList.toggle("vertical-reading", !isMicrofiction && settings.direction === "vertical");
   });
 
   // PC：ホイール1回で縦書きの約1行分を横に進めます。
   layout.addEventListener("wheel", event => {
-    if (settings.direction !== "vertical" || event.ctrlKey || event.deltaY === 0) return;
+    if (isMicrofiction || settings.direction !== "vertical" || event.ctrlKey || event.deltaY === 0) return;
     if (Math.abs(event.deltaX) > Math.abs(event.deltaY)) return;
     const maxScroll = layout.scrollWidth - layout.clientWidth;
     const direction = event.deltaY > 0 ? -1 : 1;
@@ -716,7 +776,7 @@
   let inertiaFrame = null;
 
   function mobileVertical() {
-    return mobileScreen.matches && settings.direction === "vertical";
+    return !isMicrofiction && mobileScreen.matches && settings.direction === "vertical";
   }
 
   function stopInertia() {
@@ -825,7 +885,7 @@
 
   // PC縦書き：画面幅の90%ずつページを送る（右＝戻る、左＝進む）。
   function turnDesktopPage(direction) {
-    if (settings.direction !== "vertical" || window.matchMedia("(max-width: 600px)").matches) return;
+    if (isMicrofiction || settings.direction !== "vertical" || window.matchMedia("(max-width: 600px)").matches) return;
     layout.scrollBy({ left: direction * layout.clientWidth * 0.9, behavior: "smooth" });
   }
   document.getElementById("desktop-page-left").addEventListener("click", () => turnDesktopPage(-1));
