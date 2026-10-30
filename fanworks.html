@@ -277,6 +277,9 @@ button, a {
   position: fixed;
   width: 265px;
   max-width: calc(100vw - 24px);
+  max-height: calc(100dvh - 24px);
+  box-sizing: border-box;
+  overflow-y: auto;
   padding: 1.15rem 1.1rem 1rem;
   background: var(--white);
   color: var(--background);
@@ -441,6 +444,30 @@ button, a {
 }
 .work-list a:hover {
   opacity: .65;
+}
+/* 執筆順：作品タイトルを押すと、関係性と同じ作品情報を表示 */
+.work-list .work-trigger {
+  appearance: none;
+  -webkit-appearance: none;
+  display: inline;
+  width: fit-content;
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--white);
+  font: inherit;
+  font-size: 1.02rem;
+  line-height: 1.6;
+  text-align: left;
+  cursor: pointer;
+}
+.work-list .work-trigger:hover { opacity: .65; }
+.work-list .work-trigger:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
 }
 .work-meta {
   display: flex;
@@ -1243,6 +1270,26 @@ function positionPopup(button) {
   const margin = 12;
   const gap = 12;
 
+  // 執筆順では、選択した作品の右側（スマホでは画面右側）に表示。
+  // スクロール先が変わっても、表示領域からはみ出さないようにする。
+  if (button.classList.contains("work-trigger")) {
+    const spaceRight = window.innerWidth - rect.right;
+    const spaceLeft = rect.left;
+    let left;
+    if (spaceRight >= popupWidth + gap + margin) {
+      left = rect.right + gap;
+    } else if (spaceLeft >= popupWidth + gap + margin) {
+      left = rect.left - popupWidth - gap;
+    } else {
+      left = window.innerWidth - popupWidth - margin;
+    }
+    left = Math.max(margin, Math.min(left, window.innerWidth - popupWidth - margin));
+    const top = Math.max(margin, Math.min(rect.top - 12, window.innerHeight - popupHeight - margin));
+    popup.style.left = `${left}px`;
+    popup.style.top = `${top}px`;
+    return;
+  }
+
   let left =
     rect.left +
     rect.width / 2 -
@@ -1282,7 +1329,7 @@ function positionPopup(button) {
 }
 
 /* ポップアップを開く */
-function openPopup(work, point, button) {
+function openPopup(work, point, button, tab = "timeline") {
   closePopup();
 
   popupTitle.textContent =
@@ -1303,7 +1350,7 @@ function openPopup(work, point, button) {
     work.detail;
   popupLink.href =
     work.href;
-  popupLink.onclick = () => rememberOpenedWork(work, "timeline");
+  popupLink.onclick = () => rememberOpenedWork(work, tab);
 
   activePoint = point;
   activeButton = button;
@@ -1351,7 +1398,8 @@ popupClose.addEventListener("click", event => {
 document.addEventListener("click", event => {
   if (
     !event.target.closest(".story-popup") &&
-    !event.target.closest(".point-button")
+    !event.target.closest(".point-button") &&
+    !event.target.closest(".work-trigger")
   ) {
     closePopup();
   }
@@ -1614,11 +1662,22 @@ years.forEach(year => {
       info.className = "work-info";
 
       const link =
-        document.createElement("a");
+        document.createElement("button");
 
-      link.href = work.href;
-      link.addEventListener("click", () => rememberOpenedWork(work, "writing"));
+      link.type = "button";
+      link.className = "work-trigger";
+      link.setAttribute("aria-haspopup", "dialog");
+      link.setAttribute("aria-expanded", "false");
+      link.setAttribute("aria-controls", "story-popup");
       link.textContent = work.title;
+      link.addEventListener("click", event => {
+        event.stopPropagation();
+        if (activeButton === link) {
+          closePopup();
+        } else {
+          openPopup(work, item, link, "writing");
+        }
+      });
 
       const meta =
         document.createElement("div");
