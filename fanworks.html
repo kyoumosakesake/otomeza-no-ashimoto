@@ -709,6 +709,7 @@ button, a {
   </a>
 </div>
 
+<script src="novels.js"></script>
 <script>
 /* reader.html と共通のブックマーク情報を表示する */
 const bookmarkStorageKey = "otomeza-bookmarked-works-v1";
@@ -751,14 +752,14 @@ window.addEventListener("storage", event => {
 });
 
 /* 作品データ
-   characters: 文字数。現在はすべて仮の999字。
+   characters: novels.js の本文から自動計算（空白・改行を除く）。
    latest: 最新作のみ true にします。
 */
 const works = [
   {
     title: "やわらかなひびきで",
     date: "2023-07-04",
-    characters: 999,
+    characters: null,
     detail: "佐切さんの呼び名に関する140字小説",
     score: 4.0,
     href: "reader.html?work=yawarakana-hibiki"
@@ -766,7 +767,7 @@ const works = [
   {
     title: "あなたの心がわからない",
     date: "2023-07-04",
-    characters: 999,
+    characters: null,
     detail: "やきもちがわからない佐切さんの140字小説",
     score: 4.0,
     href: "reader.html?work=anata-no-kokoro"
@@ -774,7 +775,7 @@ const works = [
   {
     title: "心を震わせる呼び",
     date: "2023-07-04",
-    characters: 999,
+    characters: null,
     detail: "旧名の方が好きな佐切さんの140字小説",
     score: 4.0,
     href: "reader.html?work=kokoro-wo-furuwaseru-yobi"
@@ -782,7 +783,7 @@ const works = [
   {
     title: "心臓（ハート）の危機",
     date: "2023-07-04",
-    characters: 999,
+    characters: null,
     detail: "大切な人は守らねばという佐切さんの140字小説",
     score: 4.3,
     href: "reader.html?work=heart-no-kiki"
@@ -790,7 +791,7 @@ const works = [
   {
     title: "私の甘味（スイーツ）",
     date: "2023-07-04",
-    characters: 999,
+    characters: null,
     detail: "甘いものが好きなのを見てるだけで満足な杠さんの140字小説",
     score: 4.2,
     href: "reader.html?work=watashi-no-sweets"
@@ -798,7 +799,7 @@ const works = [
   {
     title: "買わねば損",
     date: "2023-07-04",
-    characters: 999,
+    characters: null,
     detail: "やけくそに言っても佐切さんは涼しい顔、な140字小説",
     score: 4.4,
     href: "reader.html?work=kawaneba-son"
@@ -806,7 +807,7 @@ const works = [
   {
     title: "ありのままで",
     date: "2023-07-04",
-    characters: 999,
+    characters: null,
     detail: "自分の傷を明かした杠さんの140字小説",
     score: 6.0,
     href: "reader.html?work=arinomamade"
@@ -814,7 +815,7 @@ const works = [
   {
     title: "ざわつき",
     date: "2023-07-04",
-    characters: 999,
+    characters: null,
     detail: "首斬りに従事してきた佐切さんの140字小説",
     score: 5.5,
     href: "reader.html?work=zawatsuki"
@@ -822,7 +823,7 @@ const works = [
   {
     title: "相克の逢",
     date: "2023-07-04",
-    characters: 999,
+    characters: null,
     detail: "タオが伝わる感覚についての140字小説",
     score: 8.4,
     href: "reader.html?work=sokoku-no-ai"
@@ -830,7 +831,7 @@ const works = [
   {
     title: "乱し満たすもの",
     date: "2023-07-04",
-    characters: 999,
+    characters: null,
     detail: "たったひとことの切り返しに惑う140字小説",
     score: 8.5,
     href: "reader.html?work=midashi-mitasu-mono"
@@ -838,7 +839,7 @@ const works = [
   {
     title: "共に過ごす時間",
     date: "2023-07-04",
-    characters: 999,
+    characters: null,
     detail: "傷も歳も受け入れるほどの、140字小説",
     score: 9.0,
     href: "reader.html?work=tomo-ni-sugosu-jikan"
@@ -846,7 +847,7 @@ const works = [
   {
     title: "愉楽を知るは",
     date: "2023-07-07",
-    characters: 999,
+    characters: null,
     detail: "原作で出てきたユラクなんたらを「活用」した小説。杠さんが攻め気味です",
     score: 7.9,
     href: "reader.html?work=yuraku-wo-shiru-wa"
@@ -854,7 +855,7 @@ const works = [
   {
     title: "手にしたい光",
     date: "2023-07-07",
-    characters: 999,
+    characters: null,
     detail: "ふたりが結ばれるシチュを考えた小説",
     score: 7.9,
     href: "reader.html?work=te-ni-shitai-hikari"
@@ -862,7 +863,7 @@ const works = [
   {
     title: "その心、満たされるまで",
     date: "2023-07-08",
-    characters: 999,
+    characters: null,
     detail: "思いが強い佐切さんについての小説",
     score: 8.3,
     href: "reader.html?work=sono-kokoro-mitasareru-made"
@@ -870,7 +871,7 @@ const works = [
   {
     title: "不安を断ち切って",
     date: "2023-07-12",
-    characters: 999,
+    characters: null,
     detail: "自分の気持ちを持て余しはじめた杠さんの小説",
     score: 6.8,
     href: "reader.html?work=fuan-wo-tachikitte"
@@ -878,7 +879,7 @@ const works = [
   {
     title: "I am too happy.",
     date: "2023-07-15",
-    characters: 999,
+    characters: null,
     detail: "とりこしくろう初のR-18小説。わいの答えはこれや（火炎瓶を投げつける）。佐切さんが攻めです",
     score: 8.1,
     href: "reader.html?work=i-am-too-happy"
@@ -887,7 +888,7 @@ const works = [
     title: "Blue Green シリーズ",
     date: "2023-07-20",
     endDate: "2023-08-07",
-    characters: 999,
+    characters: null,
     detail: "京の都に来た佐杠のすったもんだ。とりこしくろう初のシリーズ作",
     score: 5.5,
     href: "reader.html?work=blue-green"
@@ -895,7 +896,7 @@ const works = [
   {
     title: "宵語り",
     date: "2023-08-12",
-    characters: 999,
+    characters: null,
     detail: "にゃんこ目線から見た佐杠の小説。うっすら性描写ありまして佐切さんが攻めです",
     score: 9.0,
     href: "reader.html?work=yoigatari"
@@ -903,7 +904,7 @@ const works = [
   {
     title: "筆が滑る",
     date: "2023-09-30",
-    characters: 999,
+    characters: null,
     detail: "書きたいものをつい書いてしまう佐切さんの短編",
     score: 5.5,
     href: "reader.html?work=fude-ga-suberu"
@@ -911,7 +912,7 @@ const works = [
   {
     title: "お互い様",
     date: "2023-09-30",
-    characters: 999,
+    characters: null,
     detail: "酔っぱらった佐切さんについての短編",
     score: 5.6,
     href: "reader.html?work=otagaisama"
@@ -919,7 +920,7 @@ const works = [
   {
     title: "ひとをみるひとよ",
     date: "2023-09-30",
-    characters: 999,
+    characters: null,
     detail: "杠さんの運命についての短編",
     score: 7.7,
     href: "reader.html?work=hito-wo-miru-hito-yo"
@@ -927,7 +928,7 @@ const works = [
   {
     title: "あらがい・いきがい",
     date: "2023-09-30",
-    characters: 999,
+    characters: null,
     detail: "それでも生きていくふたりの短編",
     score: 9.5,
     href: "reader.html?work=aragai-ikigai"
@@ -935,7 +936,7 @@ const works = [
   {
     title: "嘘つきの本音",
     date: "2023-10-30",
-    characters: 999,
+    characters: null,
     detail: "島で別れてからの杠さんの独白小説",
     score: 3.9,
     href: "reader.html?work=usotsuki-no-honne"
@@ -944,7 +945,7 @@ const works = [
     title: "養護教諭の佐切さんと生徒の杠さん シリーズ",
     date: "2024-02-04",
     endDate: "2024-04-18",
-    characters: 999,
+    characters: null,
     detail: "立場上恋愛はできないけど、のすったもんだシリーズ",
     score: 8.0,
     parody: true,
@@ -953,7 +954,7 @@ const works = [
   {
     title: "とけてしまうくらい",
     date: "2024-05-02",
-    characters: 999,
+    characters: null,
     detail: "もしも最中に自分の傷がばれてしまったら、な杠さんの短編。R-18で佐切さんが攻め",
     score: 8.2,
     href: "reader.html?work=tokete-shimau-kurai"
@@ -961,7 +962,7 @@ const works = [
   {
     title: "まっすぐな曲者",
     date: "2024-05-02",
-    characters: 999,
+    characters: null,
     detail: "そういうときにも素直に自分を出せない杠さんの短編。R-18で佐切さんが攻め",
     score: 8.4,
     href: "reader.html?work=massugu-na-kusemono"
@@ -969,7 +970,7 @@ const works = [
   {
     title: "限度まで蒸らされて",
     date: "2024-05-02",
-    characters: 999,
+    characters: null,
     detail: "進化した佐切さんにいいようにされてしまう杠さんの短編。R-18で佐切さんが攻め",
     score: 8.4,
     href: "reader.html?work=gendo-made-murasarete"
@@ -977,7 +978,7 @@ const works = [
   {
     title: "あなたの心を味わいたい",
     date: "2024-05-02",
-    characters: 999,
+    characters: null,
     detail: "いつもとは違う雰囲気にしてみた杠さんの短編。R-18で杠さんが攻め",
     score: 8.5,
     href: "reader.html?work=anata-no-kokoro-wo-ajiwaitai"
@@ -985,7 +986,7 @@ const works = [
   {
     title: "丸餅ふたつ",
     date: "2025-01-25",
-    characters: 999,
+    characters: null,
     detail: "ちょっと暗い考えになっちゃう佐切さんの小説",
     score: 8.6,
     href: "reader.html?work=marumochi-futatsu"
@@ -993,7 +994,7 @@ const works = [
   {
     title: "ふたり、手を繋いだら",
     date: "2025-12-31",
-    characters: 999,
+    characters: null,
     detail: "もう昔の自分ではないと確信する佐切さんの小説",
     score: 6.5,
     href: "reader.html?work=futari-te-wo-tsunaidara"
@@ -1001,7 +1002,7 @@ const works = [
   {
     title: "ただそばに",
     date: "2025-12-31",
-    characters: 999,
+    characters: null,
     detail: "隣に居ないと、居ても、なんか落ちつかないふたりの小説。ちょい喧嘩？させたかった",
     score: 6.3,
     href: "reader.html?work=tada-soba-ni"
@@ -1009,7 +1010,7 @@ const works = [
   {
     title: "風邪の功名",
     date: "2026-01-13",
-    characters: 999,
+    characters: null,
     detail: "風邪をひいてしまった佐切さんの小説",
     score: 5.8,
     href: "reader.html?work=kaze-no-komyo"
@@ -1017,7 +1018,7 @@ const works = [
   {
     title: "また進むため",
     date: "2026-01-23",
-    characters: 999,
+    characters: null,
     detail: "過去を払拭する杠さんの小説",
     score: 6.1,
     href: "reader.html?work=mata-susumu-tame"
@@ -1025,7 +1026,7 @@ const works = [
   {
     title: "忍ぶれど",
     date: "2026-02-01",
-    characters: 999,
+    characters: null,
     detail: "杠さんがひたすら耐える小説",
     score: 7.8,
     href: "reader.html?work=shinoburedo"
@@ -1033,7 +1034,7 @@ const works = [
   {
     title: "ひとつ目の羽ばたき",
     date: "2026-02-14",
-    characters: 999,
+    characters: null,
     detail: "佐切さんが山田家を出る小説",
     score: 2.5,
     href: "reader.html?work=hitotsume-no-habataki"
@@ -1041,7 +1042,7 @@ const works = [
   {
     title: "前向きに進む",
     date: "2026-03-14",
-    characters: 999,
+    characters: null,
     detail: "佐切さんのちょっとしたひとことについての短編",
     score: 4.2,
     href: "reader.html?work=maemuki-ni-susumu"
@@ -1049,7 +1050,7 @@ const works = [
   {
     title: "たしかな色のある世界",
     date: "2026-03-14",
-    characters: 999,
+    characters: null,
     detail: "好きって、どういうことだろうと考える短編",
     score: 5.5,
     href: "reader.html?work=tashikana-iro-no-aru-sekai"
@@ -1057,7 +1058,7 @@ const works = [
   {
     title: "ふくらむ手土産",
     date: "2026-03-14",
-    characters: 999,
+    characters: null,
     detail: "思わぬものに救われる短編",
     score: 6.2,
     href: "reader.html?work=fukuramu-temiyage"
@@ -1065,7 +1066,7 @@ const works = [
   {
     title: "秘めごとは向こう側に",
     date: "2026-03-14",
-    characters: 999,
+    characters: null,
     detail: "第三者目線のふたりについての短編",
     score: 9.2,
     href: "reader.html?work=himegoto-wa-mukougawa-ni"
@@ -1073,7 +1074,7 @@ const works = [
   {
     title: "花は散るゆえに",
     date: "2026-03-21",
-    characters: 999,
+    characters: null,
     detail: "今がとても幸せ。だからこそ……の小説",
     score: 9.6,
     href: "reader.html?work=hana-wa-chiru-yue-ni"
@@ -1081,7 +1082,7 @@ const works = [
   {
     title: "...Me too.",
     date: "2026-04-07",
-    characters: 999,
+    characters: null,
     detail: "初夜、が明けたふたりについての小説",
     score: 8.1,
     href: "reader.html?work=me-too"
@@ -1089,7 +1090,7 @@ const works = [
   {
     title: "夢のつづきは",
     date: "2026-04-15",
-    characters: 999,
+    characters: null,
     detail: "ちょっと不思議な小説",
     score: 6.0,
     href: "reader.html?work=yume-no-tsuzuki-wa"
@@ -1098,7 +1099,7 @@ const works = [
     title: "雪女の佐切さんと鬼の杠さん シリーズ",
     date: "2026-05-03",
     endDate: "2026-05-20",
-    characters: 999,
+    characters: null,
     detail: "グッズから着想を得たすったもんだシリーズ",
     score: 7.9,
     parody: true,
@@ -1107,7 +1108,7 @@ const works = [
   {
     title: "追いかけっこ",
     date: "2026-06-28",
-    characters: 999,
+    characters: null,
     detail: "お互いに「自分には持っていないものをこの人は持っている」と思い合っているふたりの小説",
     score: 4.0,
     href: "reader.html?work=oikakekko"
@@ -1115,7 +1116,7 @@ const works = [
   {
     title: "恋を鳴くには",
     date: "2026-07-05",
-    characters: 999,
+    characters: null,
     detail: "もだもだ杠さんの小説",
     score: 6.9,
     href: "reader.html?work=koi-wo-naku-niwa"
@@ -1123,7 +1124,7 @@ const works = [
   {
     title: "生に冒され",
     date: "2026-07-18",
-    characters: 999,
+    characters: null,
     detail: "島で別れてからの佐切さんの独白小説",
     score: 2.6,
     href: "reader.html?work=sei-ni-okasare"
@@ -1131,7 +1132,7 @@ const works = [
   {
     title: "再会の夜",
     date: "2026-09-30",
-    characters: 999,
+    characters: null,
     detail: "ふたりがふたたび出会ってすぐの小説",
     score: 4.0,
     href: "reader.html?work=saikai-no-yoru"
@@ -1139,13 +1140,32 @@ const works = [
   {
     title: "旅は道連れ",
     date: "2026-10-20",
-    characters: 999,
+    characters: null,
     detail: "まだわからないけど、今は。という小説",
     score: 4.0,
     latest: true,
     href: "reader.html?work=tabi-wa-michizure"
   }
 ];
+
+/* novels.js の本文から文字数を自動計算します。
+   空白（全角・半角）・改行・タブは数えず、句読点や記号は数えます。
+   Unicode の文字単位で数えるため、絵文字なども適切に扱います。 */
+const novelTextById = new Map(
+  (typeof novels !== "undefined" ? novels : []).map(novel => [novel.id, novel.text])
+);
+
+works.forEach(work => {
+  const workId = new URL(work.href, window.location.href).searchParams.get("work");
+  const text = novelTextById.get(workId);
+  if (typeof text === "string") {
+    work.characters = Array.from(text.replace(/\s/g, "")).length;
+  } else {
+    // 本文が見つからない場合、仮の999字を表示しません。
+    work.characters = null;
+    console.warn("文字数を計算できませんでした:", work.title, workId);
+  }
+});
 
 /* 執筆日・文字数の表示 */
 works.forEach((work, index) => {
