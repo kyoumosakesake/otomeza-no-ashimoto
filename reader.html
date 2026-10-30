@@ -338,8 +338,8 @@
     .reading-layout.vertical .work-header {
       height: max(360px, calc(100dvh - 110px));
     }
-    /* スマホ縦書きだけ、本文末尾の戻る・星・共有ボタンを隠す */
-    .reading-layout.vertical .vertical-end-link { display: none; }
+    /* スマホ縦書きでも、読了後の操作は本文末尾に表示する */
+    .reading-layout.vertical .vertical-end-link { display: block; }
     .reading-layout.horizontal .work-title { font-size: 1.4rem; }
   }
 
@@ -451,14 +451,14 @@
   .reading-layout.vertical .mobile-vertical-title .mobile-date {
     font-size: 11.2px;
   }
-  /* スマホの縦書きのみ、画面下部の戻る・ブックマーク・共有を非表示にする。
-     フッターはページ送りボタンを挟むため、隣接セレクタではなく body から指定。 */
+  /* スマホ縦書き：画面下部のフッターは隠し、本文末尾に操作を配置する。
+     縦書き本文の最後の列に追加済みの .vertical-end-link を表示。 */
   @media (max-width: 600px) {
     body.vertical-reading:not(.microfiction-reading) .work-footer {
       display: none;
     }
-    .reading-layout.vertical .vertical-end-link {
-      display: none;
+    .reading-layout.vertical:not(.microfiction) .vertical-end-link {
+      display: block;
     }
   }
 </style>
