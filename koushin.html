@@ -17,25 +17,74 @@ body::before { display: none !important; }
   font-size: clamp(64px, 14vw, 136px);
   line-height: 1;
 }
-.koushin-transmission__star { display: inline-block; }
+.koushin-transmission__star {
+  position: relative;
+  display: inline-block;
+  isolation: isolate;
+  overflow: visible !important;
+}
+/* 光は文字の影ではなく、独立した円形の光として描画。
+   スマホで text-shadow / filter が四角く切られる問題を避ける。 */
+.koushin-transmission__star::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 3.6em;
+  height: 3.6em;
+  transform: translate(-50%, -50%) scale(.4);
+  border-radius: 50%;
+  background: radial-gradient(circle,
+    rgba(211,255,245,.68) 0%,
+    rgba(91,255,224,.48) 13%,
+    rgba(57,226,207,.23) 30%,
+    rgba(57,226,207,.09) 47%,
+    transparent 70%);
+  opacity: 0;
+  pointer-events: none;
+  z-index: -1;
+}
 .koushin-transmission__dot {
   font-size: .28em; opacity: .75; line-height: 1;
 }
 .koushin-transmission__star--left {
-  animation: koushin-left-light 2s ease-in-out both;
+  animation: koushin-star-brighten 2s ease-in-out both;
 }
-@keyframes koushin-left-light {
-  0%, 100% { color: #29c5be; text-shadow: 0 0 0 transparent; filter: brightness(1); transform: scale(1); }
-  38%, 62% { color: #d3fff5; text-shadow: 0 0 16px rgba(91, 255, 224, .9), 0 0 45px rgba(57, 226, 207, .8), 0 0 95px rgba(57, 226, 207, .38); filter: brightness(1.5); transform: scale(1.13); }
+.koushin-transmission__star--left::before {
+  animation: koushin-round-glow 2s ease-in-out both;
+}
+/* 右の星も同じ描画方法を使い、演出の順序は左→右にする。 */
+.koushin-transmission__star--right {
+  animation: koushin-star-brighten-right 2s ease-in-out both;
+}
+.koushin-transmission__star--right::before {
+  animation: koushin-round-glow-right 2s ease-in-out both;
+}
+@keyframes koushin-star-brighten {
+  0%, 100% { color: #29c5be; transform: scale(1); }
+  38%, 62% { color: #d3fff5; transform: scale(1.13); }
+}
+@keyframes koushin-round-glow {
+  0%, 100% { opacity: 0; transform: translate(-50%, -50%) scale(.4); }
+  38%, 62% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+@keyframes koushin-star-brighten-right {
+  0%, 46%, 100% { color: #29c5be; transform: scale(1); }
+  66%, 82% { color: #d3fff5; transform: scale(1.13); }
+}
+@keyframes koushin-round-glow-right {
+  0%, 46%, 100% { opacity: 0; transform: translate(-50%, -50%) scale(.4); }
+  66%, 82% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
 }
 @media (prefers-reduced-motion: reduce) {
-  .koushin-transmission__star--left { animation: none; color: #d3fff5; }
+  .koushin-transmission__star,
+  .koushin-transmission__star::before { animation: none !important; }
 }
 </style></head><body><main class="shell"><nav class="nav"><a href="index.html">← 乙女座の脚元</a><span>交信</span></nav><header class="hero"><div class="symbol">✦ · ✦</div><h1>交信</h1><p>ここから、私に言葉を届けることができます。<br>名前は必要ありません。感想でも、質問でも、ひとことでも。<br>お返事は気まぐれです。</p></header><section class="panel"><hr class="line"><form id="form"><label for="body" class="label">ことばを送る</label><textarea id="body" class="text" maxlength="4000" placeholder="ここにメッセージをどうぞ。" required></textarea><p class="hint"><span id="count">0</span> / 4000文字</p><div class="actions"><button id="send" class="btn primary" type="submit">送信する ↗</button></div><label class="note" style="display:block;line-height:1.9;margin-top:1.1rem"><input type="checkbox" id="remember-reply" style="accent-color:#28bfb0;vertical-align:middle;margin-right:.5em"><span style="color:#28bfb0">この端末で返信のお知らせを受け取る（任意）</span><br><span style="opacity:.85">選ぶと、次回このブラウザでトップページの「ひらく」を押したとき、返信があればお知らせします。共有端末では選ばないでください。</span></label><p class="note">届いた言葉は、管理者だけが読みます。返信はお約束できません。送信後に発行される秘密のリンクから、返信の確認と送信の取り消しができます。リンクをなくすと確認できなくなります。</p><p id="status" class="status" role="status" aria-live="polite"></p></form><section id="done" class="receipt" hidden><h2>ことばをおくりました。</h2><p>このリンクを保存してください。返信が届いた場合、このリンクから確認できます。</p><input id="receipt-url" type="text" readonly aria-label="秘密のリンク"><div class="actions"><button class="btn primary" id="copy" type="button">リンクをコピー</button><a class="btn" id="open" href="#">確認ページを開く</a></div><p class="note">このリンクを他の人に見せないでください。リンクを知る人はメッセージを閲覧・削除できます。</p></section></section></main><div id="koushin-transmission" class="koushin-transmission" hidden aria-hidden="true">
   <div class="koushin-transmission__symbol">
     <span class="koushin-transmission__star koushin-transmission__star--left">✦</span>
     <span class="koushin-transmission__dot">·</span>
-    <span class="koushin-transmission__star">✦</span>
+    <span class="koushin-transmission__star koushin-transmission__star--right">✦</span>
   </div>
 </div><script type="module">
 import {db} from './archive-common.js';
