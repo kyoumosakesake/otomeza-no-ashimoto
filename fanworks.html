@@ -443,9 +443,13 @@ button, a {
 
 /* 戻る */
 .back-link {
-  display: block;
+  position: absolute;
+  top: 1.25rem;
+  left: max(1rem, env(safe-area-inset-left));
+  display: inline-block;
   width: fit-content;
-  margin: max(0px, calc(5rem - 3vh)) auto 0;
+  margin: 0;
+  z-index: 20;
   color: var(--white);
   font-size: .95rem;
   text-decoration: none;
@@ -459,7 +463,7 @@ button, a {
 /* スマートフォン */
 @media (max-width: 600px) {
   .page {
-    padding-top: 3rem;
+    padding-top: 4.25rem;
   }
   .page-title {
     font-size: 1.7rem;
@@ -555,6 +559,7 @@ button, a {
 <body>
 
 <main class="page">
+  <a class="back-link" href="works.html">← 作品一覧へ</a>
   <h1 class="page-title">
     地獄楽（佐杠・杠佐）
   </h1>
@@ -655,12 +660,7 @@ button, a {
     ></div>
   </section>
 
-  <a
-    class="back-link"
-    href="works.html"
-  >
-    ← 作品一覧へ
-  </a>
+
 </main>
 
 <!-- 最前面ポップアップ -->
