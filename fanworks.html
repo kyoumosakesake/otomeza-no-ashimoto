@@ -445,7 +445,12 @@ button, a {
 .work-list a:hover {
   opacity: .65;
 }
-/* 執筆順：作品タイトルを押すと、関係性と同じ作品情報を表示 */
+/* 執筆順：作品行のどこを押しても作品情報を表示 */
+.work-list li { cursor: pointer; }
+.work-list li:hover { background: rgba(255,255,255,.035); }
+/* 執筆順のポップアップは既に一覧にある日付・文字数を省略 */
+.story-popup.writing-popup .story-date,
+.story-popup.writing-popup .story-characters { display: none !important; }
 .work-list .work-trigger {
   appearance: none;
   -webkit-appearance: none;
@@ -1332,6 +1337,8 @@ function positionPopup(button) {
 function openPopup(work, point, button, tab = "timeline") {
   closePopup();
 
+  popup.classList.toggle("writing-popup", tab === "writing");
+
   popupTitle.textContent =
     work.title;
   popupDate.textContent =
@@ -1399,7 +1406,7 @@ document.addEventListener("click", event => {
   if (
     !event.target.closest(".story-popup") &&
     !event.target.closest(".point-button") &&
-    !event.target.closest(".work-trigger")
+    !event.target.closest(".work-list li")
   ) {
     closePopup();
   }
@@ -1670,14 +1677,16 @@ years.forEach(year => {
       link.setAttribute("aria-expanded", "false");
       link.setAttribute("aria-controls", "story-popup");
       link.textContent = work.title;
-      link.addEventListener("click", event => {
+      // 行全体をタップ領域にする（タイトルのボタンはキーボード操作にも対応）。
+      const toggleWritingPopup = event => {
         event.stopPropagation();
         if (activeButton === link) {
           closePopup();
         } else {
           openPopup(work, item, link, "writing");
         }
-      });
+      };
+      item.addEventListener("click", toggleWritingPopup);
 
       const meta =
         document.createElement("div");
