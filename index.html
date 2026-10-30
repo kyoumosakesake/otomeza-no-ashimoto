@@ -18,7 +18,9 @@
     @keyframes star-glimmer { 0%,100% {opacity:.3} 50% {opacity:.85} }
     .hero-heading { position:absolute; z-index:2; top:55%; left:1rem; right:1rem; transform:translateY(-50%); pointer-events:none; }
     .site-title { margin:0; color:#fff; font-size:clamp(2rem,4.2vw,3.2rem); font-weight:400; letter-spacing:.16em; opacity:0; animation:title-appear 2.1s ease-out .25s forwards; text-shadow:0 0 25px rgba(231,245,255,.10); }
-    .site-description { margin:1.15rem 0 0; color:#e4edf3; font-size:clamp(.95rem,1.6vw,1.15rem); line-height:1.8; letter-spacing:.08em; opacity:0; animation:title-appear 1.8s ease-out 1s forwards; }
+    .site-description { margin:1.15rem 0 0; color:#e4edf3; font-size:clamp(.95rem,1.6vw,1.15rem); line-height:1.8; letter-spacing:.08em; min-height:1.8em; }
+    .site-description.typing::after { content:""; display:inline-block; height:1em; margin-left:.12em; border-right:1px solid #28bfb0; vertical-align:-.12em; animation:caret-blink .8s step-end infinite; }
+    @keyframes caret-blink { 50% { opacity:0; } }
     @keyframes title-appear { from {opacity:0; filter:blur(7px)} to {opacity:1; filter:blur(0)} }
     .open-button { position:absolute; z-index:3; top:76%; left:50%; transform:translate(-50%,-50%); display:inline-flex; align-items:center; justify-content:center; min-width:7.4rem; box-sizing:border-box; padding:.8rem 1.8rem; background:#28bfb0; color:#fff; border:1px solid rgba(202,255,250,.38); border-radius:999px; font:inherit; font-size:1.35rem; letter-spacing:.12em; text-decoration:none; box-shadow:0 0 0 rgba(40,191,176,0); transition:transform .3s ease,box-shadow .3s ease,background .3s ease; }
     .open-button::after { content:""; position:absolute; left:27%; right:27%; bottom:.42rem; height:1px; background:#eafffc; transform:scaleX(0); transition:transform .3s ease; }
@@ -30,11 +32,14 @@
     .corvus .star-core { fill:#f2f9ff; filter:drop-shadow(0 0 3px rgba(222,243,255,.75)); transition:fill .6s ease,filter .6s ease; }
     .corvus .star-halo { fill:#d4e6f4; opacity:.10; transition:opacity .6s ease,fill .6s ease; }
     .corvus .constellation-path { fill:none; stroke:#42d9cb; stroke-width:1.15; stroke-linecap:round; stroke-linejoin:round; opacity:0; stroke-dasharray:650; stroke-dashoffset:650; transition:opacity .45s ease,stroke-dashoffset 1.65s ease; filter:drop-shadow(0 0 3px rgba(40,191,176,.5)); }
-    .corvus .corvus-name { fill:#a8eee4; font-family:Georgia,"Times New Roman",serif; font-size:12px; letter-spacing:5px; opacity:0; transition:opacity .7s ease .05s; }
-    .corvus:is(:hover,:focus-visible,[aria-pressed="true"]) .constellation-path { opacity:.83; stroke-dashoffset:0; }
-    .corvus:is(:hover,:focus-visible,[aria-pressed="true"]) .star-core { fill:#8df6e9; filter:drop-shadow(0 0 7px rgba(40,191,176,.9)); }
-    .corvus:is(:hover,:focus-visible,[aria-pressed="true"]) .star-halo { opacity:.33; fill:#51d9cc; }
-    .corvus:is(:hover,:focus-visible,[aria-pressed="true"]) .corvus-name { opacity:1; }
+    .corvus:is(:focus-visible,[data-active="true"]) .constellation-path { opacity:.83; stroke-dashoffset:0; }
+    .corvus:is(:focus-visible,[data-active="true"]) .star-core { fill:#8df6e9; filter:drop-shadow(0 0 7px rgba(40,191,176,.9)); }
+    .corvus:is(:focus-visible,[data-active="true"]) .star-halo { opacity:.33; fill:#51d9cc; }
+    @media (hover:hover) and (pointer:fine) {
+      .corvus:hover .constellation-path { opacity:.83; stroke-dashoffset:0; }
+      .corvus:hover .star-core { fill:#8df6e9; filter:drop-shadow(0 0 7px rgba(40,191,176,.9)); }
+      .corvus:hover .star-halo { opacity:.33; fill:#51d9cc; }
+    }
     .corvus:focus-visible { outline:1px solid rgba(40,191,176,.6); outline-offset:4px; border-radius:8px; }
     .signal-overlay { position:fixed; inset:0; z-index:9999; display:grid; place-items:center; background:#1d3652; }
     .signal-overlay[hidden], .reply-notice[hidden] { display:none !important; }
@@ -52,7 +57,7 @@
     .reply-notice .privacy { color:#b8d4dc; font-size:.83rem; max-width:36rem; }
     @media (max-width:600px) { .corvus {top:clamp(48px,11vh,110px);width:min(360px,91vw)} .hero-heading {top:57%} .site-title {letter-spacing:.1em} .open-button {top:79%;font-size:1.25rem} }
     @media (max-height:570px) { .corvus {top:3vh;width:min(310px,60vw)} .hero-heading {top:60%} .open-button {top:84%} }
-    @media (prefers-reduced-motion:reduce) { .site-title,.site-description {animation:none;opacity:1;filter:none} .night-stars circle,.signal-right {animation:none} .constellation-path,.corvus .star-core,.corvus .star-halo,.corvus .corvus-name {transition:none} }
+    @media (prefers-reduced-motion:reduce) { .site-title {animation:none;opacity:1;filter:none} .site-description.typing::after {animation:none;opacity:0} .night-stars circle,.signal-right {animation:none} .constellation-path,.corvus .star-core,.corvus .star-halo,.corvus .corvus-name {transition:none} }
   </style>
 </head>
 
@@ -90,14 +95,13 @@
         <g><circle class="star-halo" cx="275" cy="65" r="12"/><circle class="star-core" cx="275" cy="65" r="3.1"/></g>
         <g><circle class="star-halo" cx="315" cy="175" r="14"/><circle class="star-core" cx="315" cy="175" r="3.4"/></g>
         <g><circle class="star-halo" cx="135" cy="199" r="12"/><circle class="star-core" cx="135" cy="199" r="3.1"/></g>
-        <text class="corvus-name" x="210" y="243" text-anchor="middle">CORVUS</text>
       </svg>
     </button>
 
 
     <div class="hero-heading">
       <h1 class="site-title">乙女座の脚元</h1>
-      <p class="site-description">とりこしくろうのひとつの在り処</p>
+      <p class="site-description" id="site-description" aria-label="とりこしくろうのひとつの在り処"></p>
     </div>
 
     <a class="open-button" href="menu.html" id="site-open">
@@ -123,19 +127,45 @@
   </section>
 
   <script>
-    // マウスはホバーで表示。タッチ操作はタップで表示／非表示を切り替え。
+    // タイトル出現後、サブタイトルを一文字ずつ表示する。
+    const description = document.getElementById('site-description');
+    const subtitle = 'とりこしくろうのひとつの在り処';
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reducedMotion) {
+      description.textContent = subtitle;
+    } else {
+      description.classList.add('typing');
+      let index = 0;
+      setTimeout(() => {
+        const timer = setInterval(() => {
+          description.textContent += Array.from(subtitle)[index++];
+          if (index >= Array.from(subtitle).length) {
+            clearInterval(timer);
+            setTimeout(() => description.classList.remove('typing'), 600);
+          }
+        }, 115);
+      }, 1700);
+    }
+
+    // PCではホバー、スマホでは指が触れている間だけ星座を表示する。
     const corvus = document.getElementById('corvus');
-    corvus.addEventListener('click', () => {
-      const next = corvus.getAttribute('aria-pressed') !== 'true';
-      corvus.setAttribute('aria-pressed', String(next));
-      corvus.setAttribute('aria-label', next ? 'カラス座を隠す' : 'カラス座を表示する');
+    const setActive = active => {
+      corvus.dataset.active = String(active);
+      corvus.setAttribute('aria-pressed', String(active));
+    };
+    corvus.addEventListener('pointerdown', event => {
+      if (event.pointerType === 'touch' || event.pointerType === 'pen') setActive(true);
     });
-    document.addEventListener('pointerdown', event => {
-      if (!corvus.contains(event.target) && corvus.getAttribute('aria-pressed') === 'true') {
-        corvus.setAttribute('aria-pressed', 'false');
-        corvus.setAttribute('aria-label', 'カラス座を表示する');
-      }
+    for (const type of ['pointerup', 'pointercancel', 'pointerleave']) {
+      corvus.addEventListener(type, event => {
+        if (event.pointerType === 'touch' || event.pointerType === 'pen') setActive(false);
+      });
+    }
+    // タッチ後に残るフォーカスで線が表示され続けないようにする。
+    corvus.addEventListener('click', event => {
+      if (event.detail !== 0) corvus.blur();
     });
+    corvus.addEventListener('blur', () => setActive(false));
   </script>
 
   <script type="module">
