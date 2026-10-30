@@ -1775,7 +1775,7 @@ function rememberOpenedWork(work, tab) {
   if (!id) return;
   try {
     sessionStorage.setItem(readingReturnKey, JSON.stringify({
-      id, tab, timestamp: Date.now()
+      id, tab, timestamp: Date.now(), pending: true
     }));
   } catch (_) { /* 保存不可でも通常のリンクは利用できる */ }
 }
@@ -1794,12 +1794,40 @@ function showFanworksTab(tab) {
     updateSectionLabel();
   }
 }
-function restoreOpenedWork() {
+function getReturnState() {
+  // 「作品一覧に戻る」リンクはURLを優先。
   const params = new URLSearchParams(location.search);
-  if (params.get("from") !== "reader") return false;
-  const id = params.get("work");
-  const tab = params.get("tab");
-  if (!id || !["timeline", "writing"].includes(tab)) return false;
+  if (params.get("from") === "reader") {
+    const id = params.get("work");
+    const tab = params.get("tab");
+    if (id && ["timeline", "writing"].includes(tab)) return { id, tab };
+  }
+
+  // ブラウザの「戻る」ではURLが変わらないので、
+  // 本文へ移動する直前に記録した作品を使う。
+  try {
+    const state = JSON.parse(sessionStorage.getItem(readingReturnKey) || "null");
+    if (state && state.pending === true &&
+        typeof state.id === "string" &&
+        ["timeline", "writing"].includes(state.tab) &&
+        Date.now() - state.timestamp < 2 * 60 * 60 * 1000) {
+      return state;
+    }
+  } catch (_) {}
+  return null;
+}
+function clearPendingReturn() {
+  try {
+    const state = JSON.parse(sessionStorage.getItem(readingReturnKey) || "null");
+    if (state && state.pending) {
+      state.pending = false;
+      sessionStorage.setItem(readingReturnKey, JSON.stringify(state));
+    }
+  } catch (_) {}
+}
+function restoreOpenedWork(state) {
+  if (!state) return false;
+  const { id, tab } = state;
   showFanworksTab(tab);
   if (tab === "timeline") {
     const point = [...timeline.querySelectorAll(".story-point")]
@@ -1818,30 +1846,38 @@ function restoreOpenedWork() {
     if (row) {
       const top = window.scrollY + row.getBoundingClientRect().top +
         row.getBoundingClientRect().height / 2 - window.innerHeight / 2;
-      window.scrollTo({top: Math.max(0, top), behavior: "instant"});
+      window.scrollTo({ top: Math.max(0, top), behavior: "instant" });
     }
   }
   return true;
 }
-function restoreOnReturn() {
-  if (restoreOpenedWork()) {
-    requestAnimationFrame(() => restoreOpenedWork());
+function restoreOnReturn(state) {
+  if (state) {
+    restoreOpenedWork(state);
+    requestAnimationFrame(() => restoreOpenedWork(state));
     return;
   }
   setInitialTimelinePosition();
 }
 
 /* 初期表示。本文から戻った場合だけ作品位置を復元する。 */
+const initialReturnState = getReturnState();
 adjustTimelineHeight();
-restoreOnReturn();
+restoreOnReturn(initialReturnState);
 window.addEventListener("load", () => {
   adjustTimelineHeight();
-  restoreOnReturn();
+  restoreOnReturn(initialReturnState);
+  if (initialReturnState) clearPendingReturn();
 });
 window.addEventListener("pageshow", event => {
   if (event.persisted) {
     refreshBookmarkMarks();
-    restoreOnReturn();
+    adjustTimelineHeight();
+    const state = getReturnState();
+    if (state) {
+      restoreOnReturn(state);
+      clearPendingReturn();
+    }
   }
 });
 if (window.visualViewport) window.visualViewport.addEventListener("resize", adjustTimelineHeight);
