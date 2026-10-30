@@ -524,7 +524,7 @@
 </footer>
 <div class="share-status" id="share-status" role="status" aria-live="polite" hidden></div>
 
-<script src="novels.js?v=20261029-all48"></script>
+<script src="novels.js?v=20261031-navigation"></script>
 <script>
   const fontSizes = [15, 17, 19, 21, 23];
   const storageKey = "otomeza-reader-settings";
@@ -684,6 +684,23 @@
   }
 
   const workId = new URLSearchParams(window.location.search).get("work");
+  const readingReturnKey = "otomeza-fanworks-return-v1";
+  function getReturnUrl() {
+    let tab = null;
+    try {
+      const state = JSON.parse(sessionStorage.getItem(readingReturnKey) || "null");
+      if (state && state.id === workId && ["timeline", "writing"].includes(state.tab)) {
+        tab = state.tab;
+      }
+    } catch (_) {}
+    if (!tab) return "fanworks.html";
+    return "fanworks.html?" + new URLSearchParams({
+      from: "reader", tab, work: workId
+    }).toString();
+  }
+  document.querySelectorAll('a[aria-label="作品一覧へ戻る"]').forEach(link => {
+    link.href = getReturnUrl();
+  });
   const novelList = typeof novels !== "undefined" && Array.isArray(novels) ? novels : [];
   const currentWork = novelList.find(work => work.id === workId);
   const isMicrofiction = Boolean(currentWork && currentWork.format === "microfiction");
@@ -742,6 +759,7 @@
     <button class="end-action share-action" type="button" aria-label="作品を共有" title="作品を共有">↗</button>
   </div>`;
   document.getElementById("novel-text").append(verticalEndLink);
+  verticalEndLink.querySelector('a[aria-label="作品一覧へ戻る"]').href = getReturnUrl();
 
 
   // 読書画面と作品一覧で共通のブックマーク保存領域。
@@ -961,9 +979,24 @@
   applySettings();
   saveSettings();
   resetAfterLayout();
+  function stabilizeInitialReading() {
+    if (!currentWork) return;
+    // 初回表示でフォント読込前の縦書き列幅が残らないよう再計算する。
+    void document.getElementById("novel-text").offsetWidth;
+    refreshReadingLayout({ resetVerticalPosition: true });
+  }
   window.addEventListener("load", () => {
-    resetAfterLayout();
+    stabilizeInitialReading();
     window.scrollTo(0, 0);
+  });
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(() => {
+      stabilizeInitialReading();
+      requestAnimationFrame(stabilizeInitialReading);
+    });
+  }
+  window.addEventListener("pageshow", event => {
+    if (event.persisted) stabilizeInitialReading();
   });
 </script>
 </body>
