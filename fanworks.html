@@ -1734,10 +1734,20 @@ window.addEventListener(
   { passive: true }
 );
 
+/* 初期表示は数直線の約35％地点から。左へも戻れます。 */
+function setInitialTimelinePosition() {
+  const maxScroll = Math.max(0, timelineScroll.scrollWidth - timelineScroll.clientWidth);
+  timelineScroll.scrollLeft = maxScroll * 0.35;
+  updateSectionLabel();
+}
+
 /* 初期表示 */
 adjustTimelineHeight();
-updateSectionLabel();
-window.addEventListener("load", adjustTimelineHeight);
+setInitialTimelinePosition();
+window.addEventListener("load", () => {
+  adjustTimelineHeight();
+  setInitialTimelinePosition();
+});
 if (window.visualViewport) window.visualViewport.addEventListener("resize", adjustTimelineHeight);
 refreshBookmarkMarks();
 </script>
