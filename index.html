@@ -28,6 +28,36 @@
     .open-button:hover { transform:translate(-50%,calc(-50% - 2px)); background:#30cdbd; box-shadow:0 0 25px rgba(40,191,176,.32); }
     .open-button:hover::after, .open-button:focus-visible::after { transform:scaleX(1); }
     .open-button:focus-visible { outline:2px solid #fff; outline-offset:4px; }
+    /* サイトの誕生日を、夜空の最下部に控えめに刻む。 */
+    .site-established {
+      position: absolute;
+      z-index: 2;
+      bottom: clamp(16px, 3.8vh, 38px);
+      left: 1rem;
+      right: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: clamp(.65rem, 2.2vw, 1.1rem);
+      margin: 0;
+      color: #b5cbd5;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(.69rem, 1.15vw, .82rem);
+      font-weight: 400;
+      letter-spacing: .075em;
+      line-height: 1.5;
+      white-space: nowrap;
+      pointer-events: none;
+    }
+    .site-established::before,
+    .site-established::after {
+      content: "";
+      display: block;
+      width: clamp(24px, 5vw, 36px);
+      height: 1px;
+      flex: 0 0 auto;
+      background: rgba(40, 191, 176, .72);
+    }
     .corvus { position:absolute; z-index:2; top:clamp(30px,8vh,95px); left:50%; width:min(320px,74vw,36vh); height:auto; aspect-ratio:546/601; transform:translateX(-50%); border:0; padding:0; background:transparent; color:inherit; cursor:pointer; -webkit-tap-highlight-color:transparent; }
     .corvus svg { width:100%; height:100%; display:block; overflow:visible; }
     .corvus .star-core { fill:#f2f9ff; filter:drop-shadow(0 0 3px rgba(222,243,255,.75)); transition:fill .6s ease,filter .6s ease; }
@@ -166,6 +196,8 @@
     <a class="open-button" href="menu.html" id="site-open">
       ひらく
     </a>
+
+    <p class="site-established" lang="en">Est. November 1, 2026</p>
 
   </main>
 
