@@ -10,7 +10,7 @@
     *, *::before, *::after { box-sizing:border-box; }
     html { scroll-behavior:smooth; }
     body { margin:0; min-height:100vh; background:var(--bg); color:var(--text); font-family:"Yu Mincho","游明朝","YuMincho",serif; font-weight:400; }
-    .back { position:fixed; z-index:5; top:clamp(20px,3.5vw,38px); left:clamp(20px,4vw,48px); color:var(--text); text-decoration:none; font-size:.9rem; letter-spacing:.07em; opacity:.8; transition:color .25s,opacity .25s; }
+    .back { position:absolute; z-index:5; top:clamp(20px,3.5vw,38px); left:clamp(20px,4vw,48px); color:var(--text); text-decoration:none; font-size:.9rem; letter-spacing:.07em; opacity:.8; transition:color .25s,opacity .25s; }
     .back:hover,.back:focus-visible { color:var(--accent); opacity:1; }
     main { width:min(680px,calc(100% - 48px)); margin:0 auto; padding:clamp(116px,14vw,165px) 0 130px; }
     h1 { margin:0 0 66px; font-size:clamp(1.65rem,4vw,2rem); font-weight:400; letter-spacing:.14em; text-align:center; line-height:1.6; }
@@ -23,6 +23,8 @@
     .guide h3:first-of-type { margin-top:8px; }
     .closing { margin-bottom:0; }
     .last-question { margin:clamp(75px,13vw,120px) 0 0; text-align:center; letter-spacing:.11em; }
+    .bottom-back { display:block; width:fit-content; margin:2.25em auto 0; color:var(--text); text-decoration:none; font-size:.9rem; letter-spacing:.07em; opacity:.8; transition:color .25s,opacity .25s; }
+    .bottom-back:hover,.bottom-back:focus-visible { color:var(--accent); opacity:1; }
     @media(max-width:600px) { main { width:calc(100% - 44px); padding-top:115px; padding-bottom:90px; } h1 { margin-bottom:52px; } section { margin-bottom:55px; } h2 { font-size:1.16rem; } p { font-size:.96rem; line-height:2.15; } .last-question { margin-top:88px; } }
     @media(prefers-reduced-motion:reduce) { html { scroll-behavior:auto; } }
   </style>
@@ -55,18 +57,18 @@
       <p>ここには、日々の暮らしの中で考えたことや、創作にまつわるあれこれを綴っていきたいと思っています。</p>
       <p>いわば、思考の種を置いておく場所です。</p>
       <p>今はまだなににもならないけれど、地面に落としておけば、いつか芽が出るかもしれない。</p>
-      <p>はい。思いつくままに言葉を残していこうと思います。</p>
+      <p>はい、思いつくままに言葉を残していこうと思います。</p>
     </section>
     <section>
       <h2>訪問者の方へ</h2>
-      <p>小説を読んでくださるだけでも充分嬉しいですが、感想をいただけたら、もっと嬉しいです！</p>
-      <p>好きだった場面や印象に残った言葉など。ぜひ「交信」からお聞かせください。日常的なメッセージもウェルカムです。</p>
+      <p>小説を読んでくださるだけでも充分嬉しいですが、感想をいただけたら、もっと嬉しいです。</p>
+      <p>好きだった場面や印象に残った言葉、シーンなど。ぜひ「交信」からお聞かせください。日常的なメッセージもウェルカムです。</p>
       <p>もちろん、名乗っていただく必要はありません。気が向いたときに、気軽に言葉を送っていただけたら幸いです。</p>
     </section>
     <section class="guide">
       <h2>サイトのご案内</h2>
       <h3>二次創作物</h3>
-      <p>これまでに創作した小説をまとめています。小説は関係性・執筆順から探すことができます。</p>
+      <p>これまでに制作した小説をまとめています。小説は関係性・執筆順から探すことができます。</p>
       <h3>カラスのアルキバ</h3>
       <p>日々の思考や創作にまつわる話を綴る場所です。</p>
       <h3>交信</h3>
@@ -90,6 +92,7 @@
       <p>ここを訪れた方がいつかふとした折に、この場所や、ここで出会った言葉や線を思い出してくださったなら。</p>
       <p>『乙女座の脚元』が、誰かにとって忘れられない場所になれば幸いです。</p>
       <p class="last-question">私のことを覚えていますか。</p>
+      <a class="bottom-back" href="menu.html">← メニューへ戻る</a>
     </section>
   </main>
 </body>
