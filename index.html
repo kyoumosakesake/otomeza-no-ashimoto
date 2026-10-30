@@ -27,11 +27,11 @@
     .open-button:hover { transform:translate(-50%,calc(-50% - 2px)); background:#30cdbd; box-shadow:0 0 25px rgba(40,191,176,.32); }
     .open-button:hover::after, .open-button:focus-visible::after { transform:scaleX(1); }
     .open-button:focus-visible { outline:2px solid #fff; outline-offset:4px; }
-    .corvus { position:absolute; z-index:2; top:clamp(30px,8vh,95px); left:50%; width:min(430px,78vw); height:auto; aspect-ratio:420/260; transform:translateX(-50%); border:0; padding:0; background:transparent; color:inherit; cursor:pointer; -webkit-tap-highlight-color:transparent; }
+    .corvus { position:absolute; z-index:2; top:clamp(30px,8vh,95px); left:50%; width:min(320px,74vw,36vh); height:auto; aspect-ratio:546/601; transform:translateX(-50%); border:0; padding:0; background:transparent; color:inherit; cursor:pointer; -webkit-tap-highlight-color:transparent; }
     .corvus svg { width:100%; height:100%; display:block; overflow:visible; }
     .corvus .star-core { fill:#f2f9ff; filter:drop-shadow(0 0 3px rgba(222,243,255,.75)); transition:fill .6s ease,filter .6s ease; }
     .corvus .star-halo { fill:#d4e6f4; opacity:.10; transition:opacity .6s ease,fill .6s ease; }
-    .corvus .constellation-path { fill:none; stroke:#42d9cb; stroke-width:1.15; stroke-linecap:round; stroke-linejoin:round; opacity:0; stroke-dasharray:650; stroke-dashoffset:650; transition:opacity .45s ease,stroke-dashoffset 1.65s ease; filter:drop-shadow(0 0 3px rgba(40,191,176,.5)); }
+    .corvus .constellation-path { fill:none; stroke:#42d9cb; stroke-width:1.15; stroke-linecap:round; stroke-linejoin:round; opacity:0; stroke-dasharray:1800; stroke-dashoffset:1800; transition:opacity .45s ease,stroke-dashoffset 1.65s ease; filter:drop-shadow(0 0 3px rgba(40,191,176,.5)); }
     .corvus:is(:focus-visible,[data-active="true"]) .constellation-path { opacity:.83; stroke-dashoffset:0; }
     .corvus:is(:focus-visible,[data-active="true"]) .star-core { fill:#8df6e9; filter:drop-shadow(0 0 7px rgba(40,191,176,.9)); }
     .corvus:is(:focus-visible,[data-active="true"]) .star-halo { opacity:.33; fill:#51d9cc; }
@@ -55,8 +55,8 @@
     .reply-actions a, .reply-actions button { background:#28bfb0; color:#132e45; border:1px solid #28bfb0; padding:.8rem 1.3rem; font:inherit; font-size:1rem; border-radius:4px; text-decoration:none; cursor:pointer; }
     .reply-actions button { background:transparent; color:white; border-color:#4b8d99; }
     .reply-notice .privacy { color:#b8d4dc; font-size:.83rem; max-width:36rem; }
-    @media (max-width:600px) { .corvus {top:clamp(48px,11vh,110px);width:min(360px,91vw)} .hero-heading {top:57%} .site-title {letter-spacing:.1em} .open-button {top:79%;font-size:1.25rem} }
-    @media (max-height:570px) { .corvus {top:3vh;width:min(310px,60vw)} .hero-heading {top:60%} .open-button {top:84%} }
+    @media (max-width:600px) { .corvus {top:clamp(24px,6vh,65px);width:min(310px,78vw,34vh)} .hero-heading {top:57%} .site-title {letter-spacing:.1em} .open-button {top:79%;font-size:1.25rem} }
+    @media (max-height:570px) { .corvus {top:2vh;width:min(240px,52vw,32vh)} .hero-heading {top:60%} .open-button {top:84%} }
     @media (prefers-reduced-motion:reduce) { .site-title {animation:none;opacity:1;filter:none} .site-description.typing::after {animation:none;opacity:0} .night-stars circle,.signal-right {animation:none} .constellation-path,.corvus .star-core,.corvus .star-halo,.corvus .corvus-name {transition:none} }
   </style>
 </head>
@@ -89,12 +89,13 @@
     </svg>
     <!-- 星は通常の夜空に紛れ、触れたときだけカラス座の線が現れます。 -->
     <button class="corvus" id="corvus" type="button" aria-label="カラス座を表示する" aria-pressed="false">
-      <svg viewBox="0 0 420 260" role="img" aria-label="カラス座の四つの主な星">
-        <path class="constellation-path" d="M 100 95 L 275 65 L 315 175 L 135 199 Z" />
-        <g><circle class="star-halo" cx="100" cy="95" r="13"/><circle class="star-core" cx="100" cy="95" r="3.3"/></g>
-        <g><circle class="star-halo" cx="275" cy="65" r="12"/><circle class="star-core" cx="275" cy="65" r="3.1"/></g>
-        <g><circle class="star-halo" cx="315" cy="175" r="14"/><circle class="star-core" cx="315" cy="175" r="3.4"/></g>
-        <g><circle class="star-halo" cx="135" cy="199" r="12"/><circle class="star-core" cx="135" cy="199" r="3.1"/></g>
+      <svg viewBox="0 0 546 601" role="img" aria-label="カラス座の五つの星">
+        <path class="constellation-path" d="M 153 41 L 365 102 L 448 423 L 96 474 L 153 41 M 448 423 L 470 553" />
+        <g><circle class="star-halo" cx="153" cy="41" r="15"/><circle class="star-core" cx="153" cy="41" r="6"/></g>
+        <g><circle class="star-halo" cx="365" cy="102" r="15"/><circle class="star-core" cx="365" cy="102" r="6"/></g>
+        <g><circle class="star-halo" cx="448" cy="423" r="15"/><circle class="star-core" cx="448" cy="423" r="6"/></g>
+        <g><circle class="star-halo" cx="96" cy="474" r="15"/><circle class="star-core" cx="96" cy="474" r="6"/></g>
+        <g><circle class="star-halo" cx="470" cy="553" r="12"/><circle class="star-core" cx="470" cy="553" r="4.6"/></g>
       </svg>
     </button>
 
