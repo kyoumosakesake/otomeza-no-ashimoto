@@ -11,15 +11,16 @@
     body { margin:0; min-height:100vh; background:var(--night); color:#fff; font-family:"Yu Mincho","游明朝","YuMincho",serif; }
     .hero { position:relative; min-height:100vh; min-height:100dvh; overflow:hidden; isolation:isolate; text-align:center; background:radial-gradient(ellipse at 70% 27%, #2c4964 0%, #213d59 34%, #1d3652 72%, #182e49 100%); }
     .hero::after { content:""; position:absolute; inset:0; z-index:-1; pointer-events:none; background:radial-gradient(ellipse at 50% 100%, transparent 20%,rgba(8,19,37,.17) 100%); }
-    .night-stars { position:absolute; inset:0; width:100%; height:100%; pointer-events:none; opacity:.85; }
-    .night-stars circle { fill:#d7eaf0; animation:star-glimmer 7s ease-in-out infinite; }
-    .night-stars circle:nth-child(3n) { animation-delay:-2.4s; }
-    .night-stars circle:nth-child(4n) { animation-delay:-4.7s; }
+    .night-stars { position:absolute; inset:0; pointer-events:none; opacity:.9; overflow:hidden; }
+    .night-star { position:absolute; display:block; width:var(--size); height:var(--size); border-radius:50%; background:#d7eaf0; box-shadow:0 0 5px rgba(215,234,240,.32); animation:star-glimmer var(--duration) ease-in-out infinite; animation-delay:var(--delay); }
     @keyframes star-glimmer { 0%,100% {opacity:.3} 50% {opacity:.85} }
     .hero-heading { position:absolute; z-index:2; top:55%; left:1rem; right:1rem; transform:translateY(-50%); pointer-events:none; }
-    .site-title { margin:0; color:#fff; font-size:clamp(2rem,4.2vw,3.2rem); font-weight:400; letter-spacing:.16em; opacity:0; animation:title-appear 2.1s ease-out .25s forwards; text-shadow:0 0 25px rgba(231,245,255,.10); }
+    .site-title { margin:0; color:#fff; font-size:clamp(2rem,4.2vw,3.2rem); font-weight:400; letter-spacing:.16em; opacity:0; animation:title-appear 1.75s ease-out .25s forwards; text-shadow:0 0 25px rgba(231,245,255,.10); }
     .site-description { margin:1.15rem 0 0; color:#e4edf3; font-size:clamp(.95rem,1.6vw,1.15rem); line-height:1.8; letter-spacing:.08em; min-height:1.8em; }
-    .site-description.typing::after { content:""; display:inline-block; height:1em; margin-left:.12em; border-right:1px solid #28bfb0; vertical-align:-.12em; animation:caret-blink .8s step-end infinite; }
+    .subtitle-frame { position:relative; display:inline-block; white-space:nowrap; max-width:100%; }
+    .subtitle-placeholder { visibility:hidden; }
+    .subtitle-typed { position:absolute; top:0; left:0; white-space:nowrap; }
+    .site-description.typing .subtitle-typed::after { content:""; display:inline-block; height:1em; margin-left:.12em; border-right:1px solid #28bfb0; vertical-align:-.12em; animation:caret-blink .8s step-end infinite; }
     @keyframes caret-blink { 50% { opacity:0; } }
     @keyframes title-appear { from {opacity:0; filter:blur(7px)} to {opacity:1; filter:blur(0)} }
     .open-button { position:absolute; z-index:3; top:76%; left:50%; transform:translate(-50%,-50%); display:inline-flex; align-items:center; justify-content:center; min-width:7.4rem; box-sizing:border-box; padding:.8rem 1.8rem; background:#28bfb0; color:#fff; border:1px solid rgba(202,255,250,.38); border-radius:999px; font:inherit; font-size:1.35rem; letter-spacing:.12em; text-decoration:none; box-shadow:0 0 0 rgba(40,191,176,0); transition:transform .3s ease,box-shadow .3s ease,background .3s ease; }
@@ -35,6 +36,9 @@
     .corvus:is(:focus-visible,[data-active="true"]) .constellation-path { opacity:.83; stroke-dashoffset:0; }
     .corvus:is(:focus-visible,[data-active="true"]) .star-core { fill:#8df6e9; filter:drop-shadow(0 0 7px rgba(40,191,176,.9)); }
     .corvus:is(:focus-visible,[data-active="true"]) .star-halo { opacity:.33; fill:#51d9cc; }
+    .corvus[data-glow="true"] .constellation-path { opacity:1; stroke:#a5fff4; filter:drop-shadow(0 0 7px rgba(60,255,222,.95)); }
+    .corvus[data-glow="true"] .star-core { fill:#d9fff8; filter:drop-shadow(0 0 12px rgba(70,255,224,1)); }
+    .corvus[data-glow="true"] .star-halo { opacity:.57; fill:#71fff0; }
     @media (hover:hover) and (pointer:fine) {
       .corvus:hover .constellation-path { opacity:.83; stroke-dashoffset:0; }
       .corvus:hover .star-core { fill:#8df6e9; filter:drop-shadow(0 0 7px rgba(40,191,176,.9)); }
@@ -57,36 +61,90 @@
     .reply-notice .privacy { color:#b8d4dc; font-size:.83rem; max-width:36rem; }
     @media (max-width:600px) { .corvus {top:clamp(24px,6vh,65px);width:min(310px,78vw,34vh)} .hero-heading {top:57%} .site-title {letter-spacing:.1em} .open-button {top:79%;font-size:1.25rem} }
     @media (max-height:570px) { .corvus {top:2vh;width:min(240px,52vw,32vh)} .hero-heading {top:60%} .open-button {top:84%} }
-    @media (prefers-reduced-motion:reduce) { .site-title {animation:none;opacity:1;filter:none} .site-description.typing::after {animation:none;opacity:0} .night-stars circle,.signal-right {animation:none} .constellation-path,.corvus .star-core,.corvus .star-halo,.corvus .corvus-name {transition:none} }
+    @media (prefers-reduced-motion:reduce) { .site-title {animation:none;opacity:1;filter:none} .site-description.typing::after {animation:none;opacity:0} .night-star,.signal-right {animation:none} .constellation-path,.corvus .star-core,.corvus .star-halo,.corvus .corvus-name {transition:none} }
   </style>
 </head>
 
 <body>
 
   <main class="hero">
-    <svg class="night-stars" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-      <circle cx="17" cy="43" r="0.125" />
-      <circle cx="67" cy="85" r="0.045" />
-      <circle cx="81" cy="74" r="0.100" />
-      <circle cx="75" cy="73" r="0.100" />
-      <circle cx="98" cy="78" r="0.100" />
-      <circle cx="32" cy="3" r="0.125" />
-      <circle cx="12" cy="17" r="0.080" />
-      <circle cx="14" cy="60" r="0.045" />
-      <circle cx="89" cy="65" r="0.080" />
-      <circle cx="97" cy="68" r="0.045" />
-      <circle cx="94" cy="46" r="0.045" />
-      <circle cx="39" cy="39" r="0.100" />
-      <circle cx="20" cy="85" r="0.125" />
-      <circle cx="41" cy="6" r="0.080" />
-      <circle cx="56" cy="14" r="0.100" />
-      <circle cx="76" cy="73" r="0.100" />
-      <circle cx="16" cy="57" r="0.125" />
-      <circle cx="98" cy="79" r="0.100" />
-      <circle cx="5" cy="76" r="0.065" />
-      <circle cx="18" cy="9" r="0.125" />
-      <circle cx="87" cy="16" r="0.125" />
-    </svg>
+    <div class="night-stars" aria-hidden="true">
+      <span class="night-star" style="left:61.56%;top:97.51%;--size:2.42px;--duration:8.3s;--delay:-2.5s"></span>
+      <span class="night-star" style="left:46.32%;top:80.00%;--size:1.36px;--duration:8.0s;--delay:-5.9s"></span>
+      <span class="night-star" style="left:18.70%;top:50.41%;--size:1.22px;--duration:9.5s;--delay:-4.5s"></span>
+      <span class="night-star" style="left:35.84%;top:58.84%;--size:2.24px;--duration:9.3s;--delay:-2.0s"></span>
+      <span class="night-star" style="left:46.67%;top:97.35%;--size:1.75px;--duration:8.0s;--delay:-5.9s"></span>
+      <span class="night-star" style="left:10.11%;top:44.05%;--size:2.21px;--duration:6.8s;--delay:-7.7s"></span>
+      <span class="night-star" style="left:83.86%;top:6.89%;--size:2.99px;--duration:9.8s;--delay:-7.2s"></span>
+      <span class="night-star" style="left:31.88%;top:92.22%;--size:1.37px;--duration:8.8s;--delay:-4.1s"></span>
+      <span class="night-star" style="left:13.28%;top:6.53%;--size:1.34px;--duration:5.4s;--delay:-2.5s"></span>
+      <span class="night-star" style="left:92.96%;top:54.86%;--size:2.15px;--duration:8.5s;--delay:-7.9s"></span>
+      <span class="night-star" style="left:28.43%;top:88.72%;--size:1.19px;--duration:5.4s;--delay:-5.8s"></span>
+      <span class="night-star" style="left:82.72%;top:31.94%;--size:1.18px;--duration:8.7s;--delay:-4.6s"></span>
+      <span class="night-star" style="left:42.53%;top:58.48%;--size:1.31px;--duration:6.8s;--delay:-0.9s"></span>
+      <span class="night-star" style="left:13.02%;top:13.12%;--size:1.61px;--duration:8.7s;--delay:-3.7s"></span>
+      <span class="night-star" style="left:52.23%;top:85.15%;--size:2.23px;--duration:5.1s;--delay:-3.9s"></span>
+      <span class="night-star" style="left:14.42%;top:71.50%;--size:1.9px;--duration:8.2s;--delay:-4.7s"></span>
+      <span class="night-star" style="left:57.70%;top:97.96%;--size:2.48px;--duration:9.6s;--delay:-2.6s"></span>
+      <span class="night-star" style="left:45.56%;top:97.35%;--size:1.35px;--duration:7.5s;--delay:-9.9s"></span>
+      <span class="night-star" style="left:11.89%;top:42.37%;--size:1.64px;--duration:5.3s;--delay:-6.9s"></span>
+      <span class="night-star" style="left:81.16%;top:95.24%;--size:1.28px;--duration:5.2s;--delay:-1.8s"></span>
+      <span class="night-star" style="left:57.93%;top:82.00%;--size:1.15px;--duration:7.4s;--delay:-2.6s"></span>
+      <span class="night-star" style="left:5.14%;top:9.60%;--size:1.15px;--duration:7.8s;--delay:-2.1s"></span>
+      <span class="night-star" style="left:2.32%;top:46.07%;--size:1.24px;--duration:5.2s;--delay:-4.3s"></span>
+      <span class="night-star" style="left:13.29%;top:53.12%;--size:2.13px;--duration:6.5s;--delay:-7.4s"></span>
+      <span class="night-star" style="left:63.95%;top:60.83%;--size:2.24px;--duration:7.5s;--delay:-3.8s"></span>
+      <span class="night-star" style="left:13.30%;top:85.90%;--size:1.14px;--duration:5.4s;--delay:-3.8s"></span>
+      <span class="night-star" style="left:10.15%;top:81.07%;--size:2.02px;--duration:8.8s;--delay:-1.5s"></span>
+      <span class="night-star" style="left:2.84%;top:89.15%;--size:1.72px;--duration:9.3s;--delay:-7.4s"></span>
+      <span class="night-star" style="left:64.25%;top:90.72%;--size:1.29px;--duration:6.8s;--delay:-4.7s"></span>
+      <span class="night-star" style="left:18.41%;top:60.13%;--size:1.83px;--duration:10.0s;--delay:-8.7s"></span>
+      <span class="night-star" style="left:66.38%;top:90.04%;--size:2.15px;--duration:5.0s;--delay:-7.8s"></span>
+      <span class="night-star" style="left:69.05%;top:64.67%;--size:2.14px;--duration:9.6s;--delay:-2.5s"></span>
+      <span class="night-star" style="left:4.29%;top:52.10%;--size:1.15px;--duration:5.4s;--delay:-1.7s"></span>
+      <span class="night-star" style="left:26.57%;top:49.07%;--size:1.96px;--duration:8.6s;--delay:-4.4s"></span>
+      <span class="night-star" style="left:55.57%;top:88.69%;--size:1.8px;--duration:5.7s;--delay:-8.0s"></span>
+      <span class="night-star" style="left:2.82%;top:25.31%;--size:1.87px;--duration:7.1s;--delay:-6.3s"></span>
+      <span class="night-star" style="left:69.95%;top:92.17%;--size:1.93px;--duration:5.0s;--delay:-8.9s"></span>
+      <span class="night-star" style="left:22.12%;top:91.85%;--size:2.22px;--duration:8.2s;--delay:-2.9s"></span>
+      <span class="night-star" style="left:90.43%;top:35.35%;--size:1.67px;--duration:5.1s;--delay:-1.9s"></span>
+      <span class="night-star" style="left:17.52%;top:15.53%;--size:1.73px;--duration:6.6s;--delay:-9.0s"></span>
+      <span class="night-star" style="left:28.27%;top:92.66%;--size:1.3px;--duration:8.2s;--delay:-0.8s"></span>
+      <span class="night-star" style="left:87.31%;top:33.26%;--size:2.3px;--duration:8.6s;--delay:-3.1s"></span>
+      <span class="night-star" style="left:4.07%;top:59.46%;--size:2.93px;--duration:5.5s;--delay:-1.4s"></span>
+      <span class="night-star" style="left:9.44%;top:91.13%;--size:1.73px;--duration:7.9s;--delay:-5.9s"></span>
+      <span class="night-star" style="left:25.97%;top:90.10%;--size:1.32px;--duration:9.8s;--delay:-2.2s"></span>
+      <span class="night-star" style="left:21.45%;top:63.78%;--size:2.07px;--duration:9.8s;--delay:-6.4s"></span>
+      <span class="night-star" style="left:65.39%;top:55.27%;--size:1.19px;--duration:7.7s;--delay:-7.6s"></span>
+      <span class="night-star" style="left:60.19%;top:84.49%;--size:1.95px;--duration:9.6s;--delay:-7.8s"></span>
+      <span class="night-star" style="left:37.48%;top:96.70%;--size:2.83px;--duration:5.2s;--delay:-6.7s"></span>
+      <span class="night-star" style="left:98.72%;top:37.96%;--size:1.43px;--duration:9.7s;--delay:-4.3s"></span>
+      <span class="night-star" style="left:46.30%;top:54.86%;--size:1.46px;--duration:7.7s;--delay:-2.1s"></span>
+      <span class="night-star" style="left:4.89%;top:59.66%;--size:1.85px;--duration:8.6s;--delay:-7.2s"></span>
+      <span class="night-star" style="left:7.99%;top:54.92%;--size:1.53px;--duration:5.4s;--delay:-8.8s"></span>
+      <span class="night-star" style="left:91.02%;top:20.63%;--size:1.41px;--duration:9.7s;--delay:-8.6s"></span>
+      <span class="night-star" style="left:11.42%;top:51.63%;--size:2.98px;--duration:9.6s;--delay:-2.1s"></span>
+      <span class="night-star" style="left:91.08%;top:84.61%;--size:1.52px;--duration:9.6s;--delay:-5.3s"></span>
+      <span class="night-star" style="left:10.00%;top:56.59%;--size:1.99px;--duration:7.0s;--delay:-4.8s"></span>
+      <span class="night-star" style="left:96.17%;top:40.57%;--size:2.19px;--duration:7.1s;--delay:-8.5s"></span>
+      <span class="night-star" style="left:1.19%;top:17.87%;--size:1.49px;--duration:6.9s;--delay:-7.0s"></span>
+      <span class="night-star" style="left:7.00%;top:49.60%;--size:1.13px;--duration:8.9s;--delay:-5.8s"></span>
+      <span class="night-star" style="left:95.22%;top:13.36%;--size:1.36px;--duration:5.3s;--delay:-8.5s"></span>
+      <span class="night-star" style="left:94.40%;top:24.37%;--size:1.76px;--duration:8.4s;--delay:-0.6s"></span>
+      <span class="night-star" style="left:9.96%;top:35.50%;--size:1.42px;--duration:8.2s;--delay:-9.3s"></span>
+      <span class="night-star" style="left:48.93%;top:92.19%;--size:2.54px;--duration:9.7s;--delay:-9.3s"></span>
+      <span class="night-star" style="left:21.51%;top:40.07%;--size:1.44px;--duration:8.4s;--delay:-1.5s"></span>
+      <span class="night-star" style="left:95.71%;top:79.08%;--size:1.76px;--duration:8.0s;--delay:-1.7s"></span>
+      <span class="night-star" style="left:42.22%;top:67.91%;--size:2.63px;--duration:10.0s;--delay:-6.0s"></span>
+      <span class="night-star" style="left:79.91%;top:49.89%;--size:1.92px;--duration:7.4s;--delay:-8.6s"></span>
+      <span class="night-star" style="left:38.48%;top:79.73%;--size:1.77px;--duration:5.4s;--delay:-4.9s"></span>
+      <span class="night-star" style="left:16.18%;top:84.80%;--size:1.86px;--duration:7.6s;--delay:-3.1s"></span>
+      <span class="night-star" style="left:45.19%;top:27.12%;--size:1.63px;--duration:9.6s;--delay:-4.1s"></span>
+      <span class="night-star" style="left:85.41%;top:77.85%;--size:2.57px;--duration:8.3s;--delay:-1.6s"></span>
+      <span class="night-star" style="left:86.17%;top:21.57%;--size:2.09px;--duration:8.3s;--delay:-7.1s"></span>
+      <span class="night-star" style="left:16.96%;top:72.72%;--size:2.11px;--duration:9.9s;--delay:-7.7s"></span>
+      <span class="night-star" style="left:17.29%;top:45.10%;--size:1.19px;--duration:8.9s;--delay:-3.5s"></span>
+    </div>
     <!-- 星は通常の夜空に紛れ、触れたときだけカラス座の線が現れます。 -->
     <button class="corvus" id="corvus" type="button" aria-label="カラス座を表示する" aria-pressed="false">
       <svg viewBox="0 0 546 601" role="img" aria-label="カラス座の五つの星">
@@ -102,7 +160,7 @@
 
     <div class="hero-heading">
       <h1 class="site-title">乙女座の脚元</h1>
-      <p class="site-description" id="site-description" aria-label="とりこしくろうのひとつの在り処"></p>
+      <p class="site-description" id="site-description" aria-label="とりこしくろうのひとつの在り処"><span class="subtitle-frame"><span class="subtitle-placeholder" aria-hidden="true">とりこしくろうのひとつの在り処</span><span class="subtitle-typed" id="subtitle-typed" aria-hidden="true"></span></span></p>
     </div>
 
     <a class="open-button" href="menu.html" id="site-open">
@@ -128,45 +186,62 @@
   </section>
 
   <script>
-    // タイトル出現後、サブタイトルを一文字ずつ表示する。
+    // サブタイトルの表示幅を最初から確保し、入力中・入力後の横ずれを防ぐ。
     const description = document.getElementById('site-description');
-    const subtitle = 'とりこしくろうのひとつの在り処';
+    const typed = document.getElementById('subtitle-typed');
+    const subtitle = Array.from('とりこしくろうのひとつの在り処');
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (reducedMotion) {
-      description.textContent = subtitle;
+      typed.textContent = subtitle.join('');
     } else {
       description.classList.add('typing');
       let index = 0;
       setTimeout(() => {
         const timer = setInterval(() => {
-          description.textContent += Array.from(subtitle)[index++];
-          if (index >= Array.from(subtitle).length) {
+          typed.textContent += subtitle[index++];
+          if (index >= subtitle.length) {
             clearInterval(timer);
             setTimeout(() => description.classList.remove('typing'), 600);
           }
         }, 115);
-      }, 1700);
+      }, 1450);
     }
 
-    // PCではホバー、スマホでは指が触れている間だけ星座を表示する。
     const corvus = document.getElementById('corvus');
     const setActive = active => {
       corvus.dataset.active = String(active);
       corvus.setAttribute('aria-pressed', String(active));
     };
-    corvus.addEventListener('pointerdown', event => {
-      if (event.pointerType === 'touch' || event.pointerType === 'pen') setActive(true);
-    });
-    for (const type of ['pointerup', 'pointercancel', 'pointerleave']) {
-      corvus.addEventListener(type, event => {
-        if (event.pointerType === 'touch' || event.pointerType === 'pen') setActive(false);
-      });
+    let animationTimers = [];
+    const clearCorvusTimers = () => {
+      animationTimers.forEach(clearTimeout);
+      animationTimers = [];
+    };
+    function playCorvus() {
+      clearCorvusTimers();
+      corvus.dataset.glow = 'false';
+      setActive(false);
+      // 次のフレームで線を描き始め、描き終わったところで短く発光する。
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        setActive(true);
+        if (reducedMotion) {
+          corvus.dataset.glow = 'true';
+          animationTimers.push(setTimeout(() => { corvus.dataset.glow = 'false'; setActive(false); }, 1100));
+        } else {
+          animationTimers.push(setTimeout(() => { corvus.dataset.glow = 'true'; }, 1700));
+          animationTimers.push(setTimeout(() => { corvus.dataset.glow = 'false'; setActive(false); }, 2550));
+        }
+      }));
     }
-    // タッチ後に残るフォーカスで線が表示され続けないようにする。
+    // スマホは一度のタップで全演出を自動再生。PCは従来どおりホバー。
     corvus.addEventListener('click', event => {
-      if (event.detail !== 0) corvus.blur();
+      if (event.detail === 0 || window.matchMedia('(hover:none)').matches) playCorvus();
+      corvus.blur();
     });
-    corvus.addEventListener('blur', () => setActive(false));
+    corvus.addEventListener('blur', () => {
+      // 自動再生中はフォーカスが外れても演出を続ける。
+      if (!animationTimers.length) setActive(false);
+    });
   </script>
 
   <script type="module">
