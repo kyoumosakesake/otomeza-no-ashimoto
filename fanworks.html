@@ -1275,23 +1275,13 @@ function positionPopup(button) {
   const margin = 12;
   const gap = 12;
 
-  // 執筆順では、選択した作品の右側（スマホでは画面右側）に表示。
-  // スクロール先が変わっても、表示領域からはみ出さないようにする。
+  // 執筆順：画面右端と作品行の下端をそれぞれ揃える。
+  // タイトルボタンではなく、行全体の位置を基準にする。
   if (button.classList.contains("work-trigger")) {
-    const spaceRight = window.innerWidth - rect.right;
-    const spaceLeft = rect.left;
-    let left;
-    if (spaceRight >= popupWidth + gap + margin) {
-      left = rect.right + gap;
-    } else if (spaceLeft >= popupWidth + gap + margin) {
-      left = rect.left - popupWidth - gap;
-    } else {
-      left = window.innerWidth - popupWidth - margin;
-    }
-    left = Math.max(margin, Math.min(left, window.innerWidth - popupWidth - margin));
-    const top = Math.max(margin, Math.min(rect.top - 12, window.innerHeight - popupHeight - margin));
-    popup.style.left = `${left}px`;
-    popup.style.top = `${top}px`;
+    const row = button.closest(".work-list li");
+    const rowRect = row ? row.getBoundingClientRect() : rect;
+    popup.style.left = `${window.innerWidth - popupWidth}px`;
+    popup.style.top = `${rowRect.bottom - popupHeight}px`;
     return;
   }
 
@@ -1680,11 +1670,13 @@ years.forEach(year => {
       // 行全体をタップ領域にする（タイトルのボタンはキーボード操作にも対応）。
       const toggleWritingPopup = event => {
         event.stopPropagation();
-        if (activeButton === link) {
+        // 開いている間は他作品に直接切り替えず、まず閉じる。
+        // 同じ行の再タップも、ボックス外のタップとして閉じる。
+        if (popup.classList.contains("open")) {
           closePopup();
-        } else {
-          openPopup(work, item, link, "writing");
+          return;
         }
+        openPopup(work, item, link, "writing");
       };
       item.addEventListener("click", toggleWritingPopup);
 
