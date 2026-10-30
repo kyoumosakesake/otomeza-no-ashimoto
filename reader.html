@@ -48,8 +48,10 @@
     cursor: pointer;
   }
   .settings-button:hover { color: var(--accent); border-color: var(--accent); }
-  .settings-button { display: inline-flex; align-items: center; justify-content: center; gap: .4em; }
-  .settings-gear { display: block; width: 1.1em; height: 1.1em; flex: none; }
+  .settings-button { display: inline-flex; align-items: center; justify-content: center; gap: .4em; white-space: nowrap; flex-wrap: nowrap; }
+  .settings-gear { display: block; width: 1.1em; height: 1.1em; flex: none; color: var(--accent); }
+  .settings-button > span { color: #ffffff; }
+  body.light-mode .settings-button > span { color: #171717; }
   .settings-panel {
     display: none;
     position: absolute;
@@ -260,7 +262,7 @@
     letter-spacing: 0;
   }
   .reading-layout.vertical .mobile-settings-button {
-    display: block;
+    display: inline-flex;
     writing-mode: horizontal-tb;
     white-space: nowrap;
     font-family: sans-serif;
@@ -467,7 +469,7 @@
 </head>
 <body>
 <header class="site-header">
-  <button class="settings-button" id="settings-button" type="button" aria-expanded="false" aria-controls="settings-panel"><svg class="settings-gear" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false"><path d="M10.3 2.6h3.4l.5 2.3c.6.2 1.1.4 1.6.7l2-1.2 2.4 2.4-1.2 2c.3.5.5 1 .7 1.6l2.3.5v3.4l-2.3.5c-.2.6-.4 1.1-.7 1.6l1.2 2-2.4 2.4-2-1.2c-.5.3-1 .5-1.6.7l-.5 2.3h-3.4l-.5-2.3c-.6-.2-1.1-.4-1.6-.7l-2 1.2-2.4-2.4 1.2-2c-.3-.5-.5-1-.7-1.6L2 13.7v-3.4l2.3-.5c.2-.6.4-1.1.7-1.6l-1.2-2 2.4-2.4 2 1.2c.5-.3 1-.5 1.6-.7z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><circle cx="12" cy="12" r="3.1" fill="none" stroke="currentColor" stroke-width="1.5"/></svg><span>読書設定</span></button>
+  <button class="settings-button" id="settings-button" type="button" aria-expanded="false" aria-controls="settings-panel"><svg class="settings-gear" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false"><path d="M 9.06 3.92 L 9.65 0.95 L 14.35 0.95 L 14.94 3.92 L 15.63 4.21 L 18.15 2.52 L 21.48 5.85 L 19.79 8.37 L 20.08 9.06 L 23.05 9.65 L 23.05 14.35 L 20.08 14.94 L 19.79 15.63 L 21.48 18.15 L 18.15 21.48 L 15.63 19.79 L 14.94 20.08 L 14.35 23.05 L 9.65 23.05 L 9.06 20.08 L 8.37 19.79 L 5.85 21.48 L 2.52 18.15 L 4.21 15.63 L 3.92 14.94 L 0.95 14.35 L 0.95 9.65 L 3.92 9.06 L 4.21 8.37 L 2.52 5.85 L 5.85 2.52 L 8.37 4.21 Z M 15.25 12 A 3.25 3.25 0 1 0 8.75 12 A 3.25 3.25 0 1 0 15.25 12 Z" fill="currentColor" fill-rule="evenodd"/></svg><span>読書設定</span></button>
 </header>
 
 <div class="settings-panel" id="settings-panel" role="dialog" aria-label="読書設定">
@@ -741,7 +743,7 @@
     const mobileSettings = document.createElement("button");
     mobileSettings.type = "button";
     mobileSettings.className = "settings-button mobile-settings-button";
-    mobileSettings.innerHTML = '<svg class="settings-gear" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false"><path d="M10.3 2.6h3.4l.5 2.3c.6.2 1.1.4 1.6.7l2-1.2 2.4 2.4-1.2 2c.3.5.5 1 .7 1.6l2.3.5v3.4l-2.3.5c-.2.6-.4 1.1-.7 1.6l1.2 2-2.4 2.4-2-1.2c-.5.3-1 .5-1.6.7l-.5 2.3h-3.4l-.5-2.3c-.6-.2-1.1-.4-1.6-.7l-2 1.2-2.4-2.4 1.2-2c-.3-.5-.5-1-.7-1.6L2 13.7v-3.4l2.3-.5c.2-.6.4-1.1.7-1.6l-1.2-2 2.4-2.4 2 1.2c.5-.3 1-.5 1.6-.7z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><circle cx="12" cy="12" r="3.1" fill="none" stroke="currentColor" stroke-width="1.5"/></svg><span>読書設定</span>';
+    mobileSettings.innerHTML = '<svg class="settings-gear" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false"><path d="M 9.06 3.92 L 9.65 0.95 L 14.35 0.95 L 14.94 3.92 L 15.63 4.21 L 18.15 2.52 L 21.48 5.85 L 19.79 8.37 L 20.08 9.06 L 23.05 9.65 L 23.05 14.35 L 20.08 14.94 L 19.79 15.63 L 21.48 18.15 L 18.15 21.48 L 15.63 19.79 L 14.94 20.08 L 14.35 23.05 L 9.65 23.05 L 9.06 20.08 L 8.37 19.79 L 5.85 21.48 L 2.52 18.15 L 4.21 15.63 L 3.92 14.94 L 0.95 14.35 L 0.95 9.65 L 3.92 9.06 L 4.21 8.37 L 2.52 5.85 L 5.85 2.52 L 8.37 4.21 Z M 15.25 12 A 3.25 3.25 0 1 0 8.75 12 A 3.25 3.25 0 1 0 15.25 12 Z" fill="currentColor" fill-rule="evenodd"/></svg><span>読書設定</span>';
     mobileSettings.setAttribute("aria-label", "読書設定を開く");
     mobileSettings.addEventListener("click", event => {
       event.stopPropagation();
