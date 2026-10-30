@@ -136,6 +136,13 @@
 
     .back-link:hover { opacity: 1; }
 
+    /* メニュー4項目のあとに「もどる」を静かに表示。位置は動かさない。 */
+    @keyframes back-appear {
+      from { opacity: 0; }
+      to { opacity: 0.75; }
+    }
+    .back-link { animation: back-appear .8s ease-out .48s both; }
+
     @keyframes menu-appear {
       from { opacity: 0; transform: translateY(8px); }
       to { opacity: 1; transform: translateY(0); }
@@ -147,7 +154,7 @@
     .menu-list li:nth-child(3) { animation-delay: .24s; }
     .menu-list li:nth-child(4) { animation-delay: .32s; }
     @media (prefers-reduced-motion: reduce) {
-      .menu-heading, .menu-list li { animation: none; }
+      .menu-heading, .menu-list li, .back-link { animation: none; }
       .menu-link, .menu-link::after { transition: none; }
     }
 
