@@ -6,116 +6,42 @@
   <title>乙女座の脚元</title>
 
   <style>
-    body {
-      margin: 0;
-      background: #1d3652;
-      color: #ffffff;
-      font-family: "Yu Mincho", "游明朝", "YuMincho", serif;
-    }
 
-    .hero {
-      min-height: 100vh;
-      min-height: 100dvh;
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-      padding: 2rem;
-      box-sizing: border-box;
-    }
-
-    .hero-heading {
-      position: absolute;
-      bottom: calc(50% + 5rem);
-      left: 1rem;
-      right: 1rem;
-    }
-
-    .site-title {
-      margin: 0;
-      color: #ffffff;
-      font-size: 2.4rem;
-      font-weight: 400;
-      letter-spacing: 0.12em;
-      animation: title-breathe 6s ease-in-out infinite;
-    }
-
-    @keyframes title-breathe {
-      0%, 100% { opacity: .95; text-shadow: 0 0 2px rgba(255,255,255,.06); }
-      50% { opacity: .52; text-shadow: 0 0 16px rgba(255,255,255,.22); }
-    }
-
-    .site-description {
-      margin: 1rem 0 0;
-      color: #ffffff;
-      font-size: 1.15rem;
-      line-height: 1.8;
-    }
-
-    .open-button {
-      display: inline-flex;
-      justify-content: center;
-      align-items: center;
-
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      padding: 0.8rem 1.8rem;
-
-      background: #28bfb0;
-      color: #ffffff;
-
-      font-family: inherit;
-      font-size: 1.5rem;
-      letter-spacing: 0.08em;
-
-      text-decoration: none;
-      border-radius: 999px;
-
-      transition:
-        opacity 0.2s ease,
-        transform 0.2s ease;
-    }
-
-    .open-button:hover {
-      opacity: 0.85;
-      transform: translate(-50%, calc(-50% - 2px));
-    }
-
-    .open-button:focus-visible {
-      outline: 2px solid #ffffff;
-      outline-offset: 4px;
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      .site-title { animation: none; }
-    }
-
-    @media (max-width: 600px) {
-      .site-title {
-        font-size: 2rem;
-      }
-
-      .site-description {
-        font-size: 1rem;
-      }
-
-      .open-button {
-        font-size: 1.3rem;
-      }
-    }
-
+    :root { --night:#1d3652; --teal:#28bfb0; }
+    body { margin:0; min-height:100vh; background:var(--night); color:#fff; font-family:"Yu Mincho","游明朝","YuMincho",serif; }
+    .hero { position:relative; min-height:100vh; min-height:100dvh; overflow:hidden; isolation:isolate; text-align:center; background:radial-gradient(ellipse at 70% 27%, #2c4964 0%, #213d59 34%, #1d3652 72%, #182e49 100%); }
+    .hero::after { content:""; position:absolute; inset:0; z-index:-1; pointer-events:none; background:radial-gradient(ellipse at 50% 100%, transparent 20%,rgba(8,19,37,.17) 100%); }
+    .night-stars { position:absolute; inset:0; width:100%; height:100%; pointer-events:none; opacity:.85; }
+    .night-stars circle { fill:#d7eaf0; animation:star-glimmer 7s ease-in-out infinite; }
+    .night-stars circle:nth-child(3n) { animation-delay:-2.4s; }
+    .night-stars circle:nth-child(4n) { animation-delay:-4.7s; }
+    @keyframes star-glimmer { 0%,100% {opacity:.3} 50% {opacity:.85} }
+    .hero-heading { position:absolute; z-index:2; top:55%; left:1rem; right:1rem; transform:translateY(-50%); pointer-events:none; }
+    .site-title { margin:0; color:#fff; font-size:clamp(2rem,4.2vw,3.2rem); font-weight:400; letter-spacing:.16em; opacity:0; animation:title-appear 2.1s ease-out .25s forwards; text-shadow:0 0 25px rgba(231,245,255,.10); }
+    .site-description { margin:1.15rem 0 0; color:#e4edf3; font-size:clamp(.95rem,1.6vw,1.15rem); line-height:1.8; letter-spacing:.08em; opacity:0; animation:title-appear 1.8s ease-out 1s forwards; }
+    @keyframes title-appear { from {opacity:0; filter:blur(7px)} to {opacity:1; filter:blur(0)} }
+    .open-button { position:absolute; z-index:3; top:76%; left:50%; transform:translate(-50%,-50%); display:inline-flex; align-items:center; justify-content:center; min-width:7.4rem; box-sizing:border-box; padding:.8rem 1.8rem; background:#28bfb0; color:#fff; border:1px solid rgba(202,255,250,.38); border-radius:999px; font:inherit; font-size:1.35rem; letter-spacing:.12em; text-decoration:none; box-shadow:0 0 0 rgba(40,191,176,0); transition:transform .3s ease,box-shadow .3s ease,background .3s ease; }
+    .open-button::after { content:""; position:absolute; left:27%; right:27%; bottom:.42rem; height:1px; background:#eafffc; transform:scaleX(0); transition:transform .3s ease; }
+    .open-button:hover { transform:translate(-50%,calc(-50% - 2px)); background:#30cdbd; box-shadow:0 0 25px rgba(40,191,176,.32); }
+    .open-button:hover::after, .open-button:focus-visible::after { transform:scaleX(1); }
+    .open-button:focus-visible { outline:2px solid #fff; outline-offset:4px; }
+    .corvus { position:absolute; z-index:2; top:clamp(30px,8vh,95px); left:50%; width:min(430px,78vw); height:auto; aspect-ratio:420/260; transform:translateX(-50%); border:0; padding:0; background:transparent; color:inherit; cursor:pointer; -webkit-tap-highlight-color:transparent; }
+    .corvus svg { width:100%; height:100%; display:block; overflow:visible; }
+    .corvus .star-core { fill:#f2f9ff; filter:drop-shadow(0 0 3px rgba(222,243,255,.75)); transition:fill .6s ease,filter .6s ease; }
+    .corvus .star-halo { fill:#d4e6f4; opacity:.10; transition:opacity .6s ease,fill .6s ease; }
+    .corvus .constellation-path { fill:none; stroke:#42d9cb; stroke-width:1.15; stroke-linecap:round; stroke-linejoin:round; opacity:0; stroke-dasharray:650; stroke-dashoffset:650; transition:opacity .45s ease,stroke-dashoffset 1.65s ease; filter:drop-shadow(0 0 3px rgba(40,191,176,.5)); }
+    .corvus .corvus-name { fill:#a8eee4; font-family:Georgia,"Times New Roman",serif; font-size:12px; letter-spacing:5px; opacity:0; transition:opacity .7s ease .05s; }
+    .corvus:is(:hover,:focus-visible,[aria-pressed="true"]) .constellation-path { opacity:.83; stroke-dashoffset:0; }
+    .corvus:is(:hover,:focus-visible,[aria-pressed="true"]) .star-core { fill:#8df6e9; filter:drop-shadow(0 0 7px rgba(40,191,176,.9)); }
+    .corvus:is(:hover,:focus-visible,[aria-pressed="true"]) .star-halo { opacity:.33; fill:#51d9cc; }
+    .corvus:is(:hover,:focus-visible,[aria-pressed="true"]) .corvus-name { opacity:1; }
+    .corvus:focus-visible { outline:1px solid rgba(40,191,176,.6); outline-offset:4px; border-radius:8px; }
     .signal-overlay { position:fixed; inset:0; z-index:9999; display:grid; place-items:center; background:#1d3652; }
     .signal-overlay[hidden], .reply-notice[hidden] { display:none !important; }
     .signal-stars { display:flex; align-items:center; justify-content:center; gap:clamp(24px,6vw,68px); color:#29c5be; font-family:Georgia,serif; font-size:clamp(64px,14vw,136px); line-height:1; }
     .signal-dot { font-size:.28em; opacity:.75; }
     .signal-right { animation:signal-right-light 2s ease-in-out both; }
-    @keyframes signal-right-light {
-      0%,100% { color:#29c5be; text-shadow:none; filter:brightness(1); transform:scale(1); }
-      38%,62% { color:#d3fff5; text-shadow:0 0 16px rgba(91,255,224,.9),0 0 45px rgba(57,226,207,.8),0 0 95px rgba(57,226,207,.38); filter:brightness(1.5); transform:scale(1.13); }
-    }
+    @keyframes signal-right-light { 0%,100% {color:#29c5be;text-shadow:none;filter:brightness(1);transform:scale(1)} 38%,62% {color:#d3fff5;text-shadow:0 0 16px rgba(91,255,224,.9),0 0 45px rgba(57,226,207,.8),0 0 95px rgba(57,226,207,.38);filter:brightness(1.5);transform:scale(1.13)} }
     .reply-notice { position:fixed; inset:0; z-index:9998; background:#1d3652; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:2rem; box-sizing:border-box; gap:1.2rem; }
     .reply-notice h2 { font-size:clamp(1.6rem,5vw,2.2rem); font-weight:400; letter-spacing:.13em; margin:0; }
     .reply-notice p { line-height:2; margin:0; }
@@ -124,13 +50,50 @@
     .reply-actions a, .reply-actions button { background:#28bfb0; color:#132e45; border:1px solid #28bfb0; padding:.8rem 1.3rem; font:inherit; font-size:1rem; border-radius:4px; text-decoration:none; cursor:pointer; }
     .reply-actions button { background:transparent; color:white; border-color:#4b8d99; }
     .reply-notice .privacy { color:#b8d4dc; font-size:.83rem; max-width:36rem; }
-    @media(prefers-reduced-motion:reduce) { .signal-right { animation:none; color:#d3fff5; } }
+    @media (max-width:600px) { .corvus {top:clamp(48px,11vh,110px);width:min(360px,91vw)} .hero-heading {top:57%} .site-title {letter-spacing:.1em} .open-button {top:79%;font-size:1.25rem} }
+    @media (max-height:570px) { .corvus {top:3vh;width:min(310px,60vw)} .hero-heading {top:60%} .open-button {top:84%} }
+    @media (prefers-reduced-motion:reduce) { .site-title,.site-description {animation:none;opacity:1;filter:none} .night-stars circle,.signal-right {animation:none} .constellation-path,.corvus .star-core,.corvus .star-halo,.corvus .corvus-name {transition:none} }
   </style>
 </head>
 
 <body>
 
   <main class="hero">
+    <svg class="night-stars" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+      <circle cx="17" cy="43" r="0.125" />
+      <circle cx="67" cy="85" r="0.045" />
+      <circle cx="81" cy="74" r="0.100" />
+      <circle cx="75" cy="73" r="0.100" />
+      <circle cx="98" cy="78" r="0.100" />
+      <circle cx="32" cy="3" r="0.125" />
+      <circle cx="12" cy="17" r="0.080" />
+      <circle cx="14" cy="60" r="0.045" />
+      <circle cx="89" cy="65" r="0.080" />
+      <circle cx="97" cy="68" r="0.045" />
+      <circle cx="94" cy="46" r="0.045" />
+      <circle cx="39" cy="39" r="0.100" />
+      <circle cx="20" cy="85" r="0.125" />
+      <circle cx="41" cy="6" r="0.080" />
+      <circle cx="56" cy="14" r="0.100" />
+      <circle cx="76" cy="73" r="0.100" />
+      <circle cx="16" cy="57" r="0.125" />
+      <circle cx="98" cy="79" r="0.100" />
+      <circle cx="5" cy="76" r="0.065" />
+      <circle cx="18" cy="9" r="0.125" />
+      <circle cx="87" cy="16" r="0.125" />
+    </svg>
+    <!-- 星は通常の夜空に紛れ、触れたときだけカラス座の線が現れます。 -->
+    <button class="corvus" id="corvus" type="button" aria-label="カラス座を表示する" aria-pressed="false">
+      <svg viewBox="0 0 420 260" role="img" aria-label="カラス座の四つの主な星">
+        <path class="constellation-path" d="M 100 95 L 275 65 L 315 175 L 135 199 Z" />
+        <g><circle class="star-halo" cx="100" cy="95" r="13"/><circle class="star-core" cx="100" cy="95" r="3.3"/></g>
+        <g><circle class="star-halo" cx="275" cy="65" r="12"/><circle class="star-core" cx="275" cy="65" r="3.1"/></g>
+        <g><circle class="star-halo" cx="315" cy="175" r="14"/><circle class="star-core" cx="315" cy="175" r="3.4"/></g>
+        <g><circle class="star-halo" cx="135" cy="199" r="12"/><circle class="star-core" cx="135" cy="199" r="3.1"/></g>
+        <text class="corvus-name" x="210" y="243" text-anchor="middle">CORVUS</text>
+      </svg>
+    </button>
+
 
     <div class="hero-heading">
       <h1 class="site-title">乙女座の脚元</h1>
@@ -158,6 +121,22 @@
     </div>
     <p class="privacy">秘密のリンクは他人に見せないでください。このお知らせは、送信時にこの端末での通知を希望した場合にだけ表示されます。</p>
   </section>
+
+  <script>
+    // マウスはホバーで表示。タッチ操作はタップで表示／非表示を切り替え。
+    const corvus = document.getElementById('corvus');
+    corvus.addEventListener('click', () => {
+      const next = corvus.getAttribute('aria-pressed') !== 'true';
+      corvus.setAttribute('aria-pressed', String(next));
+      corvus.setAttribute('aria-label', next ? 'カラス座を隠す' : 'カラス座を表示する');
+    });
+    document.addEventListener('pointerdown', event => {
+      if (!corvus.contains(event.target) && corvus.getAttribute('aria-pressed') === 'true') {
+        corvus.setAttribute('aria-pressed', 'false');
+        corvus.setAttribute('aria-label', 'カラス座を表示する');
+      }
+    });
+  </script>
 
   <script type="module">
     import { db } from './archive-common.js';
