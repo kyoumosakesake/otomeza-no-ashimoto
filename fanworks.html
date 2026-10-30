@@ -135,7 +135,7 @@ button, a {
 .timeline-line {
   position: absolute;
   left: 55px;
-  right: 55px;
+  right: 0;
   top: 210px;
   height: 7px;
   background: var(--accent);
@@ -145,16 +145,28 @@ button, a {
 .slide-guide-text {
   position: absolute;
   left: 55px;
-  top: 174px;
+  top: calc(var(--timeline-top-space) + 174px);
   color: var(--accent);
   font-size: .8rem;
   letter-spacing: .08em;
   white-space: nowrap;
   z-index: 10;
 }
+/* 矢印の先端側へ線が突き抜けないよう、中央より右を背景で隠す */
+.timeline-area::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  top: calc(var(--timeline-top-space) + 210px);
+  width: 40px;
+  height: 7px;
+  background: var(--background);
+  pointer-events: none;
+  z-index: 80;
+}
 .fixed-arrow-head {
   position: absolute;
-  right: 3px;
+  right: 28px;
   top: calc(var(--timeline-top-space) + 199px);
   width: 0;
   height: 0;
@@ -625,6 +637,10 @@ button, a {
         aria-hidden="true"
       ></div>
 
+      <div class="slide-guide-text">
+        スライドして移動
+      </div>
+
       <div
         class="current-section-label"
         id="current-section-label"
@@ -638,9 +654,6 @@ button, a {
           id="timeline"
         >
           <div class="timeline-line"></div>
-          <div class="slide-guide-text">
-            スライドして移動
-          </div>
           <div class="division-line division-1"></div>
           <div class="division-line division-2"></div>
         </div>
@@ -1734,10 +1747,19 @@ window.addEventListener(
   { passive: true }
 );
 
-/* 初期表示は数直線の約35％地点から。左へも戻れます。 */
+/* 画像の位置に合わせ、「嘘つきの本音」を画面左から約24％に配置。
+   数直線自体は切り詰めず、左右どちらにもスクロールできます。 */
 function setInitialTimelinePosition() {
+  const target = [...timeline.querySelectorAll(".story-point .point-button")]
+    .find(button => button.getAttribute("aria-label") === "嘘つきの本音");
   const maxScroll = Math.max(0, timelineScroll.scrollWidth - timelineScroll.clientWidth);
-  timelineScroll.scrollLeft = maxScroll * 0.35;
+  if (target) {
+    const point = target.closest(".story-point");
+    const timelineOffset = timeline.offsetLeft;
+    const desiredX = timelineScroll.clientWidth * 0.24;
+    timelineScroll.scrollLeft = Math.max(0, Math.min(maxScroll,
+      timelineOffset + point.offsetLeft - desiredX));
+  }
   updateSectionLabel();
 }
 
