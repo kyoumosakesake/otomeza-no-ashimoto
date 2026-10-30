@@ -85,7 +85,7 @@ body::before { display: none !important; }
   <h2 style="font-size:1.15rem;font-weight:normal;color:#28bfb0;letter-spacing:.08em">交信の結果を確認する</h2>
   <p class="note">この端末に記録された交信を、あとから確認できます。「あとで読む」を選んだお返事もこちらから開けます。</p>
   <div id="saved-results-list" class="actions" style="display:flex;flex-direction:column;align-items:flex-start;gap:.8rem"></div>
-  <p class="note">この端末だけの記録です。別の端末では、送信時に発行された秘密のリンクが必要です。共有端末ではご注意ください。</p>
+  <p class="note" style="line-height:1.9;margin-top:1.4rem"><strong style="font-weight:normal;color:#28bfb0">交信の記録について</strong><br>この端末には、最大20件の交信の確認リンクが保存されます。20件を超えると、古いものから順に一覧から消えます。<br>また、ブラウザのデータを消去すると、保存されたリンクも失われます。大切な交信は、秘密のリンクを別途保存しておいてください。<br>一覧から消えても、交信そのものが削除されるわけではありません。<br>この端末だけの記録です。別の端末では、送信時に発行された秘密のリンクが必要です。共有端末ではご注意ください。</p>
 </section>
 <section id="done" class="receipt" hidden><h2>ことばをおくりました。</h2><p>このリンクを保存してください。返信が届いた場合、このリンクから確認できます。</p><input id="receipt-url" type="text" readonly aria-label="秘密のリンク"><div class="actions"><button class="btn primary" id="copy" type="button">リンクをコピー</button><a class="btn" id="open" href="#">確認ページを開く</a></div><p class="note">このリンクを他の人に見せないでください。リンクを知る人はメッセージを閲覧・削除できます。</p></section></section></main><div id="koushin-transmission" class="koushin-transmission" hidden aria-hidden="true">
   <div class="koushin-transmission__symbol">
