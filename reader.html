@@ -285,7 +285,7 @@
   .vertical-end-link { display: none; }
   .reading-layout.vertical .vertical-end-link {
     display: block;
-    margin-block-start: 7em;
+    margin-block-start: 11.9em; /* 本文末尾からの余白を従来の1.7倍に */
     margin-block-end: 1.5em;
     font-size: .9em;
     line-height: 2;
@@ -302,6 +302,29 @@
     line-height: 1.5;
   }
   .reading-layout.vertical + .work-footer { display: none; }
+  /* PC縦書き：下部の余分なフッターを除き、縦スクロールを発生させない。 */
+  @media (min-width: 601px) {
+    html:has(body.vertical-reading), body.vertical-reading {
+      height: 100dvh;
+      min-height: 0;
+      overflow-y: hidden;
+    }
+    body.vertical-reading:not(.microfiction-reading) .reading-layout.vertical {
+      height: 100dvh;
+      overflow-y: hidden;
+      padding-top: 0;
+      padding-bottom: 0;
+      align-items: flex-start;
+    }
+    body.vertical-reading:not(.microfiction-reading) .reading-layout.vertical .reader {
+      padding-top: 0;
+      padding-bottom: 0;
+    }
+    body.vertical-reading:not(.microfiction-reading) .reading-layout.vertical .novel-text {
+      height: calc(100dvh - var(--font-size) - 1rem);
+    }
+    body.vertical-reading:not(.microfiction-reading) .work-footer { display: none; }
+  }
   .work-footer { max-width: 800px; margin: calc(7 * var(--font-size) * 2.2) auto 5rem; padding: 0 1.5rem; text-align: center; }
   .back-link { color: var(--foreground); font-size: 1.7rem; text-decoration: none; opacity: .7; }
   .back-link:hover { color: var(--accent); opacity: 1; }
@@ -385,7 +408,7 @@
   .end-action { display: inline-flex; align-items: center; justify-content: center; padding: .2rem; border: 0; background: transparent; color: var(--foreground); font: 1.7rem/1.5 sans-serif; opacity: .75; text-decoration: none; cursor: pointer; }
   .end-action:hover, .end-action:focus-visible { color: var(--accent); opacity: 1; }
   .end-action.bookmarked { color: var(--accent); opacity: 1; }
-  .share-ripple { display: block; flex: none; color: var(--accent); }
+  .share-ripple { display: block; flex: none; width: 28px; height: 28px; object-fit: contain; }
   .share-status { position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%); z-index: 1200; background: var(--foreground); color: var(--background); padding: .65rem 1rem; border-radius: 5px; font: .8rem/1.6 sans-serif; box-shadow: 0 5px 18px rgba(0,0,0,.25); max-width: calc(100vw - 2rem); text-align: center; }
   .share-status[hidden] { display: none; }
   .reading-layout.vertical .vertical-end-link { white-space: normal; }
@@ -524,7 +547,7 @@
   <div class="end-actions" aria-label="読書後の操作">
     <a class="end-action" href="fanworks.html" aria-label="作品一覧へ戻る" title="作品一覧へ戻る">↩︎</a>
     <button class="end-action bookmark-action" type="button" aria-label="ブックマークに追加" title="ブックマークに追加" aria-pressed="false">☆</button>
-    <button class="end-action share-action" type="button" aria-label="作品を共有" title="作品を共有"><svg class="share-ripple" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><circle cx="6.2" cy="16" r="3.1" fill="currentColor"/><path d="M 13.2 8.4 A 10.4 10.4 0 0 1 13.2 23.6 M 18.3 3.6 A 17.2 17.2 0 0 1 18.3 28.4" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round"/></svg></button>
+    <button class="end-action share-action" type="button" aria-label="作品を共有" title="作品を共有"><img class="share-ripple" src="data:image/png;base64,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" width="28" height="28" alt="" aria-hidden="true"></button>
   </div>
 </footer>
 <div class="share-status" id="share-status" role="status" aria-live="polite" hidden></div>
@@ -762,7 +785,7 @@
   verticalEndLink.innerHTML = `<div class="end-actions" aria-label="読書後の操作">
     <a class="end-action" href="fanworks.html" aria-label="作品一覧へ戻る" title="作品一覧へ戻る">↩︎</a>
     <button class="end-action bookmark-action" type="button" aria-label="ブックマークに追加" title="ブックマークに追加" aria-pressed="false">☆</button>
-    <button class="end-action share-action" type="button" aria-label="作品を共有" title="作品を共有"><svg class="share-ripple" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><circle cx="6.2" cy="16" r="3.1" fill="currentColor"/><path d="M 13.2 8.4 A 10.4 10.4 0 0 1 13.2 23.6 M 18.3 3.6 A 17.2 17.2 0 0 1 18.3 28.4" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round"/></svg></button>
+    <button class="end-action share-action" type="button" aria-label="作品を共有" title="作品を共有"><img class="share-ripple" src="data:image/png;base64,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" width="28" height="28" alt="" aria-hidden="true"></button>
   </div>`;
   document.getElementById("novel-text").append(verticalEndLink);
   verticalEndLink.querySelector('a[aria-label="作品一覧へ戻る"]').href = getReturnUrl();
