@@ -654,12 +654,63 @@
       }
     });
   });
+  // フォント変更時、画面中央の文字をアンカーにして読み位置を保つ。
+  // スクロール量ではなく文字ノード＋文字位置を記録するため、改行位置が変わっても追従する。
+  function readingAnchor() {
+    const bounds = layout.getBoundingClientRect();
+    const vertical = !isMicrofiction && settings.direction === "vertical";
+    const x = vertical ? bounds.left + bounds.width * .5 : window.innerWidth * .5;
+    const y = vertical ? bounds.top + bounds.height * .5 : window.innerHeight * .5;
+    const samples = vertical
+      ? [[x,y],[x - bounds.width * .12,y],[x + bounds.width * .12,y]]
+      : [[x,y],[x,y - 60],[x,y + 60]];
+    for (const [px, py] of samples) {
+      let node, offset;
+      if (document.caretPositionFromPoint) {
+        const pos = document.caretPositionFromPoint(px, py);
+        if (pos) { node = pos.offsetNode; offset = pos.offset; }
+      } else if (document.caretRangeFromPoint) {
+        const pos = document.caretRangeFromPoint(px, py);
+        if (pos) { node = pos.startContainer; offset = pos.startOffset; }
+      }
+      if (!node || !document.getElementById("novel-text").contains(node)) continue;
+      if (node.nodeType !== Node.TEXT_NODE || !node.length) continue;
+      const range = document.createRange();
+      range.setStart(node, Math.min(offset, node.length - 1));
+      range.setEnd(node, Math.min(offset + 1, node.length));
+      const rect = range.getBoundingClientRect();
+      if (!rect.width && !rect.height) continue;
+      return { node, offset, x: rect.left + rect.width / 2, y: rect.top + rect.height / 2, vertical };
+    }
+    return null;
+  }
+  function restoreReadingAnchor(anchor) {
+    if (!anchor || !anchor.node.isConnected) return;
+    const range = document.createRange();
+    range.setStart(anchor.node, Math.min(anchor.offset, anchor.node.length - 1));
+    range.setEnd(anchor.node, Math.min(anchor.offset + 1, anchor.node.length));
+    const rect = range.getBoundingClientRect();
+    if (anchor.vertical) {
+      // RTLスクロール座標はブラウザで異なるため、移動後の実測で補正する。
+      const delta = rect.left + rect.width / 2 - anchor.x;
+      layout.scrollLeft += delta;
+      const actual = range.getBoundingClientRect();
+      const remaining = actual.left + actual.width / 2 - anchor.x;
+      if (Math.abs(remaining) > 2) layout.scrollLeft += remaining;
+    } else {
+      const delta = rect.top + rect.height / 2 - anchor.y;
+      window.scrollBy(0, delta);
+    }
+  }
   fontSizeSlider.addEventListener("input", () => {
+    const anchor = settingsPanel.classList.contains("open") ? readingAnchor() : null;
     settings.fontSize = fontSizes[Number(fontSizeSlider.value)];
     applySettings();
     saveSettings();
-    // 縦書きの列高・横書きの折り返しを文字サイズ変更のたびに更新する。
-    refreshReadingLayout();
+    // 文字組みの再計算後、同じ文字を元の画面位置に戻す。
+    void layout.offsetHeight;
+    restoreReadingAnchor(anchor);
+    requestAnimationFrame(() => restoreReadingAnchor(anchor));
   });
   function toggleSettingsPanel(open) {
     settingsPanel.classList.toggle("open", open);
