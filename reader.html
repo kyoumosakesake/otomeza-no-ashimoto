@@ -321,7 +321,10 @@
       padding-bottom: 0;
     }
     body.vertical-reading:not(.microfiction-reading) .reading-layout.vertical .novel-text {
-      height: calc(100dvh - var(--font-size) - 1rem);
+      /* PC縦書き：本文の開始位置を赤線で示された高さより下へ。
+         既存の1行分にさらに2行分の上余白を加え、下端は維持する。 */
+      margin-top: calc(var(--font-size) * 2.2 * 3);
+      height: calc(100dvh - var(--font-size) - 1rem - var(--font-size) * 2.2 * 3);
     }
     body.vertical-reading:not(.microfiction-reading) .work-footer { display: none; }
   }
