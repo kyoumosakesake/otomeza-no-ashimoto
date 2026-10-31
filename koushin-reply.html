@@ -15,24 +15,34 @@
       0%, 100% { color: #28bfb0; text-shadow: none; filter: brightness(1); transform: scale(1); }
       38%, 62% { color: #d3fff5; text-shadow: 0 0 16px rgba(91,255,224,.9), 0 0 45px rgba(57,226,207,.8), 0 0 95px rgba(57,226,207,.38); filter: brightness(1.5); transform: scale(1.13); }
     }
-    .result-list { display: grid; gap: 2.2rem; }
+    /* 結果ページの装飾的な固定 SIGNAL は非表示 */
+    .panel:before { content: none !important; }
+    .result-list { display: grid; gap: 1rem; }
     .result-card {
       border: 1px solid rgba(138,214,201,.29);
       background: rgba(15,39,61,.75);
-      padding: clamp(16px, 4vw, 26px);
+      padding: clamp(12px, 2.5vw, 18px);
     }
     .result-card__top {
       display: flex; align-items: baseline; justify-content: space-between; gap: 12px;
-      border-bottom: 1px solid rgba(138,214,201,.22); padding-bottom: .6rem; margin-bottom: 1.4rem;
+      border-bottom: 1px solid rgba(138,214,201,.22); padding-bottom: .4rem; margin-bottom: .7rem;
     }
     .result-card__number { font-family: Georgia, serif; color: #8ad6c9; letter-spacing: .12em; font-size: .85rem; }
     .result-card__date { color: #bac9d5; font-size: .72rem; text-align: right; }
-    .result-card .label { font-size: 1rem; }
-    .result-card .entry { margin-bottom: 1.1rem; }
-    .result-card .divider { margin: 1.5rem 0; }
+    .result-card .label { font-size: .94rem; margin: .55rem 0; }
+    .result-card__number .signal-value.is-full { color: #f07575; }
+    .result-card .entry { padding: .7rem .9rem; line-height: 1.75; white-space: pre-wrap; overflow-wrap: anywhere; }
+    .result-card .entry.is-collapsed { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 1; line-clamp: 1; overflow: hidden; white-space: normal; }
+    .entry-toggle { display: inline-block; margin: .3rem 0 .15rem; padding: .2rem .3rem; border: 0; background: none; color: #7fe0d7; cursor: pointer; font: inherit; font-size: .8rem; text-decoration: underline; text-underline-offset: .2em; }
+    .entry-toggle:hover { color: white; }
+    .result-card .btn--remove { font-size: .76rem; padding: .45rem .75rem; min-width: 0; }
+    .result-card .actions { margin-top: .6rem; }
+    @media(max-width:600px) { .result-card { padding: 12px; } }
+    .result-card .entry { margin-bottom: .25rem; }
+    .result-card .divider { margin: .7rem 0; }
     .result-card .actions { margin-bottom: 0; }
     .result-card .status { margin: .6rem 0 0; }
-    .result-card .note { margin: 1rem 0; }
+    .result-card .note { margin: .5rem 0; font-size: .8rem; }
     .results-footer {
       max-width: 650px; margin: 46px auto 0; padding-top: 24px;
       border-top: 1px solid rgba(138,214,201,.29); text-align: center;
@@ -106,23 +116,54 @@ function makeElement(tag, className, text) {
   if (text !== undefined) el.textContent = text;
   return el;
 }
-function makeCard(id, data, index) {
+function setCardNumber(card, number) {
+  const label = card.querySelector('.result-card__number');
+  label.replaceChildren(
+    document.createTextNode('SIGNAL / '),
+    makeElement('span', 'signal-value' + (number === 20 ? ' is-full' : ''), String(number).padStart(2, '0'))
+  );
+}
+function addExpandableEntry(card, content) {
+  const entry = makeElement('div', 'entry', content);
+  card.append(entry);
+  // 実際の表示幅で2行以上になる場合だけ開閉ボタンを表示。
+  requestAnimationFrame(() => {
+    if (!entry.isConnected) return;
+    const lineHeight = parseFloat(getComputedStyle(entry).lineHeight);
+    if (!Number.isFinite(lineHeight) || entry.scrollHeight <= lineHeight + 2) return;
+    entry.classList.add('is-collapsed');
+    const toggle = makeElement('button', 'entry-toggle', '全文を見る');
+    toggle.type = 'button';
+    toggle.setAttribute('aria-expanded', 'false');
+    toggle.addEventListener('click', () => {
+      const expanded = entry.classList.toggle('is-collapsed') === false;
+      toggle.textContent = expanded ? '折りたたむ' : '全文を見る';
+      toggle.setAttribute('aria-expanded', String(expanded));
+    });
+    entry.after(toggle);
+  });
+}
+function renumberCards() {
+  const cards = [...$('#results').querySelectorAll('.result-card')];
+  cards.forEach((card, i) => setCardNumber(card, cards.length - i));
+}
+function makeCard(id, data) {
   const card = makeElement('article', 'result-card');
   const top = makeElement('div', 'result-card__top');
-  top.append(makeElement('span', 'result-card__number', `SIGNAL / ${String(index + 1).padStart(2, '0')}`));
+  top.append(makeElement('span', 'result-card__number'));
   top.append(makeElement('span', 'result-card__date', dateText(data.createdAt)));
   card.append(top);
 
   card.append(makeElement('h2', 'label', 'あなたのことば'));
-  card.append(makeElement('div', 'entry', data.body || ''));
+  addExpandableEntry(card, data.body || '');
   card.append(makeElement('hr', 'divider'));
   card.append(makeElement('h2', 'label', 'お返事'));
-  card.append(makeElement('div', 'entry', data.reply || 'まだお返事はありません。'));
+  addExpandableEntry(card, data.reply || 'まだお返事はありません。');
   card.append(makeElement('p', 'note', 'お返事は一度だけです。届かない場合もあります。'));
   card.append(makeElement('hr', 'divider'));
 
   const actions = makeElement('div', 'actions');
-  const remove = makeElement('button', 'btn', '送信を取り消す');
+  const remove = makeElement('button', 'btn btn--remove', '送信を取り消す');
   remove.type = 'button';
   const status = makeElement('p', 'status');
   status.setAttribute('role', 'status');
@@ -137,10 +178,8 @@ function makeCard(id, data, index) {
       try { removeFromBrowser(id); }
       catch (error) { console.warn('ブラウザの交信記録を更新できませんでした', error); }
       card.remove();
+      renumberCards();
       const remaining = $('#results').querySelectorAll('.result-card');
-      remaining.forEach((item, i) => {
-        item.querySelector('.result-card__number').textContent = `SIGNAL / ${String(i + 1).padStart(2, '0')}`;
-      });
       $('#status').textContent = remaining.length ? '送信を取り消しました。' : '送信を取り消しました。保存された交信はありません。';
     } catch (error) {
       console.error(error);
@@ -178,9 +217,11 @@ async function loadResults() {
     if (result.error) { errors++; console.error(result.error); continue; }
     if (!result.snapshot.exists()) continue;
     const data = result.snapshot.data();
-    $('#results').append(makeCard(result.id, data, loaded++));
+    $('#results').append(makeCard(result.id, data));
+    loaded++;
     if (typeof data.reply === 'string' && data.reply.trim()) hasReply = true;
   }
+  renumberCards();
   if (hasReply) $('.koushin-receive-symbol').classList.add('has-reply');
   if (errors) {
     $('#status').textContent = '一部の交信を読み込めませんでした。通信状態をご確認ください。';
