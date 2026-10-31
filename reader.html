@@ -172,13 +172,13 @@
     touch-action: auto;
   }
   .reading-layout.horizontal .work-header {
-    max-width: 800px; margin: 3rem auto 2rem;
+    max-width: 800px; margin: 3rem auto 0;
     padding: 0 1.5rem; text-align: center;
   }
   .reading-layout.horizontal .work-title { font-size: 1.7rem; }
   .reading-layout.horizontal .work-date { margin-top: .8rem; }
   .reading-layout.horizontal .reader {
-    max-width: 800px; margin: 0 auto; padding: 2rem 1.5rem 5rem;
+    max-width: 800px; margin: 0 auto; padding: calc(5 * var(--font-size) * 2.2) 1.5rem 0;
   }
   .reading-layout.horizontal .novel-text {
     writing-mode: horizontal-tb;
@@ -244,7 +244,7 @@
   /* PC・スマホ共通：タイトルと設定を本文の最初の列に置く。 */
   .reading-layout.vertical .mobile-vertical-title {
     display: block;
-    margin-block-end: 1.5rem;
+    margin-block-end: calc(5 * var(--font-size));
     font-size: 16px;
     line-height: 1.8;
     letter-spacing: .12em;
@@ -285,7 +285,7 @@
   .vertical-end-link { display: none; }
   .reading-layout.vertical .vertical-end-link {
     display: block;
-    margin-block-start: 2.5em;
+    margin-block-start: 7em;
     margin-block-end: 1.5em;
     font-size: .9em;
     line-height: 2;
@@ -302,7 +302,7 @@
     line-height: 1.5;
   }
   .reading-layout.vertical + .work-footer { display: none; }
-  .work-footer { max-width: 800px; margin: 3rem auto 5rem; padding: 0 1.5rem; text-align: center; }
+  .work-footer { max-width: 800px; margin: calc(7 * var(--font-size) * 2.2) auto 5rem; padding: 0 1.5rem; text-align: center; }
   .back-link { color: var(--foreground); font-size: 1.7rem; text-decoration: none; opacity: .7; }
   .back-link:hover { color: var(--accent); opacity: 1; }
   @media (max-width: 600px) {
@@ -385,6 +385,7 @@
   .end-action { display: inline-flex; align-items: center; justify-content: center; padding: .2rem; border: 0; background: transparent; color: var(--foreground); font: 1.7rem/1.5 sans-serif; opacity: .75; text-decoration: none; cursor: pointer; }
   .end-action:hover, .end-action:focus-visible { color: var(--accent); opacity: 1; }
   .end-action.bookmarked { color: var(--accent); opacity: 1; }
+  .share-ripple { display: block; flex: none; color: var(--accent); }
   .share-status { position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%); z-index: 1200; background: var(--foreground); color: var(--background); padding: .65rem 1rem; border-radius: 5px; font: .8rem/1.6 sans-serif; box-shadow: 0 5px 18px rgba(0,0,0,.25); max-width: calc(100vw - 2rem); text-align: center; }
   .share-status[hidden] { display: none; }
   .reading-layout.vertical .vertical-end-link { white-space: normal; }
@@ -523,7 +524,7 @@
   <div class="end-actions" aria-label="読書後の操作">
     <a class="end-action" href="fanworks.html" aria-label="作品一覧へ戻る" title="作品一覧へ戻る">↩︎</a>
     <button class="end-action bookmark-action" type="button" aria-label="ブックマークに追加" title="ブックマークに追加" aria-pressed="false">☆</button>
-    <button class="end-action share-action" type="button" aria-label="作品を共有" title="作品を共有">↗</button>
+    <button class="end-action share-action" type="button" aria-label="作品を共有" title="作品を共有"><svg class="share-ripple" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><circle cx="6.2" cy="16" r="3.1" fill="currentColor"/><path d="M 13.2 8.4 A 10.4 10.4 0 0 1 13.2 23.6 M 18.3 3.6 A 17.2 17.2 0 0 1 18.3 28.4" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round"/></svg></button>
   </div>
 </footer>
 <div class="share-status" id="share-status" role="status" aria-live="polite" hidden></div>
@@ -664,7 +665,7 @@
     }).join("");
   }
   function formatNovelText(text, chapterTitles = []) {
-    const source = String(text ?? "").replace(/\r\n?/g, "\n");
+    const source = String(text ?? "").replace(/\r\n?/g, "\n").replace(/^\n+|\n+$/g, "");
     if (source.length === 0) return "<p>ここに本文が入ります。</p>";
     const chapterSet = new Set(chapterTitles);
     const rubyPattern = /\[\[rb:\s*([^>\]\n]+?)\s*>\s*([^\]\n]+?)\s*\]\]/g;
@@ -675,6 +676,7 @@
         return `<p class="novel-chapter-title">${escapeHTML(chapterMatch[1])}</p>`;
       }
       if (line === "") return '<div class="novel-blank-line"></div>';
+      if (/^(?:……|──)/.test(line)) line = "　" + line;
       let html = "";
       let lastIndex = 0;
       for (const match of line.matchAll(rubyPattern)) {
@@ -760,7 +762,7 @@
   verticalEndLink.innerHTML = `<div class="end-actions" aria-label="読書後の操作">
     <a class="end-action" href="fanworks.html" aria-label="作品一覧へ戻る" title="作品一覧へ戻る">↩︎</a>
     <button class="end-action bookmark-action" type="button" aria-label="ブックマークに追加" title="ブックマークに追加" aria-pressed="false">☆</button>
-    <button class="end-action share-action" type="button" aria-label="作品を共有" title="作品を共有">↗</button>
+    <button class="end-action share-action" type="button" aria-label="作品を共有" title="作品を共有"><svg class="share-ripple" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><circle cx="6.2" cy="16" r="3.1" fill="currentColor"/><path d="M 13.2 8.4 A 10.4 10.4 0 0 1 13.2 23.6 M 18.3 3.6 A 17.2 17.2 0 0 1 18.3 28.4" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round"/></svg></button>
   </div>`;
   document.getElementById("novel-text").append(verticalEndLink);
   verticalEndLink.querySelector('a[aria-label="作品一覧へ戻る"]').href = getReturnUrl();
