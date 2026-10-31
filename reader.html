@@ -342,7 +342,7 @@
       gap: 0;
       height: auto;
       min-height: 70vh;
-      padding: 2.25rem .75rem 2rem;
+      padding: calc(2.25rem - 7px) .75rem calc(2rem - 7px);
       overflow-x: scroll;
       overflow-y: hidden;
       touch-action: pan-y;
@@ -364,7 +364,7 @@
     }
     /* 上下の余白を確保し、本文が画面下にはみ出さない高さにする */
     .reading-layout.vertical .novel-text {
-      height: max(360px, calc(100dvh - 110px + var(--font-size)));
+      height: max(374px, calc(100dvh - 96px + var(--font-size)));
     }
     .reading-layout.vertical .work-header {
       height: max(360px, calc(100dvh - 110px));
