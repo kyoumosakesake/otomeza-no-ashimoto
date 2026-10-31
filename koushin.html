@@ -32,7 +32,14 @@ body::before { display: none !important; }
 @media (prefers-reduced-motion: reduce) {
   .koushin-transmission__star--left { animation: none; color: #d3fff5; }
 }
-</style></head><body><main class="shell"><nav class="nav"><a href="menu.html">← メニューに戻る</a></nav><header class="hero"><div class="symbol">✦ · ✦</div><h1>交信</h1><p>ここから、私に言葉を届けることができます。<br>名前は必要ありません。感想でも、質問でも、ひとことでも。<br>お返事は気まぐれです。</p></header><section class="panel"><hr class="line"><form id="form"><label for="body" class="label">ことばを送る</label><textarea id="body" class="text" maxlength="4000" placeholder="ここにメッセージをどうぞ。" required></textarea><p class="hint"><span id="count">0</span> / 4000文字</p><div class="actions"><button id="send" class="btn primary" type="submit">送信する ↗</button></div><label class="note" style="display:block;line-height:1.9;margin-top:1.1rem"><input type="checkbox" id="remember-reply" style="accent-color:#28bfb0;vertical-align:middle;margin-right:.5em"><span style="color:#28bfb0">この端末で返信のお知らせを受け取る（任意）</span><br><span style="opacity:.85">選ぶと、次回このブラウザでトップページの「ひらく」を押したとき、返信があればお知らせします。共有端末では選ばないでください。</span></label><p class="note">届いた言葉は、管理者だけが読みます。返信はお約束できません。送信後に発行される秘密のリンクから、返信の確認と送信の取り消しができます。リンクをなくすと確認できなくなります。</p><p id="status" class="status" role="status" aria-live="polite"></p></form><section id="done" class="receipt" hidden><h2>ことばをおくりました。</h2><p>このリンクを保存してください。返信が届いた場合、このリンクから確認できます。</p><input id="receipt-url" type="text" readonly aria-label="秘密のリンク"><div class="actions"><button class="btn primary" id="copy" type="button">リンクをコピー</button><a class="btn" id="open" href="#">確認ページを開く</a></div><p class="note">このリンクを他の人に見せないでください。リンクを知る人はメッセージを閲覧・削除できます。</p></section></section></main><div id="koushin-transmission" class="koushin-transmission" hidden aria-hidden="true">
+</style></head><body><main class="shell"><nav class="nav"><a href="menu.html">← メニューに戻る</a></nav><header class="hero"><div class="symbol">✦ · ✦</div><h1>交信</h1><p>ここから、私に言葉を届けることができます。<br>名前は必要ありません。感想でも、質問でも、ひとことでも。<br>お返事は気まぐれです。</p></header><section id="saved-results" class="receipt" aria-label="交信の記録" style="max-width:650px;margin:0 auto 2.5rem">
+  <h2 style="font-size:1.15rem;font-weight:normal;color:#28bfb0;letter-spacing:.08em">交信の記録</h2>
+  <p class="note">この端末に保存した交信を、いつでも確認できます。「あとで読む」を選んだお返事も、再送信せずにここから開けます。</p>
+  <p id="saved-results-empty" class="note" hidden>この端末に保存された交信はまだありません。送信時に「この端末で返信のお知らせを受け取る」を選ぶと、ここに記録されます。</p>
+  <div id="saved-results-list" class="actions" style="display:flex;flex-direction:column;align-items:flex-start;gap:.8rem"></div>
+  <p class="note">記録はこのブラウザにのみ保存されます。ブラウザのデータを削除すると失われるため、秘密のリンクも別途保存してください。共有端末ではご注意ください。</p>
+</section>
+<section class="panel"><hr class="line"><form id="form"><label for="body" class="label">ことばを送る</label><textarea id="body" class="text" maxlength="4000" placeholder="ここにメッセージをどうぞ。" required></textarea><p class="hint"><span id="count">0</span> / 4000文字</p><div class="actions"><button id="send" class="btn primary" type="submit">送信する ↗</button></div><label class="note" style="display:block;line-height:1.9;margin-top:1.1rem"><input type="checkbox" id="remember-reply" style="accent-color:#28bfb0;vertical-align:middle;margin-right:.5em"><span style="color:#28bfb0">この端末で返信のお知らせを受け取る（任意）</span><br><span style="opacity:.85">選ぶと、次回このブラウザでトップページの「ひらく」を押したとき、返信があればお知らせします。共有端末では選ばないでください。</span></label><p class="note">届いた言葉は、管理者だけが読みます。返信はお約束できません。送信後に発行される秘密のリンクから、返信の確認と送信の取り消しができます。リンクをなくすと確認できなくなります。</p><p id="status" class="status" role="status" aria-live="polite"></p></form><section id="done" class="receipt" hidden><h2>ことばをおくりました。</h2><p>このリンクを保存してください。返信が届いた場合、このリンクから確認できます。</p><input id="receipt-url" type="text" readonly aria-label="秘密のリンク"><div class="actions"><button class="btn primary" id="copy" type="button">リンクをコピー</button><a class="btn" id="open" href="#">確認ページを開く</a></div><p class="note">このリンクを他の人に見せないでください。リンクを知る人はメッセージを閲覧・削除できます。</p></section></section></main><div id="koushin-transmission" class="koushin-transmission" hidden aria-hidden="true">
   <div class="koushin-transmission__symbol">
     <span class="koushin-transmission__star koushin-transmission__star--left">✦</span>
     <span class="koushin-transmission__dot">·</span>
@@ -42,6 +49,29 @@ body::before { display: none !important; }
 import {db} from './archive-common.js';
 import {doc,setDoc,serverTimestamp} from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js';
 const $=s=>document.querySelector(s);const body=$('#body');body.addEventListener('input',()=>$('#count').textContent=[...body.value].length);
+// 保存された秘密の交信リンクを一覧に戻す。送信時に通知を希望した端末のみ表示。
+const receiptKey='otomeza-koushin-receipts-v1';
+function showSavedResults(){
+  const section=$('#saved-results'), list=$('#saved-results-list');
+  list.replaceChildren();
+  let ids=[];
+  try {
+    const saved=JSON.parse(localStorage.getItem(receiptKey)||'[]');
+    if(Array.isArray(saved)) ids=[...new Set(saved.filter(id=>typeof id==='string'&&/^[A-Za-z0-9_-]{43}$/.test(id)))].slice(-20).reverse();
+  }catch(e){console.warn('交信の記録を読み取れませんでした',e);}
+  $('#saved-results-empty').hidden=ids.length!==0;
+  ids.forEach((id,index)=>{
+    const link=document.createElement('a');
+    link.className='btn';
+    link.textContent=ids.length===1?'交信の結果を見る ↗':`交信 ${index+1} の結果を見る ↗`;
+    const url=new URL('koushin-reply.html',location.href);
+    url.hash='id='+id;
+    link.href=url.href;
+    list.append(link);
+  });
+}
+showSavedResults();
+
 async function showTransmission() {
   const overlay = $('#koushin-transmission');
   overlay.hidden = false;
@@ -60,6 +90,7 @@ if ($('#remember-reply').checked) {
     const current=JSON.parse(localStorage.getItem(key)||'[]');
     const ids=Array.isArray(current)?current.filter(x=>typeof x==='string'&&/^[A-Za-z0-9_-]{43}$/.test(x)):[];
     localStorage.setItem(key,JSON.stringify([...new Set([...ids,id])].slice(-20)));
+    showSavedResults();
   } catch (err) { console.warn('通知設定を保存できませんでした',err); }
 }
 await showTransmission();$('#form').hidden=true;$('#done').hidden=false;history.replaceState(null,'',location.pathname); }catch(err){console.error(err);$('#status').textContent='送信できませんでした。通信状態やFirestoreの設定をご確認ください。';}finally{$('#send').disabled=false;}});
