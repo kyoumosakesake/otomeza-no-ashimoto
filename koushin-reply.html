@@ -1,46 +1,196 @@
-<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="referrer" content="no-referrer"><title>交信の結果｜乙女座の脚元</title><link rel="stylesheet" href="koushin.css"><style>/* 交信の結果：スクロールに追従する背景の小さな星だけ非表示 */body::before{content:none !important;display:none !important}
-.hero .koushin-receive-symbol { animation: none !important; text-shadow: none !important; }
-.receive-star-left, .receive-star-right { display:inline-block; text-shadow:none; }
-.koushin-receive-symbol.has-reply .receive-star-right { animation: receive-right-light 2s ease-in-out both; }
-@keyframes receive-right-light {
-  0%,100% { color:#28bfb0; text-shadow:none; filter:brightness(1); transform:scale(1); }
-  38%,62% { color:#d3fff5; text-shadow:0 0 16px rgba(91,255,224,.9),0 0 45px rgba(57,226,207,.8),0 0 95px rgba(57,226,207,.38); filter:brightness(1.5); transform:scale(1.13); }
-}
-@media (prefers-reduced-motion:reduce) { .koushin-receive-symbol.has-reply .receive-star-right { animation:none; color:#d3fff5; } }
-</style></head><body><main class="shell"><nav class="nav"><a href="koushin.html">← 交信へ戻る</a><span>交信の結果</span></nav><header class="hero"><div class="symbol koushin-receive-symbol" aria-label="交信"><span class="receive-star-left">✦</span> · <span class="receive-star-right">✦</span></div><h1>交信の結果</h1><p>ここは、あなたが届けた言葉のための場所です。</p></header><section class="panel"><p id="status" class="status" role="status" aria-live="polite">読み込み中……</p><section id="content" hidden><h2 class="label">あなたの言葉</h2><div id="body" class="entry"></div><p id="date" class="meta"></p><hr class="divider"><h2 class="label">お返事</h2><div id="reply" class="entry"></div><p class="note">お返事は一度だけです。届かない場合もあります。</p><hr class="divider"><button id="remove" class="btn" type="button">送信を取り消す</button><p class="note">取り消すと、このメッセージと返信は削除され、元には戻せません。管理者がすでに読んだ内容までは取り消せません。</p></section></section>
-<footer style="max-width:650px;margin:46px auto 0;padding-top:24px;border-top:1px solid rgba(138,214,201,.29);text-align:center">
-  <p id="leave-warning" class="note" style="text-align:left;margin:0 0 22px">
-    <strong>秘密のリンクを保存してください。</strong><br>
-    このページのURLには、あなた専用の秘密の情報が含まれています。保存せずに移動すると、後から返信を確認できなくなる場合があります。リンクを他の人に見せないでください。
-  </p>
-  <section aria-label="交信の記録について" style="text-align:left;margin:0 0 24px;padding:16px 18px;border:1px solid rgba(138,214,201,.22);border-radius:8px">
-    <h2 style="font-size:1rem;font-weight:normal;color:#28bfb0;letter-spacing:.07em;margin:0 0 10px">交信の記録について</h2>
-    <p class="note" style="line-height:1.95;margin:0">この端末には、最大20件の交信の確認リンクが保存されます。20件を超えると、古いものから順に一覧から消えます。<br><br>また、ブラウザのデータを消去すると、保存されたリンクも失われます。大切な交信は、秘密のリンクを別途保存しておいてください。<br><br>一覧から消えても、交信そのものが削除されるわけではありません。</p>
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="referrer" content="no-referrer">
+  <title>交信の結果｜乙女座の脚元</title>
+  <link rel="stylesheet" href="koushin.css">
+  <style>
+    body::before { content: none !important; display: none !important; }
+    .hero .koushin-receive-symbol { animation: none !important; text-shadow: none !important; }
+    .receive-star-left, .receive-star-right { display: inline-block; text-shadow: none; }
+    .koushin-receive-symbol.has-reply .receive-star-right { animation: receive-right-light 2s ease-in-out both; }
+    @keyframes receive-right-light {
+      0%, 100% { color: #28bfb0; text-shadow: none; filter: brightness(1); transform: scale(1); }
+      38%, 62% { color: #d3fff5; text-shadow: 0 0 16px rgba(91,255,224,.9), 0 0 45px rgba(57,226,207,.8), 0 0 95px rgba(57,226,207,.38); filter: brightness(1.5); transform: scale(1.13); }
+    }
+    .result-list { display: grid; gap: 2.2rem; }
+    .result-card {
+      border: 1px solid rgba(138,214,201,.29);
+      background: rgba(15,39,61,.75);
+      padding: clamp(16px, 4vw, 26px);
+    }
+    .result-card__top {
+      display: flex; align-items: baseline; justify-content: space-between; gap: 12px;
+      border-bottom: 1px solid rgba(138,214,201,.22); padding-bottom: .6rem; margin-bottom: 1.4rem;
+    }
+    .result-card__number { font-family: Georgia, serif; color: #8ad6c9; letter-spacing: .12em; font-size: .85rem; }
+    .result-card__date { color: #bac9d5; font-size: .72rem; text-align: right; }
+    .result-card .label { font-size: 1rem; }
+    .result-card .entry { margin-bottom: 1.1rem; }
+    .result-card .divider { margin: 1.5rem 0; }
+    .result-card .actions { margin-bottom: 0; }
+    .result-card .status { margin: .6rem 0 0; }
+    .result-card .note { margin: 1rem 0; }
+    .results-footer {
+      max-width: 650px; margin: 46px auto 0; padding-top: 24px;
+      border-top: 1px solid rgba(138,214,201,.29); text-align: center;
+    }
+    .results-footer .actions { justify-content: center; }
+    @media (prefers-reduced-motion: reduce) {
+      .koushin-receive-symbol.has-reply .receive-star-right { animation: none; color: #d3fff5; }
+    }
+  </style>
+</head>
+<body>
+<main class="shell">
+  <nav class="nav"><a href="koushin.html">← 交信へ戻る</a></nav>
+  <header class="hero">
+    <div class="symbol koushin-receive-symbol" aria-label="交信">
+      <span class="receive-star-left">✦</span> · <span class="receive-star-right">✦</span>
+    </div>
+    <h1>交信の結果</h1>
+    <p>ここは、あなたが届けたことばのための場所です。</p>
+  </header>
+
+  <section class="panel" aria-label="交信の結果一覧">
+    <p id="status" class="status" role="status" aria-live="polite">読み込み中……</p>
+    <div id="results" class="result-list"></div>
   </section>
-  <div class="actions" style="justify-content:center;margin:0 0 14px">
-    <button type="button" id="copy-result-link" class="btn">秘密のリンクをコピー</button>
-    <a id="go-menu" href="menu.html" class="btn">メニュー一覧へ</a>
-  </div>
-  <p id="copy-result-status" class="hint" role="status" aria-live="polite"></p>
-</footer>
-</main><script type="module">
-import {db} from './archive-common.js';
-import {doc,getDoc,deleteDoc} from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js';
-const $=s=>document.querySelector(s);
-const copyButton=$('#copy-result-link');
-copyButton.addEventListener('click',async()=>{
-  try{
-    await navigator.clipboard.writeText(location.href);
-    $('#copy-result-status').textContent='秘密のリンクをコピーしました。安全な場所に保存してください。';
-  }catch(e){
-    $('#copy-result-status').textContent='コピーできませんでした。ブラウザのアドレスバーからURLをコピーして保存してください。';
+
+  <footer class="results-footer">
+    <div class="actions"><a href="menu.html" class="btn">メニュー一覧へ</a></div>
+  </footer>
+</main>
+
+<script type="module">
+import { db } from './archive-common.js';
+import { doc, getDoc, deleteDoc } from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js';
+
+const $ = selector => document.querySelector(selector);
+const HISTORY_KEY = 'otomeza-koushin-history-v1';
+const NOTICE_KEY = 'otomeza-koushin-receipts-v1';
+const SEEN_KEY = 'otomeza-koushin-seen-v1';
+const ID_PATTERN = /^[A-Za-z0-9_-]{43}$/;
+const validId = id => typeof id === 'string' && ID_PATTERN.test(id);
+
+function readIds(key) {
+  try {
+    const saved = JSON.parse(localStorage.getItem(key) || '[]');
+    return Array.isArray(saved) ? [...new Set(saved.filter(validId))].slice(-20) : [];
+  } catch { return []; }
+}
+function getHistory() {
+  // 旧バージョンで保存された交信も引き継ぐ。
+  if (localStorage.getItem(HISTORY_KEY) === null) {
+    const previous = readIds(NOTICE_KEY);
+    localStorage.setItem(HISTORY_KEY, JSON.stringify(previous));
+    return previous;
   }
-});
-$('#go-menu').addEventListener('click',e=>{
-  if(!valid)return;
-  if(!confirm('秘密のリンクは保存しましたか？\n\n保存していない場合、後から返信を確認できなくなる可能性があります。\n\nメニュー一覧へ移動しますか？'))e.preventDefault();
-});
-const id=new URLSearchParams(location.hash.slice(1)).get('id');const valid=!!id&&/^[A-Za-z0-9_-]{43}$/.test(id);if(!valid){$('#status').textContent='秘密のリンクが正しくありません。';copyButton.hidden=true;$('#leave-warning').hidden=true;}else{load();}
-async function load(){try{const snap=await getDoc(doc(db,'koushin',id));if(!snap.exists()){$('#status').textContent='メッセージが見つかりません。取り消し済みの可能性があります。';return;}const data=snap.data();$('#body').textContent=data.body||'';$('#reply').textContent=data.reply||'まだお返事はありません。';if(data.reply){document.querySelector('.koushin-receive-symbol')?.classList.add('has-reply');}$('#date').textContent=data.createdAt?.toDate?.().toLocaleString('ja-JP')||'';$('#status').textContent='';$('#content').hidden=false;}catch(e){console.error(e);$('#status').textContent='読み込めませんでした。設定または通信状態をご確認ください。';}}
-$('#remove').onclick=async()=>{if(!confirm('送信を取り消し、メッセージと返信を完全に削除しますか？'))return;$('#remove').disabled=true;try{await deleteDoc(doc(db,'koushin',id));$('#content').hidden=true;$('#status').textContent='送信を取り消しました。';history.replaceState(null,'',location.pathname);copyButton.hidden=true;$('#leave-warning').hidden=true;}catch(e){console.error(e);$('#status').textContent='取り消せませんでした。もう一度お試しください。';$('#remove').disabled=false;}};
-</script></body></html>
+  return readIds(HISTORY_KEY);
+}
+function removeFromBrowser(id) {
+  for (const key of [HISTORY_KEY, NOTICE_KEY, SEEN_KEY]) {
+    const current = readIds(key);
+    localStorage.setItem(key, JSON.stringify(current.filter(item => item !== id)));
+  }
+}
+function dateText(value) {
+  try { return value?.toDate?.().toLocaleString('ja-JP') || ''; }
+  catch { return ''; }
+}
+function makeElement(tag, className, text) {
+  const el = document.createElement(tag);
+  if (className) el.className = className;
+  if (text !== undefined) el.textContent = text;
+  return el;
+}
+function makeCard(id, data, index) {
+  const card = makeElement('article', 'result-card');
+  const top = makeElement('div', 'result-card__top');
+  top.append(makeElement('span', 'result-card__number', `SIGNAL / ${String(index + 1).padStart(2, '0')}`));
+  top.append(makeElement('span', 'result-card__date', dateText(data.createdAt)));
+  card.append(top);
+
+  card.append(makeElement('h2', 'label', 'あなたのことば'));
+  card.append(makeElement('div', 'entry', data.body || ''));
+  card.append(makeElement('hr', 'divider'));
+  card.append(makeElement('h2', 'label', 'お返事'));
+  card.append(makeElement('div', 'entry', data.reply || 'まだお返事はありません。'));
+  card.append(makeElement('p', 'note', 'お返事は一度だけです。届かない場合もあります。'));
+  card.append(makeElement('hr', 'divider'));
+
+  const actions = makeElement('div', 'actions');
+  const remove = makeElement('button', 'btn', '送信を取り消す');
+  remove.type = 'button';
+  const status = makeElement('p', 'status');
+  status.setAttribute('role', 'status');
+  status.setAttribute('aria-live', 'polite');
+  remove.addEventListener('click', async () => {
+    const confirmed = confirm('取り消すと、このメッセージと返信は削除され、元には戻せません。管理者がすでに読んだ内容までは取り消せません。\n\n取り消しますか？');
+    if (!confirmed) return;
+    remove.disabled = true;
+    status.textContent = '取り消し中です……';
+    try {
+      await deleteDoc(doc(db, 'koushin', id));
+      try { removeFromBrowser(id); }
+      catch (error) { console.warn('ブラウザの交信記録を更新できませんでした', error); }
+      card.remove();
+      const remaining = $('#results').querySelectorAll('.result-card');
+      remaining.forEach((item, i) => {
+        item.querySelector('.result-card__number').textContent = `SIGNAL / ${String(i + 1).padStart(2, '0')}`;
+      });
+      $('#status').textContent = remaining.length ? '送信を取り消しました。' : '送信を取り消しました。保存された交信はありません。';
+    } catch (error) {
+      console.error(error);
+      status.textContent = '取り消せませんでした。もう一度お試しください。';
+      remove.disabled = false;
+    }
+  });
+  actions.append(remove);
+  card.append(actions, status);
+  return card;
+}
+
+async function loadResults() {
+  let ids;
+  try { ids = getHistory().slice().reverse(); }
+  catch (error) {
+    console.error(error);
+    $('#status').textContent = 'ブラウザに保存された交信の記録を読み取れません。保存設定をご確認ください。';
+    return;
+  }
+  if (!ids.length) {
+    $('#status').textContent = 'このブラウザに保存された交信はまだありません。';
+    return;
+  }
+  const results = await Promise.all(ids.map(async id => {
+    try {
+      const snapshot = await getDoc(doc(db, 'koushin', id));
+      return { id, snapshot };
+    } catch (error) { return { id, error }; }
+  }));
+  let hasReply = false;
+  let loaded = 0;
+  let errors = 0;
+  for (const result of results) {
+    if (result.error) { errors++; console.error(result.error); continue; }
+    if (!result.snapshot.exists()) continue;
+    const data = result.snapshot.data();
+    $('#results').append(makeCard(result.id, data, loaded++));
+    if (typeof data.reply === 'string' && data.reply.trim()) hasReply = true;
+  }
+  if (hasReply) $('.koushin-receive-symbol').classList.add('has-reply');
+  if (errors) {
+    $('#status').textContent = '一部の交信を読み込めませんでした。通信状態をご確認ください。';
+  } else if (!loaded) {
+    $('#status').textContent = '表示できる交信がありません。取り消し済みの記録が含まれている可能性があります。';
+  } else {
+    $('#status').textContent = '';
+  }
+}
+loadResults();
+</script>
+</body>
+</html>
