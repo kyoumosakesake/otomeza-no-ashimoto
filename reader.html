@@ -71,7 +71,6 @@
   .settings-panel.open { display: block; }
   /* 設定中はパネルを画面基準で固定する。 */
   .settings-panel.open { position: fixed; }
-  .settings-button.settings-anchor-locked { position: fixed; z-index: 1001; margin: 0; }
   .settings-title { margin: 0 0 1.3rem; font-size: 1rem; font-weight: 400; }
   .setting-group { margin-bottom: 1.4rem; }
   .setting-label { display: block; margin-bottom: .65rem; font-size: .8rem; opacity: .75; }
@@ -657,14 +656,23 @@
       }
     });
   });
-  // 設定中は「読書設定」ボタンの画面上の座標を固定する。
-  // 本文中の文字を基準にしたスクロール補正は行わない。
+  // 設定を開いた時点のスクロール位置を維持する。
+  // スマホ縦書きはタイトル側がスクロール領域の右端なので、
+  // scrollLeftの絶対値ではなく「右端からの距離」を保存する。
   let settingsViewport = null;
+  function mobileVerticalReading() {
+    return !isMicrofiction && settings.direction === "vertical" && window.matchMedia("(max-width: 600px)").matches;
+  }
   function holdSettingsViewport() {
     if (!settingsViewport) return;
-    window.scrollTo({ left: settingsViewport.windowX, top: settingsViewport.windowY, behavior: "instant" });
-    layout.scrollLeft = settingsViewport.layoutX;
-    layout.scrollTop = settingsViewport.layoutY;
+    const saved = settingsViewport;
+    if (mobileVerticalReading() && saved.fromRight !== null) {
+      layout.scrollLeft = Math.max(0, layout.scrollWidth - layout.clientWidth - saved.fromRight);
+    } else {
+      layout.scrollLeft = saved.layoutX;
+    }
+    layout.scrollTop = saved.layoutY;
+    window.scrollTo({ left: saved.windowX, top: saved.windowY, behavior: "instant" });
   }
   fontSizeSlider.addEventListener("input", () => {
     settings.fontSize = fontSizes[Number(fontSizeSlider.value)];
@@ -677,23 +685,17 @@
   });
   function toggleSettingsPanel(open) {
     if (open && !settingsPanel.classList.contains("open")) {
-      const rect = settingsButton.getBoundingClientRect();
       settingsViewport = {
         windowX: window.scrollX, windowY: window.scrollY,
-        layoutX: layout.scrollLeft, layoutY: layout.scrollTop
+        layoutX: layout.scrollLeft, layoutY: layout.scrollTop,
+        fromRight: mobileVerticalReading()
+          ? Math.max(0, layout.scrollWidth - layout.clientWidth - layout.scrollLeft)
+          : null
       };
-      settingsButton.style.top = `${rect.top}px`;
-      settingsButton.style.left = `${rect.left}px`;
-      settingsButton.style.width = `${rect.width}px`;
-      settingsButton.classList.add("settings-anchor-locked");
     }
     settingsPanel.classList.toggle("open", open);
     settingsButton.setAttribute("aria-expanded", String(open));
     if (!open) {
-      settingsButton.classList.remove("settings-anchor-locked");
-      settingsButton.style.top = "";
-      settingsButton.style.left = "";
-      settingsButton.style.width = "";
       settingsViewport = null;
     } else {
       holdSettingsViewport();
