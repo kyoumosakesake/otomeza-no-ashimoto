@@ -505,6 +505,11 @@ button, a {
   color: var(--accent);
 }
 
+/* PCのみ：円は動かさず、中の文字だけ1px下げる */
+@media (min-width: 601px) {
+  .point-letter { transform: translateY(1px); }
+}
+
 /* スマートフォン */
 @media (max-width: 600px) {
   .page {
@@ -1212,8 +1217,10 @@ function createTimelinePoint(work, offset) {
     "false"
   );
 
-  button.textContent =
-    Array.from(work.title)[0];
+  const pointLetter = document.createElement("span");
+  pointLetter.className = "point-letter";
+  pointLetter.textContent = Array.from(work.title)[0];
+  button.appendChild(pointLetter);
 
   point.appendChild(button);
   timeline.appendChild(point);
