@@ -84,7 +84,6 @@
     .reply-notice { position:fixed; inset:0; z-index:9998; background:#1d3652; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:2rem; box-sizing:border-box; gap:1.2rem; }
     .reply-notice h2 { font-size:clamp(1.6rem,5vw,2.2rem); font-weight:400; letter-spacing:.13em; margin:0; }
     .reply-notice p { line-height:2; margin:0; }
-    .reply-notice input { width:min(520px,100%); box-sizing:border-box; background:#294560; color:white; border:1px solid #4b8d99; border-radius:4px; padding:.8rem; font:inherit; font-size:.82rem; }
     .reply-actions { display:flex; justify-content:center; gap:.8rem; flex-wrap:wrap; }
     .reply-actions a, .reply-actions button { background:#28bfb0; color:#132e45; border:1px solid #28bfb0; padding:.8rem 1.3rem; font:inherit; font-size:1rem; border-radius:4px; text-decoration:none; cursor:pointer; }
     .reply-actions button { background:transparent; color:white; border-color:#4b8d99; }
@@ -206,15 +205,12 @@
   </div>
   <section class="reply-notice" id="reply-notice" hidden aria-live="polite">
     <h2>交信を受信しました。</h2>
-    <p>あなたの言葉に、お返事が届いています。</p>
-    <label for="reply-url">秘密のリンク</label>
-    <input id="reply-url" type="text" readonly aria-label="返信確認用の秘密のリンク">
+    <p>あなたのことばに、お返事が届いています。</p>
     <div class="reply-actions">
-      <a id="view-reply" href="#">返信を確認する</a>
-      <button id="copy-reply" type="button">リンクをコピー</button>
+      <a id="view-reply" href="koushin-reply.html">返信を確認する</a>
       <button id="later" type="button">あとで読む</button>
     </div>
-    <p class="privacy">秘密のリンクは他人に見せないでください。このお知らせは、送信時にこの端末での通知を希望した場合にだけ表示されます。</p>
+    <p class="privacy">「あとで読む」を選んだお返事も、「交信の記録」から確認できます。このお知らせは、送信時にこの端末での通知を希望した場合にだけ表示されます。</p>
   </section>
 
   <script>
@@ -310,10 +306,8 @@
           if (typeof result.data().reply === 'string' && result.data().reply.trim()) { found = id; break; }
         }
         if (!found) { menu(); return; }
-        const url = new URL('koushin-reply.html', location.href);
-        url.hash = 'id=' + found;
-        document.getElementById('reply-url').value = url.href;
-        document.getElementById('view-reply').href = url.href;
+        // ブラウザ内の交信の記録へ案内する。
+        document.getElementById('view-reply').href = 'koushin-reply.html';
         overlay.hidden = false;
         await new Promise(resolve => setTimeout(resolve, 2000));
         overlay.hidden = true;
@@ -324,11 +318,6 @@
       finally { checking = false; open.textContent = 'ひらく'; }
     });
     document.getElementById('later').addEventListener('click', menu);
-    document.getElementById('copy-reply').addEventListener('click', async () => {
-      const field = document.getElementById('reply-url');
-      try { await navigator.clipboard.writeText(field.value); document.getElementById('copy-reply').textContent = 'コピーしました'; }
-      catch { field.focus(); field.select(); document.getElementById('copy-reply').textContent = 'リンクを選択しました'; }
-    });
   </script>
 </body>
 </html>
