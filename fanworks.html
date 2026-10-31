@@ -801,398 +801,73 @@ window.addEventListener("storage", event => {
    characters: novels.js の本文から自動計算（空白・改行を除く）。
    latest: 最新作のみ true にします。
 */
-const works = [
-  {
-    title: "やわらかなひびきで",
-    date: "2023-07-04",
-    characters: null,
-    detail: "「さぎりん」という呼び名の由来を尋ねる佐切。杠を「ゆずりん」と呼び返してみると、思いがけない反応が返ってくる。",
-    score: 5.1,
-    href: "reader.html?work=yawarakana-hibiki"
-  },
-  {
-    title: "あなたの心がわからない",
-    date: "2023-07-04",
-    characters: null,
-    detail: "殊現への尊敬を語るたび、杠のタオが乱れることを不思議に思う佐切。その感情が嫉妬であることには気づかない。",
-    score: 5.3,
-    href: "reader.html?work=anata-no-kokoro"
-  },
-  {
-    title: "心を震わせる呼び",
-    date: "2023-07-04",
-    characters: null,
-    detail: "杠を偽名のスミレと呼ぶことに慣れた佐切が、ふと本当の名を口にする。かつての呼び名に込められた親しさを描く。",
-    score: 5.1,
-    href: "reader.html?work=kokoro-wo-furuwaseru-yobi"
-  },
-  {
-    title: "心臓（ハート）の危機",
-    date: "2023-07-04",
-    characters: null,
-    detail: "絡んできた男たちを佐切が追い払う。自分を大切な人だと言い切る佐切の真剣さに、杠はかえって動揺してしまう。",
-    score: 5.3,
-    href: "reader.html?work=heart-no-kiki"
-  },
-  {
-    title: "私の甘味（スイーツ）",
-    date: "2023-07-04",
-    characters: null,
-    detail: "甘味処で羊羹を幸せそうに味わう佐切。普段の凛々しさとは違う無邪気な姿を、杠はひそかに愛おしく見守る。",
-    score: 5.3,
-    href: "reader.html?work=watashi-no-sweets"
-  },
-  {
-    title: "買わねば損",
-    date: "2023-07-04",
-    characters: null,
-    detail: "暑さに着物をはだける杠を佐切が注意する。花魁の真似でからかってみるものの、佐切には冗談が通じない。",
-    score: 5.4,
-    href: "reader.html?work=kawaneba-son"
-  },
-  {
-    title: "ありのままで",
-    date: "2023-07-04",
-    characters: null,
-    detail: "湯屋で忍術を解き、傷だらけの素肌を佐切に見せる杠。生き抜いてきた自分を受け入れる言葉に、心がほどけていく。",
-    score: 7.2,
-    href: "reader.html?work=arinomamade"
-  },
-  {
-    title: "ざわつき",
-    date: "2023-07-04",
-    characters: null,
-    detail: "支度をする杠の白いうなじに、思わず目を奪われる佐切。処刑人としての習性とは違う胸の高鳴りに戸惑う。",
-    score: 5.5,
-    href: "reader.html?work=zawatsuki"
-  },
-  {
-    title: "相克の逢",
-    date: "2023-07-04",
-    characters: null,
-    detail: "初めて触れ合う夜、互いのタオから伝わる緊張と欲望。かつての言葉を交わしながら、ふたりは愛を確かめ合う。",
-    score: 8.1,
-    href: "reader.html?work=sokoku-no-ai"
-  },
-  {
-    title: "乱し満たすもの",
-    date: "2023-07-04",
-    characters: null,
-    detail: "杠に手を褒められた佐切は、かつて島で交わしたやり取りを思い出す。何気ない言葉が思わぬ方向へ転がっていく。",
-    score: 8.5,
-    href: "reader.html?work=midashi-mitasu-mono"
-  },
-  {
-    title: "共に過ごす時間",
-    date: "2023-07-04",
-    characters: null,
-    detail: "傷だらけの身体をありのまま愛してくれる佐切。老いることを嫌っていた杠は、初めて誰かと歳を重ねたいと願う。",
-    score: 9.0,
-    href: "reader.html?work=tomo-ni-sugosu-jikan"
-  },
-  {
-    title: "愉楽を知るは",
-    date: "2023-07-07",
-    characters: null,
-    detail: "佐切に密かに薬を盛った杠。普段は理性で自分を律する佐切を解放しようと、彼女の知らない愉楽へ誘う。",
-    score: 7.9,
-    href: "reader.html?work=yuraku-wo-shiru-wa"
-  },
-  {
-    title: "手にしたい光",
-    date: "2023-07-07",
-    characters: null,
-    detail: "佐切との旅がいつか終わることを恐れる杠。互いを失いたくないという想いが、蛍の舞う夜にふたりを結びつける。",
-    score: 7.9,
-    href: "reader.html?work=te-ni-shitai-hikari"
-  },
-  {
-    title: "その心、満たされるまで",
-    date: "2023-07-08",
-    characters: null,
-    detail: "情事のあとすぐ眠る杠を心配し、佐切は触れ合うことを控え始める。しかし杠にとって、その眠りは深い幸福の証だった。",
-    score: 8.3,
-    href: "reader.html?work=sono-kokoro-mitasareru-made"
-  },
-  {
-    title: "不安を断ち切って",
-    date: "2023-07-12",
-    characters: null,
-    detail: "佐切に触れる際、無意識に気配を消してしまう杠。隠しきれない恋心に戸惑うなか、佐切から思いがけない言葉を聞く。",
-    score: 6.8,
-    href: "reader.html?work=fuan-wo-tachikitte"
-  },
-  {
-    title: "I am too happy.",
-    date: "2023-07-15",
-    characters: null,
-    detail: "旅先の温泉で互いへの欲望を自覚する佐切と杠。同性であることへの戸惑いを乗り越え、ふたりは初めて身体を重ねる。",
-    score: 8.1,
-    href: "reader.html?work=i-am-too-happy"
-  },
-  {
-    title: "Blue Green シリーズ",
-    date: "2023-07-20",
-    endDate: "2023-08-07",
-    characters: null,
-    detail: "京の都を訪れた佐切と杠。花街で出会った人々の事情に触れながら、互いの価値観や心の距離を少しずつ知っていく。",
-    score: 5.5,
-    href: "reader.html?work=blue-green"
-  },
-  {
-    title: "宵語り",
-    date: "2023-08-12",
-    characters: null,
-    detail: "傷ついた野良猫を保護した佐切と杠。ふたりの暮らしを見つめてきた猫の視点から、愛することと別れの悲しみを描く。",
-    score: 9.0,
-    href: "reader.html?work=yoigatari"
-  },
-  {
-    title: "筆が滑る",
-    date: "2023-09-30",
-    characters: null,
-    detail: "旅の記録をつける佐切は、杠と過ごす日々の豊かさを思う。余白にこっそり描いた絵を本人に見つかり、慌ててしまう。",
-    score: 5.5,
-    href: "reader.html?work=fude-ga-suberu"
-  },
-  {
-    title: "お互い様",
-    date: "2023-09-30",
-    characters: null,
-    detail: "酒に酔うと感情豊かになる佐切。そんな彼女に本心を伝えられない杠は、翌朝には忘れられてしまうことをもどかしく思う。",
-    score: 5.6,
-    href: "reader.html?work=otagaisama"
-  },
-  {
-    title: "ひとをみるひとよ",
-    date: "2023-09-30",
-    characters: null,
-    detail: "つらい過去があったからこそ出会えたふたり。佐切は運命ではなく、生き抜いてきた杠自身への感謝を伝える。",
-    score: 7.9,
-    href: "reader.html?work=hito-wo-miru-hito-yo"
-  },
-  {
-    title: "あらがい・いきがい",
-    date: "2023-09-30",
-    characters: null,
-    detail: "杠の身体に残る無数の傷痕をたどる佐切。そのひとつに秘められた過去を知り、互いが生きていることの尊さを確かめる。",
-    score: 9.5,
-    href: "reader.html?work=aragai-ikigai"
-  },
-  {
-    title: "嘘つきの本音",
-    date: "2023-10-30",
-    characters: null,
-    detail: "島を離れ、琉球に漂着した杠。自由を取り戻したはずの彼女は、佐切への想いに気づき、再会を願うようになる。",
-    score: 4.0,
-    href: "reader.html?work=usotsuki-no-honne"
-  },
-  {
-    title: "養護教諭の佐切さんと生徒の杠さん シリーズ",
-    date: "2024-02-04",
-    endDate: "2024-04-18",
-    characters: null,
-    detail: "養護教諭として働く佐切の前に、奔放な生徒・杠が現れる。教師と生徒という立場に悩みながら、ふたりは惹かれ合っていく。",
-    score: 7.9,
-    parody: true,
-    href: "reader.html?work=yogo-kyoyu"
-  },
-  {
-    title: "とけてしまうくらい",
-    date: "2024-05-02",
-    characters: null,
-    detail: "初めて身体を重ねる夜、傷痕を隠していた杠の秘密が明らかになる。佐切の深い愛情が、過去の痛みを優しく塗り替えていく。",
-    score: 8.2,
-    href: "reader.html?work=tokete-shimau-kurai"
-  },
-  {
-    title: "まっすぐな曲者",
-    date: "2024-05-02",
-    characters: null,
-    detail: "佐切を大胆に誘う杠だが、その態度は緊張を隠すためのもの。素直になれない恋人の、密かな駆け引きを描く。",
-    score: 8.4,
-    href: "reader.html?work=massugu-na-kusemono"
-  },
-  {
-    title: "限度まで蒸らされて",
-    date: "2024-05-02",
-    characters: null,
-    detail: "恋人としての触れ合いにも慣れてきた佐切。蒸し風呂での会話をきっかけに、新たな愛情表現を試そうとする。",
-    score: 8.7,
-    href: "reader.html?work=gendo-made-murasarete"
-  },
-  {
-    title: "あなたの心を味わいたい",
-    date: "2024-05-02",
-    characters: null,
-    detail: "いつも愛情を注いでくれる佐切を、今度は自分が満たしたい。杠は恋人の知らなかった表情を引き出そうとする。",
-    score: 8.5,
-    href: "reader.html?work=anata-no-kokoro-wo-ajiwaitai"
-  },
-  {
-    title: "丸餅ふたつ",
-    date: "2025-01-25",
-    characters: null,
-    detail: "冬の旅先で、将来への不安に沈む佐切。杠の温かな言葉と抱擁に触れ、ふたりで歩む未来への希望を取り戻していく。",
-    score: 8.6,
-    href: "reader.html?work=marumochi-futatsu"
-  },
-  {
-    title: "ふたり、手を繋いだら",
-    date: "2025-12-31",
-    characters: null,
-    detail: "幼い頃から孤独を抱えてきた佐切。杠との何気ないやり取りを通して、信頼できる仲間がいる幸福をあらためて噛みしめる。",
-    score: 6.5,
-    href: "reader.html?work=futari-te-wo-tsunaidara"
-  },
-  {
-    title: "ただそばに",
-    date: "2025-12-31",
-    characters: null,
-    detail: "旅先でひとりの時間を求める佐切と、置いていかれたように感じる杠。小さなすれ違いから、互いの存在の大きさに気づく。",
-    score: 6.3,
-    href: "reader.html?work=tada-soba-ni"
-  },
-  {
-    title: "風邪の功名",
-    date: "2026-01-13",
-    characters: null,
-    detail: "旅の途中で風邪をひいた佐切。杠の献身的な看病を受け、普段は見えにくい彼女の優しさと深い愛情を知る。",
-    score: 5.2,
-    href: "reader.html?work=kaze-no-komyo"
-  },
-  {
-    title: "また進むため",
-    date: "2026-01-23",
-    characters: null,
-    detail: "故郷と過去を思い返す杠は、旅先で不思議な老婆と出会う。人生を双六になぞらえ、佐切と進む未来へ思いを馳せる。",
-    score: 6.2,
-    href: "reader.html?work=mata-susumu-tame"
-  },
-  {
-    title: "忍ぶれど",
-    date: "2026-02-01",
-    characters: null,
-    detail: "佐切への恋心を隠し続ける杠。大阪の街を散策するなか、何気ない優しさに触れるたび、秘めた想いは膨らんでいく。",
-    score: 7.8,
-    href: "reader.html?work=shinoburedo"
-  },
-  {
-    title: "ひとつ目の羽ばたき",
-    date: "2026-02-14",
-    characters: null,
-    detail: "島から帰還した佐切は、山田家での生き方を見つめ直す。自ら選んだ道を進む決意を胸に、故郷を離れて旅立つ。",
-    score: 4.8,
-    href: "reader.html?work=hitotsume-no-habataki"
-  },
-  {
-    title: "前向きに進む",
-    date: "2026-03-14",
-    characters: null,
-    detail: "冗談めかして好意を伝える杠に、佐切はすでに好きだと告げる。思いがけない率直さに、杠の心は大きく揺れる。",
-    score: 5.1,
-    href: "reader.html?work=maemuki-ni-susumu"
-  },
-  {
-    title: "たしかな色のある世界",
-    date: "2026-03-14",
-    characters: null,
-    detail: "鈴鹿峠を越える途中、杠から赤翡翠の鳴き声を教わる佐切。彼女の知る世界に触れ、愛する人への理解を深めていく。",
-    score: 7.1,
-    href: "reader.html?work=tashikana-iro-no-aru-sekai"
-  },
-  {
-    title: "ふくらむ手土産",
-    date: "2026-03-14",
-    characters: null,
-    detail: "買い物から帰った杠の余計な土産に呆れる佐切。しかし、思いがけず現れた紙風船が、幼い頃の心残りを満たしてくれる。",
-    score: 6.0,
-    href: "reader.html?work=fukuramu-temiyage"
-  },
-  {
-    title: "秘めごとは向こう側に",
-    date: "2026-03-14",
-    characters: null,
-    detail: "習い事をさぼった少女が、雨の林でふたりの女性と出会う。彼女たちの親密な姿を目撃し、恋の新たなかたちを知る。",
-    score: 9.2,
-    href: "reader.html?work=himegoto-wa-mukougawa-ni"
-  },
-  {
-    title: "花は散るゆえに",
-    date: "2026-03-21",
-    characters: null,
-    detail: "満ち足りた日々を送る杠は、いつか訪れる別れを恐れる。佐切の言葉に支えられ、今ある幸福を大切にしようと決める。",
-    score: 9.6,
-    href: "reader.html?work=hana-wa-chiru-yue-ni"
-  },
-  {
-    title: "...Me too.",
-    date: "2026-04-07",
-    characters: null,
-    detail: "初めて結ばれた翌朝、昨夜の出来事を思い返す杠と佐切。身体だけでなく心も近づいたことを、互いに実感していく。",
-    score: 8.1,
-    href: "reader.html?work=me-too"
-  },
-  {
-    title: "夢のつづきは",
-    date: "2026-04-15",
-    characters: null,
-    detail: "春の旅路で廃屋に立ち寄った佐切は、不思議な夢想にとらわれる。杠と歩む日々の先に、まだ見ぬ未来を思い描く。",
-    score: 6.0,
-    href: "reader.html?work=yume-no-tsuzuki-wa"
-  },
-  {
-    title: "雪女の佐切さんと鬼の杠さん シリーズ",
-    date: "2026-05-03",
-    endDate: "2026-05-20",
-    characters: null,
-    detail: "妖怪たちの世界で出会った雪女の佐切と鬼の杠。異なる生き方をしてきたふたりが、共に過ごす未来を信じられるようになる。",
-    score: 8.0,
-    parody: true,
-    href: "reader.html?work=yukionna-oni"
-  },
-  {
-    title: "追いかけっこ",
-    date: "2026-06-28",
-    characters: null,
-    detail: "梅雨の旅先で、互いの価値観の違いに触れる佐切と杠。自分にはない相手の美点に憧れながら、並んで歩いていく。",
-    score: 5.5,
-    href: "reader.html?work=oikakekko"
-  },
-  {
-    title: "恋を鳴くには",
-    date: "2026-07-05",
-    characters: null,
-    detail: "夏の夜道を佐切と歩く杠。胸に膨らむ恋心をまだ言葉にできず、虫の声に紛れさせるように小さく想いをこぼす。",
-    score: 6.9,
-    href: "reader.html?work=koi-wo-naku-niwa"
-  },
-  {
-    title: "生に冒され",
-    date: "2026-07-18",
-    characters: null,
-    detail: "島から帰還した佐切は、仲間たちとの別れを胸に日常へ戻る。杠への想いを自覚し、再会を願うことが生きる希望となる。",
-    score: 4.1,
-    href: "reader.html?work=sei-ni-okasare"
-  },
-  {
-    title: "再会の夜",
-    date: "2026-09-30",
-    characters: null,
-    detail: "画眉丸夫妻の家に泊まった佐切と杠。再会の喜びを分かち合いながら、杠は佐切と明日も、その先も共にいたいと願う。",
-    score: 4.9,
-    href: "reader.html?work=saikai-no-yoru"
-  },
-  {
-    title: "旅は道連れ",
-    date: "2026-10-20",
-    characters: null,
-    detail: "杠が旅に同行する理由を不思議に思う佐切。しかし共に過ごす日々のなかで、彼女と歩くことそのものに喜びを見いだしていく。",
-    score: 5.0,
-    latest: true,
-    href: "reader.html?work=tabi-wa-michizure"
-  }
+/* 作品情報は novels.js で一元管理。新作は novels.js に追加するだけで反映されます。 */
+const originalWorkOrder = [
+  "yawarakana-hibiki",
+  "anata-no-kokoro",
+  "kokoro-wo-furuwaseru-yobi",
+  "heart-no-kiki",
+  "watashi-no-sweets",
+  "kawaneba-son",
+  "arinomamade",
+  "zawatsuki",
+  "sokoku-no-ai",
+  "midashi-mitasu-mono",
+  "tomo-ni-sugosu-jikan",
+  "yuraku-wo-shiru-wa",
+  "te-ni-shitai-hikari",
+  "sono-kokoro-mitasareru-made",
+  "fuan-wo-tachikitte",
+  "i-am-too-happy",
+  "blue-green",
+  "yoigatari",
+  "fude-ga-suberu",
+  "otagaisama",
+  "hito-wo-miru-hito-yo",
+  "aragai-ikigai",
+  "usotsuki-no-honne",
+  "yogo-kyoyu",
+  "tokete-shimau-kurai",
+  "massugu-na-kusemono",
+  "gendo-made-murasarete",
+  "anata-no-kokoro-wo-ajiwaitai",
+  "marumochi-futatsu",
+  "futari-te-wo-tsunaidara",
+  "tada-soba-ni",
+  "kaze-no-komyo",
+  "mata-susumu-tame",
+  "shinoburedo",
+  "hitotsume-no-habataki",
+  "maemuki-ni-susumu",
+  "tashikana-iro-no-aru-sekai",
+  "fukuramu-temiyage",
+  "himegoto-wa-mukougawa-ni",
+  "hana-wa-chiru-yue-ni",
+  "me-too",
+  "yume-no-tsuzuki-wa",
+  "yukionna-oni",
+  "oikakekko",
+  "koi-wo-naku-niwa",
+  "sei-ni-okasare",
+  "saikai-no-yoru",
+  "tabi-wa-michizure"
 ];
+const originalOrderIndex = new Map(originalWorkOrder.map((id, index) => [id, index]));
+const works = (typeof novels !== "undefined" ? novels : []).map((novel, index) => ({
+  title: novel.title,
+  date: novel.date || "",
+  ...(novel.endDate ? { endDate: novel.endDate } : {}),
+  characters: null,
+  detail: novel.detail || "",
+  score: Number.isFinite(Number(novel.score)) ? Number(novel.score) : 5.0,
+  ...(novel.parody ? { parody: true } : {}),
+  href: `reader.html?work=${encodeURIComponent(novel.id)}`,
+  _order: originalOrderIndex.has(novel.id) ? originalOrderIndex.get(novel.id) : originalWorkOrder.length + index
+})).sort((a, b) => a._order - b._order);
+/* 最新作は執筆日から自動判定（同日の場合は novels.js の登録順を優先）。 */
+const latestDate = works.reduce((latest, work) => work.date > latest ? work.date : latest, "");
+const latestWorkId = [...works].reverse().find(work => work.date === latestDate)?.href;
+works.forEach(work => { work.latest = work.href === latestWorkId; });
 
 /* novels.js の本文から文字数を自動計算します。
    空白（全角・半角）・改行・タブは数えず、句読点や記号は数えます。
