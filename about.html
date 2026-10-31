@@ -22,7 +22,13 @@
     .guide p { margin-bottom:1.15em; }
     .guide h3:first-of-type { margin-top:8px; }
     .closing { margin-bottom:0; }
-    .last-question { margin:clamp(75px,13vw,120px) 0 0; text-align:center; letter-spacing:.11em; }
+    .last-question { margin:clamp(75px,13vw,120px) 0 0; text-align:center; letter-spacing:.11em; color:#b4d1d1; animation:moonlight-breath 4.8s ease-in-out infinite; }
+    /* 月明かり：文字は淡く保ち、周囲のごく弱い光だけがゆっくり明滅。 */
+    @keyframes moonlight-breath {
+      0%,100% { text-shadow:0 0 2px rgba(165,200,201,.08),0 0 7px rgba(165,200,201,.04); }
+      50% { text-shadow:0 0 4px rgba(165,200,201,.34),0 0 12px rgba(165,200,201,.18); }
+    }
+    @media (prefers-reduced-motion:reduce) { .last-question { animation:none; text-shadow:0 0 5px rgba(165,200,201,.15); } }
     .bottom-back { display:block; width:fit-content; margin:calc(3 * 2.25em) auto 0; color:var(--text); text-decoration:none; font-size:.9rem; letter-spacing:.07em; opacity:.8; transition:color .25s,opacity .25s; }
     .bottom-back:hover,.bottom-back:focus-visible { color:var(--accent); opacity:1; }
     @media(max-width:600px) { main { width:calc(100% - 44px); padding-top:115px; padding-bottom:90px; } h1 { margin-bottom:52px; } section { margin-bottom:55px; } h2 { font-size:1.16rem; } p { font-size:.96rem; line-height:2.15; } .last-question { margin-top:88px; } }
