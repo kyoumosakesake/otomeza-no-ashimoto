@@ -10,6 +10,11 @@
     /* 共通デザインを保ちながら、このページの背景の固定星を非表示にする */
     body::before { display: none !important; }
     .hero .symbol { animation: none !important; text-shadow: none !important; }
+    /* 送信フォーム右上の数字は保存済み件数に連動 */
+    .panel:before { content: none !important; }
+    .panel--send { position: relative; }
+    .panel--send .signal-counter { position: absolute; top: -18px; right: 0; color: rgba(138,214,201,.65); font-family: Georgia, serif; font-size: 10px; letter-spacing: .2em; }
+    .signal-counter__count.is-full { color: #f07575; }
     .record-panel { max-width: 650px; margin: 0 auto 2.5rem; }
     .record-title { font-size: 1.15rem; font-weight: normal; color: #28bfb0; letter-spacing: .08em; margin: 0 0 1rem; }
     .record-limit {
@@ -48,7 +53,7 @@
 </head>
 <body>
 <main class="shell">
-  <nav class="nav"><a href="menu.html">← メニューに戻る</a></nav>
+  <nav class="nav"><a href="menu.html">← メニューへ戻る</a></nav>
   <header class="hero">
     <div class="symbol">✦ · ✦</div>
     <h1>交信</h1>
@@ -70,7 +75,8 @@
     <p class="note">記録はこのブラウザにのみ保存されます。ブラウザのデータを削除すると、過去の交信を確認できなくなる場合があります。共有端末をご利用の際はご注意ください。</p>
   </section>
 
-  <section class="panel">
+  <section class="panel panel--send">
+    <div class="signal-counter" aria-label="保存済みの交信件数">SIGNAL / <span id="signal-count" class="signal-counter__count">00</span></div>
     <hr class="line">
     <form id="form">
       <label for="body" class="label">ことばを送る</label>
@@ -140,6 +146,15 @@ function storeHistory(id, receiveNotice) {
   if (receiveNotice) notices.push(id);
   localStorage.setItem(NOTICE_KEY, JSON.stringify(notices.slice(-20)));
 }
+function updateSignalCount() {
+  const count = getHistory().length;
+  const el = $('#signal-count');
+  el.textContent = String(count).padStart(2, '0');
+  el.classList.toggle('is-full', count === 20);
+}
+window.addEventListener('pageshow', updateSignalCount);
+window.addEventListener('storage', updateSignalCount);
+updateSignalCount();
 function storageAvailable() {
   try {
     const testKey = 'otomeza-koushin-storage-check';
@@ -180,6 +195,7 @@ $('#form').addEventListener('submit', async event => {
     });
     try {
       storeHistory(id, $('#remember-reply').checked);
+      updateSignalCount();
     } catch (saveError) {
       console.error('交信の記録を保存できませんでした', saveError);
       // 記録を失う送信を避けるため、可能な場合は送信自体を取り消す。
