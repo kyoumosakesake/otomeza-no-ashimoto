@@ -1,136 +1,208 @@
-<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="referrer" content="no-referrer"><title>交信｜乙女座の脚元</title><link rel="stylesheet" href="koushin.css"><style>
-/* このページの背景に固定された小さな星だけを非表示にする。上部の二つの星と送信演出は維持。 */
-body::before { display: none !important; }
-.hero .symbol { animation: none !important; text-shadow: none !important; }
-/* 送信成功後だけ表示する、2秒間の交信演出 */
-.koushin-transmission {
-  position: fixed; inset: 0; z-index: 9999;
-  display: grid; place-items: center;
-  background: #1d3652;
-  pointer-events: none;
-}
-.koushin-transmission[hidden] { display: none !important; }
-.koushin-transmission__symbol {
-  display: flex; align-items: center; justify-content: center;
-  gap: clamp(24px, 6vw, 68px);
-  color: #29c5be;
-  font-family: Georgia, serif;
-  font-size: clamp(64px, 14vw, 136px);
-  line-height: 1;
-}
-.koushin-transmission__star { display: inline-block; animation: none; text-shadow: none; filter: none; }
-.koushin-transmission__dot {
-  font-size: .28em; opacity: .75; line-height: 1;
-}
-.koushin-transmission__star--left {
-  animation: koushin-left-light 2s ease-in-out both;
-}
-@keyframes koushin-left-light {
-  0%, 100% { color: #29c5be; text-shadow: 0 0 0 transparent; filter: brightness(1); transform: scale(1); }
-  38%, 62% { color: #d3fff5; text-shadow: 0 0 16px rgba(91, 255, 224, .9), 0 0 45px rgba(57, 226, 207, .8), 0 0 95px rgba(57, 226, 207, .38); filter: brightness(1.5); transform: scale(1.13); }
-}
-@media (prefers-reduced-motion: reduce) {
-  .koushin-transmission__star--left { animation: none; color: #d3fff5; }
-}
-/* 交信の記録は折り返し配置し、増えた場合は領域内でスクロール。 */
-#saved-results-list {
-  display: grid !important;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr));
-  gap: .75rem !important;
-  max-height: 260px;
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  padding: .35rem .4rem .55rem .1rem;
-  scrollbar-color: rgba(40,191,176,.65) transparent;
-}
-#saved-results-list .btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-sizing: border-box;
-  width: 100%;
-  min-width: 0;
-  text-align: center;
-  white-space: normal;
-}
-.record-limit {
-  border-left: 2px solid #28bfb0;
-  background: rgba(40,191,176,.085);
-  padding: 1rem 1.1rem;
-  margin: 1.3rem 0 1rem;
-  line-height: 1.9;
-}
-.record-limit strong { color: #7fe0d7; font-weight: normal; }
-.record-limit ul { margin: .45rem 0 0; padding-left: 1.5em; }
-@media (max-width: 600px) {
-  #saved-results-list { grid-template-columns: repeat(2, minmax(0, 1fr)); max-height: 270px; }
-  #saved-results-list .btn { font-size: .82rem; padding: .8rem .35rem; }
-}
-@media (max-width: 370px) {
-  #saved-results-list { grid-template-columns: 1fr; }
-}
-</style></head><body><main class="shell"><nav class="nav"><a href="menu.html">← メニューに戻る</a></nav><header class="hero"><div class="symbol">✦ · ✦</div><h1>交信</h1><p>ここから、私に言葉を届けることができます。<br>名前は必要ありません。感想でも、質問でも、ひとことでも。<br>お返事は気まぐれです。</p></header><section id="saved-results" class="receipt" aria-label="交信の記録" style="max-width:650px;margin:0 auto 2.5rem">
-  <h2 style="font-size:1.15rem;font-weight:normal;color:#28bfb0;letter-spacing:.08em">交信の記録</h2>
-  <p class="note">この端末に保存した交信を、いつでも確認できます。「あとで読む」を選んだお返事も、再送信せずにここから開けます。</p>
-  <p id="saved-results-empty" class="note" hidden>この端末に保存された交信はまだありません。送信時に「この端末で返信のお知らせを受け取る」を選ぶと、ここに記録されます。</p>
-  <div id="saved-results-list" class="actions"></div>
-  <div class="record-limit" role="note"><strong>交信の記録について</strong><ul><li>保存件数：最大20件</li><li>21件目を保存すると、最も古い記録が一覧から外れます。</li><li>新しい記録から順番に表示されます。</li></ul></div>
-  <p class="note">記録はこのブラウザにのみ保存されます。ブラウザのデータを削除すると失われるため、秘密のリンクも別途保存してください。共有端末ではご注意ください。</p>
-</section>
-<section class="panel"><hr class="line"><form id="form"><label for="body" class="label">ことばを送る</label><textarea id="body" class="text" maxlength="4000" placeholder="ここにメッセージをどうぞ。" required></textarea><p class="hint"><span id="count">0</span> / 4000文字</p><div class="actions"><button id="send" class="btn primary" type="submit">送信する ↗</button></div><label class="note" style="display:block;line-height:1.9;margin-top:1.1rem"><input type="checkbox" id="remember-reply" style="accent-color:#28bfb0;vertical-align:middle;margin-right:.5em"><span style="color:#28bfb0">この端末で返信のお知らせを受け取る（任意）</span><br><span style="opacity:.85">選ぶと、次回このブラウザでトップページの「ひらく」を押したとき、返信があればお知らせします。共有端末では選ばないでください。</span></label><p class="note">届いた言葉は、管理者だけが読みます。返信はお約束できません。送信後に発行される秘密のリンクから、返信の確認と送信の取り消しができます。リンクをなくすと確認できなくなります。</p><p id="status" class="status" role="status" aria-live="polite"></p></form><section id="done" class="receipt" hidden><h2>ことばをおくりました。</h2><p>このリンクを保存してください。返信が届いた場合、このリンクから確認できます。</p><input id="receipt-url" type="text" readonly aria-label="秘密のリンク"><div class="actions"><button class="btn primary" id="copy" type="button">リンクをコピー</button><a class="btn" id="open" href="#">確認ページを開く</a></div><p class="note">このリンクを他の人に見せないでください。リンクを知る人はメッセージを閲覧・削除できます。</p></section></section></main><div id="koushin-transmission" class="koushin-transmission" hidden aria-hidden="true">
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="referrer" content="no-referrer">
+  <title>交信｜乙女座の脚元</title>
+  <link rel="stylesheet" href="koushin.css">
+  <style>
+    /* 共通デザインを保ちながら、このページの背景の固定星を非表示にする */
+    body::before { display: none !important; }
+    .hero .symbol { animation: none !important; text-shadow: none !important; }
+    .record-panel { max-width: 650px; margin: 0 auto 2.5rem; }
+    .record-title { font-size: 1.15rem; font-weight: normal; color: #28bfb0; letter-spacing: .08em; margin: 0 0 1rem; }
+    .record-limit {
+      border-left: 2px solid #28bfb0;
+      background: rgba(40,191,176,.085);
+      padding: 1rem 1.1rem;
+      margin: 1.3rem 0 1rem;
+      line-height: 1.9;
+    }
+    .record-limit strong { color: #7fe0d7; font-weight: normal; }
+    .record-limit ul { margin: .45rem 0 0; padding-left: 1.5em; }
+    .record-action { margin: 1.5rem 0; }
+    .record-action .btn { min-width: 210px; text-align: center; }
+    .koushin-transmission {
+      position: fixed; inset: 0; z-index: 9999;
+      display: grid; place-items: center;
+      background: #1d3652; pointer-events: none;
+    }
+    .koushin-transmission[hidden] { display: none !important; }
+    .koushin-transmission__symbol {
+      display: flex; align-items: center; justify-content: center;
+      gap: clamp(24px, 6vw, 68px); color: #29c5be;
+      font-family: Georgia, serif; font-size: clamp(64px, 14vw, 136px); line-height: 1;
+    }
+    .koushin-transmission__star { display: inline-block; animation: none; text-shadow: none; filter: none; }
+    .koushin-transmission__dot { font-size: .28em; opacity: .75; line-height: 1; }
+    .koushin-transmission__star--left { animation: koushin-left-light 2s ease-in-out both; }
+    @keyframes koushin-left-light {
+      0%, 100% { color: #29c5be; text-shadow: none; filter: brightness(1); transform: scale(1); }
+      38%, 62% { color: #d3fff5; text-shadow: 0 0 16px rgba(91,255,224,.9), 0 0 45px rgba(57,226,207,.8), 0 0 95px rgba(57,226,207,.38); filter: brightness(1.5); transform: scale(1.13); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .koushin-transmission__star--left { animation: none; color: #d3fff5; }
+    }
+  </style>
+</head>
+<body>
+<main class="shell">
+  <nav class="nav"><a href="menu.html">← メニューに戻る</a></nav>
+  <header class="hero">
+    <div class="symbol">✦ · ✦</div>
+    <h1>交信</h1>
+    <p>ここから、私にことばを届けることができます。<br>名前は必要ありません。感想でも、質問でも、ひとことでも。<br>お返事は気まぐれです。</p>
+  </header>
+
+  <section class="receipt record-panel" aria-label="交信の記録">
+    <h2 class="record-title">交信の記録</h2>
+    <p class="note">この端末に保存した交信を、いつでも確認できます。「あとで読む」を選んだお返事も、再送信せずにここから開けます。</p>
+    <div class="record-action"><a class="btn" href="koushin-reply.html">交信の結果を見る←</a></div>
+    <div class="record-limit" role="note">
+      <strong>交信の記録について</strong>
+      <ul>
+        <li>保存件数：最大20件</li>
+        <li>21件目を保存すると、最も古い記録が一覧から外れます。</li>
+        <li>新しい記録から順番に表示されます。</li>
+      </ul>
+    </div>
+    <p class="note">記録はこのブラウザにのみ保存されます。ブラウザのデータを削除すると、過去の交信を確認できなくなる場合があります。共有端末をご利用の際はご注意ください。</p>
+  </section>
+
+  <section class="panel">
+    <hr class="line">
+    <form id="form">
+      <label for="body" class="label">ことばを送る</label>
+      <textarea id="body" class="text" maxlength="4000" placeholder="ここにメッセージをどうぞ。" required></textarea>
+      <p class="hint"><span id="count">0</span> / 4000文字</p>
+      <div class="actions"><button id="send" class="btn primary" type="submit">送信する ↗</button></div>
+      <label class="note" style="display:block;line-height:1.9;margin-top:1.1rem">
+        <input type="checkbox" id="remember-reply" style="accent-color:#28bfb0;vertical-align:middle;margin-right:.5em">
+        <span style="color:#28bfb0">この端末で返信のお知らせを受け取る（任意）</span><br>
+        <span style="opacity:.85">選ぶと、次回このブラウザでトップページの「ひらく」を押したとき、返信があればお知らせします。選ばなくても交信の記録は残ります。共有端末では選ばないでください。</span>
+      </label>
+      <p class="note">届いたことばは、管理者だけが読みます。返信はお約束できません。送信したメッセージとお返事は、このブラウザの「交信の記録」から確認できます。</p>
+      <p id="status" class="status" role="status" aria-live="polite"></p>
+    </form>
+    <section id="done" class="receipt" hidden>
+      <h2>ことばをおくりました。</h2>
+      <p>送信したメッセージは「交信の記録」からいつでも確認できます。</p>
+      <div class="actions">
+        <a class="btn primary" href="koushin-reply.html">交信の結果を見る←</a>
+        <a class="btn" href="menu.html">メニュー一覧へ</a>
+      </div>
+    </section>
+  </section>
+</main>
+
+<div id="koushin-transmission" class="koushin-transmission" hidden aria-hidden="true">
   <div class="koushin-transmission__symbol">
     <span class="koushin-transmission__star koushin-transmission__star--left">✦</span>
     <span class="koushin-transmission__dot">·</span>
     <span class="koushin-transmission__star">✦</span>
   </div>
-</div><script type="module">
-import {db} from './archive-common.js';
-import {doc,setDoc,serverTimestamp} from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js';
-const $=s=>document.querySelector(s);const body=$('#body');body.addEventListener('input',()=>$('#count').textContent=[...body.value].length);
-// 保存された秘密の交信リンクを一覧に戻す。送信時に通知を希望した端末のみ表示。
-const receiptKey='otomeza-koushin-receipts-v1';
-function showSavedResults(){
-  const section=$('#saved-results'), list=$('#saved-results-list');
-  list.replaceChildren();
-  let ids=[];
-  try {
-    const saved=JSON.parse(localStorage.getItem(receiptKey)||'[]');
-    if(Array.isArray(saved)) ids=[...new Set(saved.filter(id=>typeof id==='string'&&/^[A-Za-z0-9_-]{43}$/.test(id)))].slice(-20).reverse();
-  }catch(e){console.warn('交信の記録を読み取れませんでした',e);}
-  $('#saved-results-empty').hidden=ids.length!==0;
-  ids.forEach((id,index)=>{
-    const link=document.createElement('a');
-    link.className='btn';
-    link.textContent='交信の結果を見る←';
-    const url=new URL('koushin-reply.html',location.href);
-    url.hash='id='+id;
-    link.href=url.href;
-    list.append(link);
-  });
-}
-showSavedResults();
+</div>
 
+<script type="module">
+import { db } from './archive-common.js';
+import { doc, setDoc, deleteDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js';
+
+const $ = selector => document.querySelector(selector);
+const body = $('#body');
+const HISTORY_KEY = 'otomeza-koushin-history-v1';
+const NOTICE_KEY = 'otomeza-koushin-receipts-v1'; // 既存トップページの返信通知用
+const ID_PATTERN = /^[A-Za-z0-9_-]{43}$/;
+const validId = id => typeof id === 'string' && ID_PATTERN.test(id);
+
+body.addEventListener('input', () => { $('#count').textContent = [...body.value].length; });
+
+function readIds(key) {
+  try {
+    const saved = JSON.parse(localStorage.getItem(key) || '[]');
+    return Array.isArray(saved) ? [...new Set(saved.filter(validId))].slice(-20) : [];
+  } catch { return []; }
+}
+function getHistory() {
+  // 以前のバージョンで保存された交信を、最初のアクセス時に引き継ぐ。
+  if (localStorage.getItem(HISTORY_KEY) === null) {
+    const previous = readIds(NOTICE_KEY);
+    localStorage.setItem(HISTORY_KEY, JSON.stringify(previous));
+    return previous;
+  }
+  return readIds(HISTORY_KEY);
+}
+function storeHistory(id, receiveNotice) {
+  const history = [...getHistory().filter(item => item !== id), id].slice(-20);
+  localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+  // 通知希望者だけを従来のキーに保存し、20件から外れたIDは通知対象からも外す。
+  const notices = readIds(NOTICE_KEY).filter(item => history.includes(item) && item !== id);
+  if (receiveNotice) notices.push(id);
+  localStorage.setItem(NOTICE_KEY, JSON.stringify(notices.slice(-20)));
+}
+function storageAvailable() {
+  try {
+    const testKey = 'otomeza-koushin-storage-check';
+    localStorage.setItem(testKey, '1');
+    localStorage.removeItem(testKey);
+    getHistory();
+    return true;
+  } catch { return false; }
+}
+function makeId() {
+  const bytes = crypto.getRandomValues(new Uint8Array(32));
+  return btoa(String.fromCharCode(...bytes)).replaceAll('+', '-').replaceAll('/', '_').replaceAll('=', '');
+}
 async function showTransmission() {
   const overlay = $('#koushin-transmission');
   overlay.hidden = false;
-  try {
-    await new Promise(resolve => setTimeout(resolve, 2000));
-  } finally {
-    overlay.hidden = true;
+  try { await new Promise(resolve => setTimeout(resolve, 2000)); }
+  finally { overlay.hidden = true; }
+}
+
+$('#form').addEventListener('submit', async event => {
+  event.preventDefault();
+  const text = body.value.trim();
+  if (!text) { $('#status').textContent = 'メッセージを入力してください。'; return; }
+  if ([...text].length > 4000) { $('#status').textContent = '4000文字以内で入力してください。'; return; }
+  if (!storageAvailable()) {
+    $('#status').textContent = 'このブラウザに交信の記録を保存できません。プライベートブラウズやブラウザの保存設定をご確認ください。';
+    return;
   }
-}
-function makeId(){const bytes=crypto.getRandomValues(new Uint8Array(32));return btoa(String.fromCharCode(...bytes)).replaceAll('+','-').replaceAll('/','_').replaceAll('=','');}
-$('#form').addEventListener('submit',async e=>{e.preventDefault();const text=body.value.trim();if(!text){$('#status').textContent='メッセージを入力してください。';return;}if(text.length>4000){$('#status').textContent='4000文字以内で入力してください。';return;}if(!confirm('このメッセージを送信しますか？'))return;$('#send').disabled=true;$('#status').textContent='送信中です……';try{const id=makeId();await setDoc(doc(db,'koushin',id),{body:text,createdAt:serverTimestamp(),read:false,archived:false,reply:null});const url=new URL('koushin-reply.html',location.href);url.hash='id='+id;$('#receipt-url').value=url.href;$('#open').href=url.href;
-// 明示的に希望した場合だけ、秘密のIDをこのブラウザに記録する。
-if ($('#remember-reply').checked) {
+  if (!confirm('このメッセージを送信しますか？')) return;
+
+  $('#send').disabled = true;
+  $('#status').textContent = '送信中です……';
+  const id = makeId();
   try {
-    const key='otomeza-koushin-receipts-v1';
-    const current=JSON.parse(localStorage.getItem(key)||'[]');
-    const ids=Array.isArray(current)?current.filter(x=>typeof x==='string'&&/^[A-Za-z0-9_-]{43}$/.test(x)):[];
-    localStorage.setItem(key,JSON.stringify([...new Set([...ids,id])].slice(-20)));
-    showSavedResults();
-  } catch (err) { console.warn('通知設定を保存できませんでした',err); }
-}
-await showTransmission();$('#form').hidden=true;$('#done').hidden=false;history.replaceState(null,'',location.pathname); }catch(err){console.error(err);$('#status').textContent='送信できませんでした。通信状態やFirestoreの設定をご確認ください。';}finally{$('#send').disabled=false;}});
-$('#copy').onclick=async()=>{try{await navigator.clipboard.writeText($('#receipt-url').value);$('#copy').textContent='コピーしました';}catch{$('#receipt-url').select();$('#copy').textContent='リンクを選択しました';}};
-</script></body></html>
+    await setDoc(doc(db, 'koushin', id), {
+      body: text, createdAt: serverTimestamp(), read: false, archived: false, reply: null
+    });
+    try {
+      storeHistory(id, $('#remember-reply').checked);
+    } catch (saveError) {
+      console.error('交信の記録を保存できませんでした', saveError);
+      // 記録を失う送信を避けるため、可能な場合は送信自体を取り消す。
+      try {
+        await deleteDoc(doc(db, 'koushin', id));
+        $('#status').textContent = 'ブラウザに記録を保存できなかったため、送信を取り消しました。保存設定をご確認ください。';
+      } catch (rollbackError) {
+        console.error('送信の取り消しに失敗しました', rollbackError);
+        $('#status').textContent = '送信されましたが、ブラウザへの記録保存に失敗しました。管理者にご連絡ください。';
+      }
+      return;
+    }
+    await showTransmission();
+    $('#form').hidden = true;
+    $('#done').hidden = false;
+    history.replaceState(null, '', location.pathname);
+  } catch (error) {
+    console.error(error);
+    $('#status').textContent = '送信できませんでした。通信状態やFirestoreの設定をご確認ください。';
+  } finally {
+    $('#send').disabled = false;
+  }
+});
+</script>
+</body>
+</html>
