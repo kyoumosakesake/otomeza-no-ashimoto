@@ -348,7 +348,7 @@ button, a {
 .story-link {
   display: inline-block;
   color: var(--background);
-  font-size: .85rem;
+  font-size: calc(.85rem + 2px);
   text-decoration: none;
   border-bottom: 1px solid var(--accent);
 }
@@ -955,7 +955,14 @@ function positionPopup(button) {
   if (button.classList.contains("work-trigger")) {
     const row = button.closest(".work-list li");
     const rowRect = row ? row.getBoundingClientRect() : rect;
-    popup.style.left = `${window.innerWidth - popupWidth}px`;
+    // PCでは最新作カード（.writing-order）の右端にポップアップの右端を揃える。
+    // 高さ・縦位置はこれまでどおり、選択した作品行の下端を基準にする。
+    if (window.matchMedia("(min-width: 601px)").matches) {
+      const listRect = writingOrder.getBoundingClientRect();
+      popup.style.left = `${Math.max(margin, listRect.right - popupWidth)}px`;
+    } else {
+      popup.style.left = `${window.innerWidth - popupWidth}px`;
+    }
     popup.style.top = `${rowRect.bottom - popupHeight}px`;
     return;
   }
