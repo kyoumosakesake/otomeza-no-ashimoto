@@ -414,6 +414,32 @@ button, a {
   letter-spacing: .12em;
   opacity: .7;
 }
+/* 年別の開閉ボタン */
+.year-heading-row {
+  display: flex;
+  align-items: center;
+  gap: 1em;
+  margin-bottom: 1.3rem;
+}
+.year-heading-row .year-title { margin: 0; }
+.year-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 25px;
+  height: 25px;
+  padding: 0;
+  border: 1px solid rgba(255,255,255,.7);
+  border-radius: 50%;
+  background: transparent;
+  color: var(--white);
+  font: 19px/1 sans-serif;
+  cursor: pointer;
+}
+.year-toggle:hover { border-color: var(--accent); color: var(--accent); }
+.year-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+.work-list[hidden] { display: none !important; }
+
 .work-list {
   margin: 0;
   padding: 0;
@@ -1303,6 +1329,31 @@ if (latestWork) {
   writingOrder.appendChild(card);
 }
 
+/* 年ごとの開閉状態。初回はすべて展開。 */
+const yearFoldStorageKey = "otomeza-writing-year-fold-v1";
+function getYearFoldState() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(yearFoldStorageKey) || "{}");
+    return saved && typeof saved === "object" && !Array.isArray(saved) ? saved : {};
+  } catch (_) { return {}; }
+}
+const yearFoldState = getYearFoldState();
+function saveYearFoldState() {
+  try { localStorage.setItem(yearFoldStorageKey, JSON.stringify(yearFoldState)); }
+  catch (_) { /* 保存できない場合も開閉操作は可能 */ }
+}
+function setYearExpanded(year, expanded) {
+  const list = document.getElementById(`writing-year-${year}`);
+  const toggle = document.querySelector(`.year-toggle[data-year="${year}"]`);
+  if (!list || !toggle) return;
+  list.hidden = !expanded;
+  toggle.textContent = expanded ? "−" : "+";
+  toggle.setAttribute("aria-expanded", String(expanded));
+  toggle.setAttribute("aria-label", `${year}年の作品一覧を${expanded ? "折りたたむ" : "展開する"}`);
+  yearFoldState[year] = expanded;
+  saveYearFoldState();
+}
+
 /* 年ごとの作品一覧 */
 const years = [
   ...new Set(
@@ -1324,10 +1375,24 @@ years.forEach(year => {
   heading.className = "year-title";
   heading.textContent = `${year}年`;
 
+  const headingRow = document.createElement("div");
+  headingRow.className = "year-heading-row";
+  const toggle = document.createElement("button");
+  toggle.type = "button";
+  toggle.className = "year-toggle";
+  toggle.dataset.year = year;
+  toggle.setAttribute("aria-controls", `writing-year-${year}`);
+  toggle.addEventListener("click", () => {
+    closePopup();
+    setYearExpanded(year, toggle.getAttribute("aria-expanded") !== "true");
+  });
+  headingRow.append(heading, toggle);
+
   const list =
     document.createElement("ul");
 
   list.className = "work-list";
+  list.id = `writing-year-${year}`;
 
   chronologicalWorks
     .filter(work => work.date.startsWith(year))
@@ -1414,11 +1479,12 @@ years.forEach(year => {
     });
 
   block.append(
-    heading,
+    headingRow,
     list
   );
 
   writingOrder.appendChild(block);
+  setYearExpanded(year, yearFoldState[year] !== false);
 });
 
 /* タイムラインの区分名 */
@@ -1595,6 +1661,11 @@ function restoreOpenedWork(state) {
       || [...writingOrder.querySelectorAll("[data-bookmark-id]")]
       .find(el => el.dataset.bookmarkId === id);
     if (row) {
+      const yearBlock = row.closest(".year-block");
+      if (yearBlock) {
+        const year = yearBlock.querySelector(".year-toggle")?.dataset.year;
+        if (year) setYearExpanded(year, true);
+      }
       const top = window.scrollY + row.getBoundingClientRect().top +
         row.getBoundingClientRect().height / 2 - window.innerHeight / 2;
       window.scrollTo({ top: Math.max(0, top), behavior: "instant" });
