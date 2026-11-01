@@ -14,8 +14,8 @@
     .panel--send { position: relative; }
     .panel--send .signal-counter { position: absolute; top: -18px; right: 0; color: rgba(138,214,201,.65); font-family: Georgia, serif; font-size: 10px; letter-spacing: .2em; }
     .signal-counter__count.is-full { color: #f07575; }
-    /* 入力メッセージの行の高さは30px。 */
-    #body { font-size: 16px; line-height: 30px; }
+    /* キャレットの高さを揃えやすくするため、入力欄の行の高さを24pxに調整。 */
+    #body { font-size: 16px; line-height: 24px; }
     /* iOSで入力欄へのフォーカス時にページが自動拡大されるのを抑える。 */
     @media (max-width: 600px) {
       html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
@@ -52,7 +52,7 @@
     .draft-buttons button:focus-visible { outline: 1px solid var(--accent); outline-offset: 3px; }
     .draft-note { margin: 5px 0 0; font-size: 12px; color: var(--muted); min-height: 1.4em; }
     @media (max-width: 600px) {
-      #body { font-size: 16px !important; line-height: 30px; }
+      #body { font-size: 16px !important; line-height: 24px; }
       .draft-tools { gap: 8px; }
       .draft-buttons { gap: 10px; }
     }
