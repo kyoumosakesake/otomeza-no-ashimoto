@@ -56,7 +56,7 @@
   <header class="hero">
     <div class="symbol">✦ · ✦</div>
     <h1>交信</h1>
-    <p>ここから、私にことばを届けることができます。<br>名前は必要ありません。感想でも、質問でも、ひとことでも。<br>お返事は気まぐれです。</p>
+    <p>ここから、私にことばを届けることができます。<br>名前は必要ありません。<br>感想でも、質問でも、ひとことでも。<br>お返事は気まぐれです。</p>
   </header>
 
   <section class="receipt record-panel" aria-label="交信の記録">
@@ -111,7 +111,7 @@
 
 <script type="module">
 import { db } from './archive-common.js';
-import { doc, setDoc, deleteDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js';
+import { doc, getDoc, setDoc, deleteDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js';
 
 const $ = selector => document.querySelector(selector);
 const body = $('#body');
@@ -151,9 +151,36 @@ function updateSignalCount() {
   el.textContent = String(count).padStart(2, '0');
   el.classList.toggle('is-full', count === 20 || count === 21);
 }
-window.addEventListener('pageshow', updateSignalCount);
-window.addEventListener('storage', updateSignalCount);
-updateSignalCount();
+// Firestoreで存在が確認できない（削除済みの）交信をブラウザの記録から除外する。
+// 通信エラー時は削除せず、誤って記録を失わないようにする。
+let signalRefreshVersion = 0;
+async function refreshSignalCount() {
+  const version = ++signalRefreshVersion;
+  const counter = $('#signal-count');
+  counter.textContent = '…';
+  counter.classList.remove('is-full');
+  const ids = getHistory();
+  if (!ids.length) { updateSignalCount(); return; }
+  const checks = await Promise.all(ids.map(async id => {
+    try { return { id, exists: (await getDoc(doc(db, 'koushin', id))).exists() }; }
+    catch (error) { console.warn('交信の存在確認ができませんでした', error); return { id, exists: null }; }
+  }));
+  if (version !== signalRefreshVersion) return;
+  const removed = new Set(checks.filter(item => item.exists === false).map(item => item.id));
+  if (removed.size) {
+    // 確認中に新たな送信があっても、そのIDは保持する。
+    const current = getHistory();
+    localStorage.setItem(HISTORY_KEY, JSON.stringify(current.filter(id => !removed.has(id))));
+    for (const key of [NOTICE_KEY, 'otomeza-koushin-seen-v1']) {
+      const saved = readIds(key);
+      localStorage.setItem(key, JSON.stringify(saved.filter(id => !removed.has(id))));
+    }
+  }
+  updateSignalCount();
+}
+window.addEventListener('pageshow', refreshSignalCount);
+window.addEventListener('storage', refreshSignalCount);
+refreshSignalCount();
 function storageAvailable() {
   try {
     const testKey = 'otomeza-koushin-storage-check';
@@ -194,6 +221,7 @@ $('#form').addEventListener('submit', async event => {
     });
     try {
       storeHistory(id, $('#remember-reply').checked);
+      ++signalRefreshVersion;
       updateSignalCount();
     } catch (saveError) {
       console.error('交信の記録を保存できませんでした', saveError);

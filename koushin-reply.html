@@ -210,22 +210,33 @@ async function loadResults() {
     } catch (error) { return { id, error }; }
   }));
   let hasReply = false;
+  const missingIds = [];
   let loaded = 0;
   let errors = 0;
   for (const result of results) {
     if (result.error) { errors++; console.error(result.error); continue; }
-    if (!result.snapshot.exists()) continue;
+    if (!result.snapshot.exists()) { missingIds.push(result.id); continue; }
     const data = result.snapshot.data();
     $('#results').append(makeCard(result.id, data));
     loaded++;
     if (typeof data.reply === 'string' && data.reply.trim()) hasReply = true;
+  }
+  if (missingIds.length) {
+    const missing = new Set(missingIds);
+    // 存在しないことが確認できた記録だけを削除。通信エラーのIDは残す。
+    for (const key of [HISTORY_KEY, NOTICE_KEY, SEEN_KEY]) {
+      try {
+        const current = readIds(key);
+        localStorage.setItem(key, JSON.stringify(current.filter(id => !missing.has(id))));
+      } catch (error) { console.warn('削除済み交信の整理に失敗しました', error); }
+    }
   }
   renumberCards();
   if (hasReply) $('.koushin-receive-symbol').classList.add('has-reply');
   if (errors) {
     $('#status').textContent = '一部の交信を読み込めませんでした。通信状態をご確認ください。';
   } else if (!loaded) {
-    $('#status').textContent = '表示できる交信がありません。取り消し済みの記録が含まれている可能性があります。';
+    $('#status').textContent = 'このブラウザに保存された交信はありません。';
   } else {
     $('#status').textContent = '';
   }
