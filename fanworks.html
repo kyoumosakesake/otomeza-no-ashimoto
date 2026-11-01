@@ -514,6 +514,27 @@ button, a {
   white-space: nowrap;
 }
 
+/* 年齢区分：ゴシック体・青緑 */
+.age-rating {
+  color: var(--accent);
+  font-family: Arial, "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
+  font-size: .75rem;
+  font-weight: 500;
+  opacity: 1;
+  white-space: nowrap;
+}
+.work-meta .age-rating { opacity: 1; }
+.story-popup .popup-age-rating {
+  margin-left: 1em;
+  font-size: .79rem;
+}
+.story-popup .story-characters { display: flex; align-items: baseline; }
+.latest-card-age-rating {
+  margin-left: 1em;
+  color: var(--background);
+  font-size: .8rem;
+}
+
 /* 戻る */
 .back-link {
   position: absolute;
@@ -889,6 +910,14 @@ const originalWorkOrder = [
 const originalOrderIndex = new Map(originalWorkOrder.map((id, index) => [id, index]));
 const works = (typeof novels !== "undefined" ? novels : []).map((novel, index) => ({
   title: novel.title,
+  ageRating: ({
+    "i-am-too-happy": "R-18",
+    "me-too": "R-18",
+    "tokete-shimau-kurai": "R-18",
+    "anata-no-kokoro-wo-ajiwaitai": "R-18",
+    "massugu-na-kusemono": "R-15",
+    "gendo-made-murasarete": "R-15"
+  })[novel.id] || "",
   date: novel.date || "",
   ...(novel.endDate ? { endDate: novel.endDate } : {}),
   characters: null,
@@ -1053,11 +1082,16 @@ function openPopup(work, point, button, tab = "timeline") {
   const characters =
     displayCharacters(work);
 
-  popupCharacters.textContent =
-    characters;
+  popupCharacters.textContent = characters;
+  if (work.ageRating && tab !== "writing") {
+    const rating = document.createElement("span");
+    rating.className = "age-rating popup-age-rating";
+    rating.textContent = work.ageRating;
+    popupCharacters.appendChild(rating);
+  }
 
   popupCharacters.style.display =
-    characters ? "block" : "none";
+    (characters || (work.ageRating && tab !== "writing")) ? "flex" : "none";
 
   popupDetail.textContent =
     work.detail;
@@ -1308,7 +1342,13 @@ if (latestWork) {
   characters.textContent =
     displayCharacters(latestWork);
 
-  if (!displayCharacters(latestWork)) {
+  if (latestWork.ageRating) {
+    const rating = document.createElement("span");
+    rating.className = "age-rating latest-card-age-rating";
+    rating.textContent = latestWork.ageRating;
+    characters.appendChild(rating);
+  }
+  if (!displayCharacters(latestWork) && !latestWork.ageRating) {
     characters.style.display = "none";
   }
 
@@ -1458,6 +1498,13 @@ years.forEach(year => {
 
       if (displayCharacters(work)) {
         meta.appendChild(characters);
+      }
+
+      if (work.ageRating) {
+        const rating = document.createElement("span");
+        rating.className = "age-rating";
+        rating.textContent = work.ageRating;
+        meta.appendChild(rating);
       }
 
       if (work.parody) {
