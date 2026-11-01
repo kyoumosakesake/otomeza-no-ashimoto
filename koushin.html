@@ -14,6 +14,8 @@
     .panel--send { position: relative; }
     .panel--send .signal-counter { position: absolute; top: -18px; right: 0; color: rgba(138,214,201,.65); font-family: Georgia, serif; font-size: 10px; letter-spacing: .2em; }
     .signal-counter__count.is-full { color: #f07575; }
+    /* iOS Safariで入力欄フォーカス時の自動拡大を防ぐ */
+    @media (max-width: 600px) { #body { font-size: 16px; } }
     .record-panel { max-width: 650px; margin: 0 auto 2.5rem; }
     .record-title { font-size: 1.15rem; font-weight: normal; color: #28bfb0; letter-spacing: .08em; margin: 0 0 1rem; }
     .record-limit {
