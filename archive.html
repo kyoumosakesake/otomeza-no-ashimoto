@@ -2,6 +2,33 @@
   .archive-ornament { display:block; text-align:center; color:#28bfb0; font-family:Georgia,serif; font-size:21px; line-height:1; text-shadow:0 0 12px rgba(40,191,176,.4); margin:65px 0 26px; }
   .archive-title { text-align:center; font-size:clamp(27px,calc(5vw - 1px),41px); margin:0 0 6px; }
   .archive-subtitle { text-align:center; font-size:14px; }
+  /* 一覧の本文はPC・スマホともに1行だけ表示 */
+  .article-card > div { min-width:0; }
+  .card-excerpt {
+    display:block;
+    width:100%;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    -webkit-line-clamp:unset;
+  }
+  .read-more {
+    display:block;
+    width:max-content;
+    max-width:100%;
+    margin-top:5px;
+    color:#8ad6c9;
+    font-size:13px;
+    letter-spacing:.07em;
+    text-shadow:0 0 9px rgba(138,214,201,.34);
+    transition:color .2s ease,text-shadow .2s ease;
+  }
+  .read-more[hidden] { display:none; }
+  .article-card:hover .read-more,
+  .article-card:focus-visible .read-more {
+    color:#b5f4e9;
+    text-shadow:0 0 15px rgba(138,214,201,.65);
+  }
   @media(max-width:640px) { .archive-ornament { margin-top:45px; } }
 </style></head>
 <body><main class="shell"><nav class="top"><a href="menu.html">← メニューへ戻る</a></nav><span class="archive-ornament" aria-hidden="true">✦</span><h1 class="brand archive-title">カラスのアルキバ</h1><p class="subtitle archive-subtitle">思考の種を蒔くところ。</p><hr class="line"><div id="list"><p class="empty">記事を読み込んでいます……</p></div><button id="more" class="btn more" hidden>もっと読む</button></main>
@@ -9,13 +36,24 @@
 import {db,esc,plainText,dateText,thumb} from './archive-common.js';
 import {collection,query,where,orderBy,limit,startAfter,getDocs} from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js';
 const box=document.querySelector('#list'), more=document.querySelector('#more'); let last=null, first=true;
+// 実際に1行からはみ出す記事だけ「続きを読む」を表示する。
+function updateExcerpts(){
+  for(const excerpt of box.querySelectorAll('.card-excerpt')){
+    const readMore=excerpt.nextElementSibling;
+    if(!readMore?.classList.contains('read-more'))continue;
+    readMore.hidden=excerpt.scrollWidth<=excerpt.clientWidth+1;
+  }
+}
+window.addEventListener('resize',updateExcerpts);
+if(document.fonts?.ready)document.fonts.ready.then(updateExcerpts);
 async function load(){more.disabled=true;try{
   let parts=[where('status','==','published'),orderBy('publishedAt','desc'),limit(10)]; if(last)parts.push(startAfter(last));
   const snap=await getDocs(query(collection(db,'posts'),...parts));if(first){box.innerHTML='';first=false;}
   for(const doc of snap.docs){const p=doc.data(), article=document.createElement('a');article.href='archive-post.html?id='+encodeURIComponent(doc.id);article.className='article-card'+(p.thumbnail?'':' no-image');
-    article.innerHTML=`<div><h2 class="card-title">${esc(p.title?.trim()||'無題')}</h2><div class="card-date">${esc(dateText(p.recordDate))}</div><p class="card-excerpt">${esc(plainText(p.body).slice(0,190))}</p></div>`;
+    article.innerHTML=`<div><h2 class="card-title">${esc(p.title?.trim()||'無題')}</h2><div class="card-date">${esc(dateText(p.recordDate))}</div><p class="card-excerpt">${esc(plainText(p.body))}</p><span class="read-more" hidden>続きを読む</span></div>`;
     if(p.thumbnail){const img=document.createElement('img');img.className='card-thumb';img.alt='';img.loading='lazy';article.append(img);thumb(p.thumbnail,img);}box.append(article);}
   last=snap.docs.at(-1)||last;more.hidden=snap.size<10;if(!box.children.length)box.innerHTML='<p class="empty">まだ記事はありません。</p>';
+  requestAnimationFrame(updateExcerpts);
 }catch(e){console.error(e);box.insertAdjacentHTML('beforeend','<p class="empty">読み込めませんでした。設定や通信状況をご確認ください。</p>');}finally{more.disabled=false;}}
 more.addEventListener('click',load);load();
 </script></body></html>
