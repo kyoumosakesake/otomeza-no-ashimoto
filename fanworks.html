@@ -436,6 +436,7 @@ button, a {
   font: 19px/1 sans-serif;
   cursor: pointer;
 }
+.year-toggle .year-toggle-symbol { display: inline-block; transform: translateY(-1px); }
 .year-toggle:hover { border-color: var(--accent); color: var(--accent); }
 .year-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
 .work-list[hidden] { display: none !important; }
@@ -1347,7 +1348,8 @@ function setYearExpanded(year, expanded) {
   const toggle = document.querySelector(`.year-toggle[data-year="${year}"]`);
   if (!list || !toggle) return;
   list.hidden = !expanded;
-  toggle.textContent = expanded ? "−" : "+";
+  const symbol = toggle.querySelector(".year-toggle-symbol");
+  if (symbol) symbol.textContent = expanded ? "−" : "+";
   toggle.setAttribute("aria-expanded", String(expanded));
   toggle.setAttribute("aria-label", `${year}年の作品一覧を${expanded ? "折りたたむ" : "展開する"}`);
   yearFoldState[year] = expanded;
@@ -1380,6 +1382,10 @@ years.forEach(year => {
   const toggle = document.createElement("button");
   toggle.type = "button";
   toggle.className = "year-toggle";
+  const toggleSymbol = document.createElement("span");
+  toggleSymbol.className = "year-toggle-symbol";
+  toggleSymbol.setAttribute("aria-hidden", "true");
+  toggle.appendChild(toggleSymbol);
   toggle.dataset.year = year;
   toggle.setAttribute("aria-controls", `writing-year-${year}`);
   toggle.addEventListener("click", () => {
