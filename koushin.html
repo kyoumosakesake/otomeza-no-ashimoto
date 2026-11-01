@@ -39,10 +39,16 @@
     .draft-tools .hint { margin: 0; }
     .draft-buttons { display: flex; flex-wrap: wrap; gap: 12px; }
     .draft-buttons button {
-      border: 0; background: transparent; color: var(--accent);
-      font: inherit; font-size: 12px; cursor: pointer; padding: 2px 0;
+      border: 1px solid rgba(40,191,176,.65);
+      border-radius: 6px;
+      background: rgba(40,191,176,.08);
+      color: var(--accent);
+      font: inherit; font-size: 12px; line-height: 1.4;
+      cursor: pointer; padding: 7px 10px;
+      white-space: nowrap;
     }
-    .draft-buttons button:hover { text-decoration: underline; }
+    .draft-buttons button:hover { background: rgba(40,191,176,.17); }
+    .draft-buttons button:active { background: rgba(40,191,176,.24); }
     .draft-buttons button:focus-visible { outline: 1px solid var(--accent); outline-offset: 3px; }
     .draft-note { margin: 5px 0 0; font-size: 12px; color: var(--muted); min-height: 1.4em; }
     @media (max-width: 600px) {
@@ -206,6 +212,21 @@ function correctHorizontalScroll() {
     if (window.scrollX !== 0) window.scrollTo({ left: 0, top: window.scrollY, behavior: 'instant' });
   });
 }
+// iOS Safariでキーボードを開いた際の意図しないページ拡大を抑える。
+// 入力中だけ倍率を1に制限し、フォーカスが外れたら元のviewportに戻す。
+// この制限は一時的で、通常閲覧中のピンチズームは妨げない。
+const viewportMeta = document.querySelector('meta[name="viewport"]');
+const originalViewport = viewportMeta?.getAttribute('content') || 'width=device-width, initial-scale=1';
+function lockFocusZoom() {
+  if (!viewportMeta) return;
+  viewportMeta.setAttribute('content', originalViewport + ', maximum-scale=1');
+}
+function unlockFocusZoom() {
+  if (!viewportMeta) return;
+  viewportMeta.setAttribute('content', originalViewport);
+}
+body.addEventListener('focus', lockFocusZoom);
+body.addEventListener('blur', unlockFocusZoom);
 body.addEventListener('focus', correctHorizontalScroll);
 window.visualViewport?.addEventListener('resize', correctHorizontalScroll);
 window.visualViewport?.addEventListener('scroll', correctHorizontalScroll);
