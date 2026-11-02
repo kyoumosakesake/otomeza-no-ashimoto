@@ -336,17 +336,26 @@
   @media (max-width: 600px) {
     .site-header { padding: 1.2rem 1rem; }
     .site-name { font-size: .8rem; }
+    /* スマホ縦書きではページ全体の上下移動を止める。設定パネルは独立してスクロール可能。 */
+    html:has(body.vertical-reading:not(.microfiction-reading)),
+    body.vertical-reading:not(.microfiction-reading) {
+      height: 100dvh;
+      min-height: 0;
+      overflow: hidden;
+      overscroll-behavior-y: none;
+    }
     /* LTRのスクロール座標と既存のドラッグ操作を維持する。 */
     .reading-layout.vertical {
       direction: ltr;
       flex-direction: row;
       gap: 0;
-      height: auto;
-      min-height: 70vh;
+      height: 100dvh;
+      min-height: 0;
       padding: 2.25rem .75rem 2rem;
       overflow-x: scroll;
       overflow-y: hidden;
-      touch-action: pan-y;
+      overscroll-behavior-y: none;
+      touch-action: none;
       -webkit-overflow-scrolling: touch;
     }
     /* タイトルを独立したflex要素にすると並びが反転するため、
@@ -999,6 +1008,9 @@
       }
     }
 
+    // 上下スワイプもブラウザへ渡さず、縦書き本文の上下移動を防ぐ。
+    // 左右スワイプは既存のドラッグ処理で移動させる。
+    event.preventDefault();
     if (gesture.dragging) {
       // 指が右へ動いたら本文も右へ動くように、スクロール座標は逆方向に更新します。
       event.preventDefault();
