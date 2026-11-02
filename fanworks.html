@@ -588,18 +588,18 @@ button, a {
   .timeline-area {
     --timeline-top-space: 19rem; /* 読み込み後に画面高に合わせて調整 */
   }
-  /* スマホ：スクロールする主軸を矢印の手前で覆い、固定の短い主軸で接続する。
-     固定線と矢印は同じ .timeline-area 基準なので慣性スクロールでも離れない。 */
+  /* スマホ：主軸を表示領域全体に固定して矢印の根元までつなぐ。
+     スクロール終端でも元の線の長さに依存しないため、隙間が生じない。 */
   .timeline-area::before {
     content: "";
     position: absolute;
-    right: 53px; /* 矢印の左端（right:28px + border-left:25px） */
+    left: 0;
+    right: 53px; /* ▶の左端：right 28px + 三角形の幅 25px */
     top: calc(var(--timeline-top-space) + 210px);
-    width: 28px; /* マスクの左端を越えて重ね、隙間を作らない */
     height: 7px;
     background: var(--accent);
     pointer-events: none;
-    z-index: 90; /* マスクより前、矢印より後ろ */
+    z-index: 90;
   }
   /* スマホ：固定矢印の背後に見える線を背景色で覆う。矢印自体は維持。 */
   .timeline-area::after {
