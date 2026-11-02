@@ -588,6 +588,14 @@ button, a {
   .timeline-area {
     --timeline-top-space: 19rem; /* 読み込み後に画面高に合わせて調整 */
   }
+  /* スマホ：固定矢印の背後に見える線を背景色で覆う。矢印自体は維持。 */
+  .timeline-area::after {
+    right: 0;
+    top: calc(var(--timeline-top-space) + 190px);
+    width: 65px;
+    height: 50px;
+  }
+
   .point-button {
     width: 50px;
     height: 50px;
