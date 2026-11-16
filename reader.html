@@ -976,8 +976,14 @@
     inertiaFrame = requestAnimationFrame(frame);
   }
 
-  layout.addEventListener("touchstart", event => {
+  // 画面の端も確実に拾うため、タッチ開始・終了は文書全体で監視する。
+  // 操作対象は閲覧領域の高さの範囲に限定し、設定パネルやリンクは除外する。
+  document.addEventListener("touchstart", event => {
     if (!mobileVertical() || event.touches.length !== 1) return;
+    if (event.target.closest("a, button, input, select, textarea, .settings-panel")) return;
+    const bounds = layout.getBoundingClientRect();
+    const start = event.touches[0];
+    if (start.clientY < bounds.top || start.clientY > bounds.bottom) return;
     stopInertia();
     const touch = event.touches[0];
     gesture = {
@@ -992,7 +998,7 @@
     };
   }, { passive: true });
 
-  layout.addEventListener("touchmove", event => {
+  document.addEventListener("touchmove", event => {
     if (!mobileVertical() || !gesture || event.touches.length !== 1) return;
     const touch = event.touches[0];
     const x = touch.clientX;
@@ -1026,7 +1032,7 @@
     gesture.lastTime = performance.now();
   }, { passive: false });
 
-  layout.addEventListener("touchend", event => {
+  document.addEventListener("touchend", event => {
     if (event.target.closest("a, button, input, select, textarea")) { gesture = null; return; }
     if (!gesture || !mobileVertical()) { gesture = null; return; }
     const touch = event.changedTouches[0];
@@ -1037,14 +1043,16 @@
     if (gesture.dragging) {
       if (Math.abs(gesture.velocity) > 0.08) coast(gesture.velocity);
     } else if (!dragged) {
-      const rect = layout.getBoundingClientRect();
-      const x = touch.clientX - rect.left;
-      const edgeWidth = Math.min(85, rect.width * 0.22);
+      // タップ判定は閲覧領域の余白ではなく、表示画面の左右端を基準にする。
+      // clientX と innerWidth は同じビューポート座標系（CSS px）。
+      const x = touch.clientX;
+      const viewportWidth = window.innerWidth;
+      const edgeWidth = Math.min(85, viewportWidth * 0.22);
       const step = layout.clientWidth * 0.85;
       if (x < edgeWidth) {
         // 左端タップ：次のページへ。
         layout.scrollTo({ left: layout.scrollLeft - step, behavior: "smooth" });
-      } else if (x > rect.width - edgeWidth) {
+      } else if (x > viewportWidth - edgeWidth) {
         // 右端タップ：前のページへ。
         layout.scrollTo({ left: layout.scrollLeft + step, behavior: "smooth" });
       }
@@ -1052,7 +1060,7 @@
     gesture = null;
   }, { passive: true });
 
-  layout.addEventListener("touchcancel", () => {
+  document.addEventListener("touchcancel", () => {
     gesture = null;
     stopInertia();
   }, { passive: true });
