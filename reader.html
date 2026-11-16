@@ -1047,7 +1047,7 @@
       // clientX と innerWidth は同じビューポート座標系（CSS px）。
       const x = touch.clientX;
       const viewportWidth = window.innerWidth;
-      const edgeWidth = Math.min(85, viewportWidth * 0.15);
+      const edgeWidth = Math.min(85, viewportWidth * 0.17);
       const step = layout.clientWidth * 0.85;
       if (x < edgeWidth) {
         // 左端タップ：次のページへ。
