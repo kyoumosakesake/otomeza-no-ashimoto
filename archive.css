@@ -6,3 +6,11 @@
 .reader :where(p,div,span,blockquote,li,strong,b,em,i,a){font-size:inherit!important;-webkit-text-size-adjust:none;text-size-adjust:none}
 
 .reader,.editor{writing-mode:horizontal-tb} @media(max-width: 768px){.admin-form input,.admin-form textarea,.editor{font-size:16px!important;min-width:0;max-width:100%}.admin-form{min-width:0;grid-template-columns:minmax(0,1fr)} html{-webkit-text-size-adjust:100%}}
+
+/* 管理画面の入力欄と編集本文の自動拡大・横はみ出し対策 */
+@media (max-width: 768px) {
+  .admin-form input, .admin-form textarea, #editor { font-size: 16px !important; }
+  #editor :where(p,div,span,b,strong,i,em,a,li,blockquote) { font-size: inherit !important; }
+  .admin-form > *, .field { min-width: 0; }
+  #editor { overflow-wrap: anywhere; }
+}
