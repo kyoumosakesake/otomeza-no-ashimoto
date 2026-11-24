@@ -1,6 +1,6 @@
 (() => {
 const key='otomeza-entry-v1', open=document.getElementById('site-open');
-const questions=[['夜空に浮かぶ天体は？',['月','石','貝']],['鳥の名前は？',['つばめ','すみれ','こはく']],['春に咲く花は？',['桜','稲穂','紅葉']],['海の水は一般にどんな味？',['塩辛い','甘い','苦くない砂糖味']],['一日は何時間？',['24時間','12時間','48時間']],['雨のあと空に現れることがあるものは？',['虹','砂丘','氷山']],['秋に色づく葉を何という？',['紅葉','新芽','花粉']],['月が満ちて丸く見える日は？',['満月','新月','半月']],['カラスは何の仲間？',['鳥','魚','昆虫']],['東から昇る天体は？',['太陽','地球','北極星']]];
+const questions=[['夜空に浮かぶ天体は？',['星','石','貝']],['鳥の名前は？',['カラス','ハラス','シラス']],['春に咲く花は？',['コスモス','','ツバキ']],['海の水は一般にどんな味？',['深い','甘い','塩辛い']],['一日は何時間？',['24時間','12時間','48時間']],['雨のあと空に現れることがあるものは？',['虹','砂丘','氷山']],['秋に色づく葉を何という？',['紅葉','新芽','花粉']],['月が満ちて丸く見える日は？',['満月','新月','半月']],['人間は何の仲間？',['猿','神','魚']],['東から昇る天体は？',['太陽','地球','北極星']]];
 function shuffle(a){a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
 let passed=false;try{passed=sessionStorage.getItem(key)==='1'}catch{}
 const dialog=document.createElement('dialog');dialog.style.cssText='background:#1d3652;color:white;border:1px solid #28bfb0;padding:28px;width:min(340px,85vw);box-sizing:border-box;text-align:center;font-family:inherit;line-height:1.8';document.body.append(dialog);
