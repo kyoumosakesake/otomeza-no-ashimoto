@@ -47,5 +47,5 @@ $('#image').onclick=()=>{
   else $('#editor').append(img);
   message('画像を挿入しました。記事を保存してください。');
 };
-$('#preview').onclick=()=>{const w=window.open('','_blank');if(!w){message('ポップアップがブロックされました。');return;}const body=cleanBody();const style='<style>body{background:#1d3652;color:white;font:19px/2.1 serif;padding:35px}article{writing-mode:vertical-rl;height:75vh;overflow:auto}img{max-height:80%;max-width:260px}</style>';w.document.write('<!doctype html><html lang="ja"><meta charset="utf-8"><title>プレビュー</title>'+style+'<h1>'+esc($('#post-title').value||'無題')+'</h1><article>'+body+'</article>');w.document.close();message('プレビューを開きました。画像もプレビューに表示されます。');};
+$('#preview').onclick=()=>{const w=window.open('','_blank');if(!w){message('ポップアップがブロックされました。');return;}const body=cleanBody();const style='<style>body{background:#1d3652;color:white;font:19px/2.1 serif;padding:35px}article{writing-mode:horizontal-tb;overflow-wrap:anywhere}img{max-height:65vh;max-width:100%;height:auto}</style>';w.document.write('<!doctype html><html lang="ja"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>プレビュー</title>'+style+'<h1>'+esc($('#post-title').value||'無題')+'</h1><article>'+body+'</article>');w.document.close();message('プレビューを開きました。画像もプレビューに表示されます。');};
 </script></body></html>

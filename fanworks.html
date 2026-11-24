@@ -829,8 +829,10 @@ button, a {
   >
     読む
   </a>
+  <a class="story-link" id="popup-audio" href="#" target="_blank" rel="noopener" hidden>🎧 朗読データを聞く</a>
 </div>
 
+<script src="narration-config.js"></script>
 <script src="novels.js?v=20261112-serenata"></script>
 <script>
 /* reader.html と共通のブックマーク情報を表示する */
@@ -931,6 +933,8 @@ const originalWorkOrder = [
 const originalOrderIndex = new Map(originalWorkOrder.map((id, index) => [id, index]));
 const works = (typeof novels !== "undefined" ? novels : []).map((novel, index) => ({
   title: novel.title,
+  narration: (window.narrations || {})[novel.id],
+  id: novel.id,
   ageRating: ({
     "i-am-too-happy": "R-18",
     "me-too": "R-18",
@@ -1119,6 +1123,10 @@ function openPopup(work, point, button, tab = "timeline") {
   popupLink.href =
     work.href;
   popupLink.onclick = () => rememberOpenedWork(work, tab);
+  const audioLink = document.getElementById('popup-audio');
+  audioLink.hidden = !work.narration;
+  audioLink.style.display = work.narration ? '' : 'none';
+  audioLink.href = 'narration.html?work=' + encodeURIComponent(work.id);
 
   activePoint = point;
   activeButton = button;

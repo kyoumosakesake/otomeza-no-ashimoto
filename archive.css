@@ -4,3 +4,5 @@
 /* 読書画面：スマートフォンの自動文字拡大を抑え、スライダーの値を本文に適用 */
 .reader{font-size:var(--reader-font-size,19px);-webkit-text-size-adjust:none;text-size-adjust:none}
 .reader :where(p,div,span,blockquote,li,strong,b,em,i,a){font-size:inherit!important;-webkit-text-size-adjust:none;text-size-adjust:none}
+
+.reader,.editor{writing-mode:horizontal-tb} @media(max-width: 768px){.admin-form input,.admin-form textarea,.editor{font-size:16px!important;min-width:0;max-width:100%}.admin-form{min-width:0;grid-template-columns:minmax(0,1fr)} html{-webkit-text-size-adjust:100%}}

@@ -80,7 +80,7 @@
     .signal-stars { display:flex; align-items:center; justify-content:center; gap:clamp(24px,6vw,68px); color:#29c5be; font-family:Georgia,serif; font-size:clamp(64px,14vw,136px); line-height:1; }
     .signal-dot { font-size:.28em; opacity:.75; }
     .signal-right { animation:signal-right-light 2s ease-in-out both; }
-    @keyframes signal-right-light { 0%,100% {color:#29c5be;text-shadow:none;filter:brightness(1);transform:scale(1)} 38%,62% {color:#d3fff5;text-shadow:0 0 16px rgba(91,255,224,.9),0 0 45px rgba(57,226,207,.8),0 0 95px rgba(57,226,207,.38);filter:brightness(1.5);transform:scale(1.13)} }
+    @keyframes signal-right-light { 0%,100% {color:#29c5be;text-shadow:none;} 38%,62% {color:#d3fff5;text-shadow:0 0 16px rgba(91,255,224,.9),0 0 45px rgba(57,226,207,.8),0 0 95px rgba(57,226,207,.38);} }
     .reply-notice { position:fixed; inset:0; z-index:9998; background:#1d3652; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:2rem; box-sizing:border-box; gap:1.2rem; }
     .reply-notice h2 { font-size:clamp(1.6rem,5vw,2.2rem); font-weight:400; letter-spacing:.13em; margin:0; }
     .reply-notice p { line-height:2; margin:0; }
@@ -319,5 +319,6 @@
     });
     document.getElementById('later').addEventListener('click', menu);
   </script>
+<script src="entry-quiz.js"></script>
 </body>
 </html>
