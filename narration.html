@@ -1,1 +1,24 @@
-<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>朗読｜乙女座の脚元</title><style>body{background:#1d3652;color:white;font-family:serif;text-align:center;padding:40px 20px;line-height:1.9}audio{width:min(100%,480px)}a{color:#8ad6c9}</style></head><body><h1>🎧 朗読</h1><h2 id="title"></h2><audio id="player" controls preload="metadata" hidden></audio><p id="status" role="status"></p><p>このタブを開いたまま、元のタブで読書を続けられます。</p><a href="fanworks.html" target="_blank" rel="noopener">作品一覧</a><script src="narration-config.js"></script><script src="novels.js?v=20261112-serenata"></script><script>const id=new URLSearchParams(location.search).get('work'), work=novels.find(n=>n.id===id),src=Object.hasOwn(window.narrations,id)?window.narrations[id]:null,p=document.getElementById('player'),status=document.getElementById('status');if(work&&src){document.getElementById('title').textContent=work.title;p.hidden=false;p.src=src;p.addEventListener('error',()=>status.textContent='朗読ファイルを読み込めませんでした。');p.play().catch(()=>status.textContent='再生ボタンを押してください。');p.addEventListener('play',()=>{status.textContent='';if('mediaSession' in navigator&&'MediaMetadata' in window)navigator.mediaSession.metadata=new MediaMetadata({title:work.title,artist:'乙女座の脚元'});});}else{status.textContent='朗読データが登録されていません。';}</script></body></html>
+<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>朗読｜乙女座の脚元</title><style>body{background:#1d3652;color:white;font-family:serif;text-align:center;padding:40px 20px;line-height:1.9}audio{width:min(100%,480px)}a{color:#8ad6c9}</style></head><body><h1>朗読</h1><h2 id="title"></h2><audio id="player" controls preload="metadata" hidden></audio><p id="status" role="status"></p><p>このタブでデータを再生しながら、元のタブでサイトの閲覧を続けられます。</p><a href="fanworks.html">←地獄楽（佐杠・杠佐）へ</a><script src="narration-config.js?v=20261125"></script><script src="novels.js?v=20261112-serenata"></script><script>
+const id = new URLSearchParams(location.search).get('work');
+const work = typeof novels !== 'undefined' ? novels.find(n => n.id === id) : null;
+const src = (window.narrations || {})[id];
+const p = document.getElementById('player');
+const status = document.getElementById('status');
+if (src) {
+  document.getElementById('title').textContent = work ? work.title : (id === 'sei-ni-okasare' ? '生に冒され' : '');
+  p.hidden = false;
+  p.volume = 1;
+  p.muted = false;
+  p.addEventListener('error', () => { status.textContent = '朗読ファイルを読み込めませんでした。音声ファイルの場所や形式をご確認ください。'; });
+  p.addEventListener('canplay', () => { status.textContent = '再生ボタンを押してください。'; });
+  p.addEventListener('playing', () => { status.textContent = ''; });
+  p.src = new URL(src, document.baseURI).href;
+  p.load();
+  const link = document.createElement('a');
+  link.href = p.src;
+  link.textContent = '音声ファイルを直接開く';
+  link.target = '_blank'; link.rel = 'noopener';
+  const line = document.createElement('p'); line.append(link); status.after(line);
+  status.textContent = '音声を読み込んでいます…';
+} else { status.textContent = '朗読データが登録されていません。'; }
+</script></body></html>
